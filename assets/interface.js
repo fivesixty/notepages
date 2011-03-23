@@ -1,92 +1,3 @@
-(function() {
-  var fieldSelection = {
-    getSelection: function() {
-      var e = this.jquery ? this[0] : this;
-      
-      var errCase = {
-        start: 0,
-        end: e.value.length,
-        length: 0
-      };
-      
-      /* mozilla / dom 3.0 */
-      if ('selectionStart' in e) {
-        var l = e.selectionEnd - e.selectionStart;
-        return {
-          start: e.selectionStart,
-          end: e.selectionEnd,
-          length: l,
-          text: e.value.substr(e.selectionStart, l)
-        };
-      }
-
-      /* exploder */
-      if (document.selection) {
-        e.focus();
-
-        var r = document.selection.createRange();
-        if (r == null) {
-          return errCase;
-        }
-
-        var re = e.createTextRange();
-        var rc = re.duplicate();
-        re.moveToBookmark(r.getBookmark());
-        rc.setEndPoint('EndToStart', re);
-
-        // IE bug - it counts newline as 2 symbols when getting selection coordinates,
-        //  but counts it as one symbol when setting selection
-        var rcLen = rc.text.length, i, rcLenOut = rcLen;
-        for (i = 0; i < rcLen; i++) {
-          if (rc.text.charCodeAt(i) == 13) rcLenOut--;
-        }
-        var rLen = r.text.length, rLenOut = rLen;
-        for (i = 0; i < rLen; i++) {
-          if (r.text.charCodeAt(i) == 13) rLenOut--;
-        }
-
-        return {
-          start: rcLenOut,
-          end: rcLenOut + rLenOut,
-          length: rLenOut,
-          text: r.text
-        };
-      }
-
-      /* browser not supported */
-      return errCase;
-
-    },
-
-    setSelection: function(start, end) {
-      var e = $(this).get(0); // I don't know why... but $(this) don't want to work today :-/
-      if (!e) {
-        return $(this);
-      } else if (e.setSelectionRange) { /* WebKit */ 
-        e.focus(); e.setSelectionRange(start, end);
-      } else if (e.createTextRange) { /* IE */
-        var range = e.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', end);
-        range.moveStart('character', start);
-        range.select();
-      } else if (e.selectionStart) { /* Others */
-        e.selectionStart = start;
-        e.selectionEnd = end;
-      }
-
-      return $(this);
-    }
-  };
-
-  jQuery.each(fieldSelection, function(i) { jQuery.fn[i] = this; });
-
-})();
-
-if (console === undefined) {
-  console = {log:function() {}}
-}
-
 function size_images(context) {
   $("img", context).not(".MathJax_strut").each(function (i, obj) {
     obj = $(obj);
@@ -159,13 +70,9 @@ $(document).ready(function () {
     var genHTML = markdown.makeHtml(inputarea.val());
     preproc.html(genHTML);
     
-    console.log(genHTML);
-    console.log(preproc[0].innerHTML);
-    
     markdownTime = ((new Date()).getTime() - startTime);
     
     var patch = outputel.quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
-    console.log(patch);
     
     diffTime = ((new Date()).getTime() - startTime) - markdownTime;
     setRenderDelay();
