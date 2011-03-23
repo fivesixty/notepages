@@ -30,3 +30,15 @@ The database configuration is trivial and at the top of the `server.js` file. Ru
 ### CDN Content
 
 Notepages serves the MathJax, Google Font API, and jQuery through their respective CDNs.
+
+## Browser Support
+
+Reading and editing has been tested across all major browsers (IE7/8, Safari, Chrome, Firefox). Reading has been tested on mobile Safari and works, but page editing is not currently friendly to a mobile browser.
+
+## Printing
+
+A print stylesheet is served which formats the document in a print friendly manner. Exporting of pages is not self-supported, but Print-to-PDF functionality of most browsers works as expected.
+
+## Syntax
+
+Notepag.es supports Markdown, but does not allow arbitrary HTML. HTML markup can still be used, but only insofar as elements that can naturally be created with markdown syntax. Future work is planned to provide syntax for common additional elements such as tables, footnotes, and captioned figures.
