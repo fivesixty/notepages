@@ -137,34 +137,34 @@ hr {
   width: 500px;
   text-align: center;
 }
---.editting #page {
+--.editing #page {
   margin: 60px auto 20px;
   overflow: scroll;
   overflow-y: scroll;
   overflow-x: hidden;
 }
-.widescreen.editting #leftcol {
+.widescreen.editing #leftcol {
   width: 59%
 }
-.narrowscreen.editting #leftcol {
+.narrowscreen.editing #leftcol {
   display: none;
 }
-.narrowscreen.editting.preview #leftcol {
+.narrowscreen.editing.preview #leftcol {
   display: inline;
 }
-.widescreen.editting #rightcol {
+.widescreen.editing #rightcol {
   width: 41%;
 }
-.narrowscreen.editting #rightcol {
+.narrowscreen.editing #rightcol {
   width: 100%;
 }
-.narrowscreen.editting.preview #rightcol {
+.narrowscreen.editing.preview #rightcol {
   display: none;
 }
-.widescreen.editting #leftcol {
+.widescreen.editing #leftcol {
   float: left;
 }
-.widescreen.editting #rightcol {
+.widescreen.editing #rightcol {
   float: left;
 }
 .readonly #leftcol {
@@ -229,7 +229,7 @@ textarea {
 #preview-enable, #params {
   display: none;
 }
-.editting #preview-enable, .editting #params {
+.editing #preview-enable, .editing #params {
   display:-moz-inline-stack;
   display:inline-block;
   zoom:1;
