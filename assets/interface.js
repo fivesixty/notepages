@@ -1,3 +1,5 @@
+// In a given context, make sure all images (skipping MathJax related images)
+// Are no wider than the page width.
 function size_images(context) {
   $("img", context).not(".MathJax_strut").each(function (i, obj) {
     obj = $(obj);
@@ -8,10 +10,12 @@ function size_images(context) {
   });
 }
 
+// Check all output images once the page has loaded.
 $(window).load(function () {
   size_images($("#output")[0]);
 });
 
+// Setup a filter for comparing mathInline spans.
 $.fn.quickdiff("filter", "mathSpanInline",
   function (node) { return (node.nodeName === "SPAN"
                             && $(node).hasClass("mathInline")); },
@@ -20,6 +24,7 @@ $.fn.quickdiff("filter", "mathSpanInline",
     return ("%%" + aHTML + "%%") !== bHTML;
   });
 
+// Setup a filter for comparing math spans.
 $.fn.quickdiff("filter", "mathSpan",
   function (node) { return (node.nodeName === "SPAN"
                             && $(node).hasClass("math")); },
@@ -27,7 +32,8 @@ $.fn.quickdiff("filter", "mathSpan",
     var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
     return ("$$" + aHTML + "$$") !== bHTML;
   });
-  
+
+// Define the page and functions
 var Page = (function () {
   var previewing = false,
     editor_scrolltop = 0,
@@ -40,14 +46,17 @@ var Page = (function () {
     outputel,
     renderDelay = 50;
   
+  // If draw latency sufficiently small, use a small delay on rendering.
+  // Otherwise use a significantly larger one.
   var setRenderDelay = function (rendertime) {
-    if (rendertime > 200) {
+    if (rendertime > 50) {
       renderDelay = 400;
     } else if (rendertime > 10) {
       renderDelay = 50;
     }
   };
 
+  // Redraws the output using the content of the input.
   var redraw = function () {
     var startTime = (new Date()).getTime();
     preproc.html(markdown.makeHtml(inputarea.val()));
@@ -69,6 +78,7 @@ var Page = (function () {
     }
   };
 
+  // Helper functions to save/restore page position.
   var savePagePosition = function () {
     preview_scrolltop = $("body").scrollTop();
   };
@@ -76,6 +86,7 @@ var Page = (function () {
     $("body").scrollTop(preview_scrolltop);
   };
 
+  // Helper functions to save/restore editor position and selection.
   var saveEditorState = function () {
     editor_scrolltop = inputarea.scrollTop();
     editor_position = inputarea.getSelection();
@@ -85,6 +96,7 @@ var Page = (function () {
     inputarea.scrollTop(editor_scrolltop);
   };
 
+  // Set whether we are previewing or not.
   var setPreviewing = function (toggle) {
     previewing = toggle;
     $("body").toggleClass("preview", previewing);
@@ -95,6 +107,8 @@ var Page = (function () {
     }
   };
 
+  // Reconstrain the page based upon current window size.
+  // Will resize the editor when editing, and toggle on/off narrowscreen mode.
   var reconstrain = function () {
     var height = $(window).height(), width = $(window).width();
 
@@ -128,6 +142,7 @@ var Page = (function () {
     }
   };
 
+  // Set whether we are editing or not.
   var setEditing = function (edit) {
     editing = edit;
     $("body").toggleClass("readonly", !editing);
@@ -143,6 +158,7 @@ var Page = (function () {
     }
   };
   
+  // Return functions for getting/setting parameters of the page.
   return {
     editing: function () {
       if (arguments.length === 0) {
@@ -192,6 +208,8 @@ $(document).ready(function () {
   
   $(window).resize(Page.reconstrain);
   
+  // On keyup, clear any timer and instate a new one using the current
+  // render relay.
   $("textarea").keyup(function () {
     if (this.timer) {
       clearTimeout(this.timer);
@@ -199,6 +217,7 @@ $(document).ready(function () {
     this.timer = setTimeout(Page.redraw, Page.renderDelay());
   });
   
+  // Toggle editing. If we haven't loaded the content, then load it via AJAX.
   $("#edit-enable a").click(function () {
     if (!loaded) {
       inputarea.val("Loading..");
@@ -221,6 +240,7 @@ $(document).ready(function () {
     return false;
   });
   
+  // Toggle preview on/off, keeping editor/page state as expected.
   $("#preview-enable a").click(function () {
     if (Page.preview()) {
       Page.savePagePosition();
@@ -234,6 +254,7 @@ $(document).ready(function () {
     return false;
   });
   
+  // Save the page, displaying a notification of the result status.
   $("#savebutton").click(function () {
     $.post("/" + Page.pagename() + ".json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
       if (ret && ret.status === "success") {
