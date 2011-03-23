@@ -26,3 +26,7 @@ The database configuration is trivial and at the top of the `server.js` file. Ru
         proxy_pass http://127.0.0.1:8080/;
       }
     }
+
+### CDN Content
+
+Notepages serves the MathJax, Google Font API, and jQuery through their respective CDNs.
