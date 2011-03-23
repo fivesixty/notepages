@@ -174,7 +174,10 @@ var Page = (function () {
     narrowscreen: function () {
       return narrowscreen;
     },
-    redraw: redraw
+    redraw: redraw,
+    renderDelay: function () {
+      return renderDelay;
+    }
   };
 }());
 
@@ -193,7 +196,7 @@ $(document).ready(function () {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-    this.timer = setTimeout(Page.redraw, Page.renderDelay);
+    this.timer = setTimeout(Page.redraw, Page.renderDelay());
   });
   
   $("#edit-enable a").click(function () {
