@@ -1,0 +1,23 @@
+#options, #footer, #rightcol {
+  display: none;
+}
+
+body {
+  background: #fff;
+  font-size: 0.9em;
+  color: #000;
+}
+
+#page {
+  margin: 0;
+  width: auto;
+  background: #fff;
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+          box-shadow: none;
+}
+
+#output {
+  padding-top: 0;
+  padding-bottom: 0;
+}

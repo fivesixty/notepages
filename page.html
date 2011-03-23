@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+  <meta charset="UTF-8">
+  <title>Notepag.es - <%= pagename %></title>
+  <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  
+  <script type="text/x-mathjax-config">
+    // MathJax Configuration
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["%%","%%"]]},
+      "HTML-CSS": {
+        scale: 80
+      }
+    });
+  </script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  
+  <script>
+    var editting = <%= editting %>;
+    var pagename = "<%= pagename %>";
+  </script>
+  
+  <script src="./assets/lib/quickdiff/quickdiff.js"></script>
+  
+  <script src="./assets/lib/grumble/grumble.js"></script>
+  <script src="./assets/showdown.js"></script>
+  <script src="./assets/interface.js"></script>
+  
+  <link rel="stylesheet" href="/assets/reset.css">
+  <link rel="stylesheet" href="/assets/default.css">
+  <link rel="stylesheet" href="/assets/lib/grumble/smoke.css">
+  <link rel="stylesheet" href="/assets/print.css" media="print">
+</head>
+<body class="readonly">
+  <div id="options" class="page-options">
+    <div id="options-inner">
+      <div id="delay">
+      </div>
+      <div id="edit-enable">
+        <a href="#">EDIT</a>
+      </div>  
+      <div id="preview-enable">
+        <a href="#">PREVIEW</a>
+      </div>
+      <div style="clear:both"></div>
+    </div>
+  </div>
+  <div id="container">
+    <div id="leftcol">
+      <div id="page" class="drop-shadow">
+        <div id="output"><div><%h content %></div></div>
+      </div>
+    </div>
+    <div id="rightcol">
+      <div id="editor">
+        <textarea></textarea>
+        <div id="params">
+          Password: <input type="password" class="tinput" id="password"> &nbsp; <input type="button" value="save" id="savebutton">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="footer">
+    Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+  </div>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13129098-3']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,3 @@
+[submodule "assets/lib/quickdiff"]
+	path = assets/lib/quickdiff
+	url = git://github.com/c-spencer/quickdiff.git
