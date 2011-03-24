@@ -1,24 +1,24 @@
 <!DOCTYPE html> 
 <html> 
-	<head> 
-	<title>Notepag.es - <%= pagename %></title> 
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
-	<link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css'>
+  <head> 
+  <title>Notepag.es - <%= pagename %></title> 
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
+  <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
-	<style>
-	  
-	  #page {
-	    max-width: 640px;
-	    margin: 0 auto;
-	    font-size: 1.1em;
-	    color: #333;
-	    font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
-	  }
-	  #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
-	    font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
-	  }
+  <style>
+    
+    #page {
+      max-width: 640px;
+      margin: 0 auto;
+      font-size: 1.1em;
+      color: #333;
+      font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
+    }
+    #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+      font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+    }
     #content *:first-child {
       margin-top: 0;
     }
@@ -125,39 +125,39 @@
 
   <div data-role="page" id="reader">
 
-  	<div data-role="header">
-  		<h1><%h pagename %></h1>
-  		<a href="#editor" class='ui-btn-right' data-icon="arrow-r" data-iconpos="right">edit</a>
-  	</div><!-- /header -->
+    <div data-role="header">
+      <h1><%h pagename %></h1>
+      <a href="#editor" class='ui-btn-right' data-icon="arrow-r" data-iconpos="right">edit</a>
+    </div><!-- /header -->
 
-  	<div data-role="content">
-  	  <div id="page">
-    	  <div id="content">
-    		  <div><%h content %></div>
-    		</div>
-  		</div>
-  	</div><!-- /content -->
+    <div data-role="content">
+      <div id="page">
+        <div id="content">
+          <div><%h content %></div>
+        </div>
+      </div>
+    </div><!-- /content -->
 
-  	<div data-role="footer">
-  		<h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
-  	</div><!-- /footer -->
+    <div data-role="footer">
+      <h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
+    </div><!-- /footer -->
   </div><!-- /page -->
   
   <div data-role="page" id="editor">
-  	<div data-role="header">
-  		<h1>edit <%h pagename %></h1>
-  		<a href="#savedialog" class='ui-btn-right' data-rel="dialog" data-transition="pop">save</a>
-  	</div><!-- /header -->
+    <div data-role="header">
+      <h1>edit <%h pagename %></h1>
+      <a href="#savedialog" class='ui-btn-right' data-rel="dialog" data-transition="pop">save</a>
+    </div><!-- /header -->
 
-  	<div data-role="content">
-  	  <div data-role="fieldcontain">
-      	<textarea style="width: 98%" name="textarea" id="textarea"></textarea>
+    <div data-role="content">
+      <div data-role="fieldcontain">
+        <textarea style="width: 98%" name="textarea" id="textarea"></textarea>
       </div>
-  	</div><!-- /content -->
+    </div><!-- /content -->
 
-  	<div data-role="footer">
-  		<h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
-  	</div><!-- /footer -->
+    <div data-role="footer">
+      <h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
+    </div><!-- /footer -->
   </div>
   
   <div data-role="page" id="savedialog">
@@ -167,17 +167,17 @@
       <div data-role="fieldcontain">
         <label for="password">Password (optional):</label>
         <input type="password" name="password" id="password" value=""  />
-  		</div>
-  		
-  		<div id="formerror"></div>
+      </div>
+      
+      <div id="formerror"></div>
   
       <div class="ui-body ui-body-b">
-    		<fieldset class="ui-grid-a">
-    			<div class="ui-block-a"><a data-role="button" data-rel="back">Cancel</a></div>
-  				<div class="ui-block-b"><a id="saveform" data-role="button">Save</a></div>
-  	    </fieldset>
-    	</div>
-  	</div>
+        <fieldset class="ui-grid-a">
+          <div class="ui-block-a"><a data-role="button" data-rel="back">Cancel</a></div>
+          <div class="ui-block-b"><a id="saveform" data-role="button">Save</a></div>
+        </fieldset>
+      </div>
+    </div>
   </div>
 
 </body>
