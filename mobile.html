@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Notepag.es - <%= pagename %></title> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
+	<style>
+	  
+	  #page {
+	    max-width: 640px;
+	    margin: 0 auto;
+	    font-size: 1.1em;
+	    color: #333;
+	    font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
+	  }
+	  #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+	    font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+	  }
+    #content *:first-child {
+      margin-top: 0;
+    }
+    #content *:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+  
+  <script type="text/x-mathjax-config">
+    // MathJax Configuration
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX","output/HTML-CSS"],
+      tex2jax: {inlineMath: [["%%","%%"]]},
+      "HTML-CSS": {
+        scale: 80
+      }
+    });
+  </script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  
+  <script>
+  
+  var loaded = false;
+  $("#editor").live("pageshow", function (event, ui) {
+    if (!loaded) {
+      $("#textarea").val("Loading..");
+      $.getJSON("/<%h pagename %>.json", function (data) {
+        $("#textarea").val(data.text);
+        loaded = true;
+      });
+    }
+  });
+  </script>
+</head> 
+<body> 
+
+  <div data-role="page" id="reader">
+
+  	<div data-role="header">
+  		<h1><%h pagename %></h1>
+  		<a href="#editor" class='ui-btn-right' data-icon="arrow-r" data-iconpos="right">edit</a>
+  	</div><!-- /header -->
+
+  	<div data-role="content">
+  	  <div id="page">
+    	  <div id="content">
+    		  <%h content %>
+    		</div>
+  		</div>
+  	</div><!-- /content -->
+
+  	<div data-role="footer">
+  		<h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
+  	</div><!-- /footer -->
+  </div><!-- /page -->
+  
+  <div data-role="page" id="editor">
+  	<div data-role="header">
+  		<h1>edit <%h pagename %></h1>
+  	</div><!-- /header -->
+
+  	<div data-role="content">
+  	  <div data-role="fieldcontain">
+      	<textarea style="width: 98%" name="textarea" id="textarea"></textarea>
+      </div>
+  	</div><!-- /content -->
+
+  	<div data-role="footer">
+  		<h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
+  	</div><!-- /footer -->
+  </div>
+
+</body>
+</html>

@@ -65,6 +65,16 @@ gh.post('/{id}', function(args) {
   });
 });
 
+gh.get('/mobile', function () {
+  var conn = this;
+  PageModel.findOne({iden: "csm2"}, function (err, post) {
+    conn.model.editting = "false";
+    conn.model.content = sd.makeHtml(post.text);
+    conn.model.pagename = "csm2";
+    conn.render('mobile');
+  });
+});
+
 gh.get('/{id}', function(args) {
   if (block_invalid(this, args.id, ["json", "html"])) return;
   
