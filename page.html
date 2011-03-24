@@ -42,15 +42,12 @@
 <body class="readonly">
   <div id="options" class="page-options">
     <div id="options-inner">
-      <div id="delay">
-      </div>
-      <div id="edit-enable">
-        <a href="#">EDIT</a>
-      </div>  
       <div id="preview-enable">
         <a href="#">PREVIEW</a>
       </div>
-      <div style="clear:both"></div>
+      <div id="edit-enable">
+        <a href="#">EDIT</a>
+      </div>
     </div>
   </div>
   <div id="container">
@@ -61,12 +58,15 @@
     </div>
     <div id="rightcol">
       <div id="editor">
-        <textarea></textarea>
-        <div id="params">
-          Password: <input type="password" class="tinput" id="password"> &nbsp; <input type="button" value="save" id="savebutton">
-        </div>
+        <form id="editform" method="POST" action="<%= pagename %>">
+          <textarea></textarea>
+          <div id="params">
+            Password (optional): <input type="password" class="tinput" id="password"> &nbsp; <input type="submit" value="save" id="savebutton">
+          </div>
+        </form>
       </div>
     </div>
+    <div style="clear:both"></div>
   </div>
   <div id="footer">
     Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>

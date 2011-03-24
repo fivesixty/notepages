@@ -1,3 +1,6 @@
+html, body {
+  height: 100%;
+}
 body {
   background: #ccc;
   font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
@@ -108,16 +111,22 @@ hr {
   width: 100%;
   text-align: center;
   font-size: 0.8em;
-  margin-bottom: 0.5em;
   clear: both;
+  height: 2em;
 }
 #footer, #footer a {
   color: #333;
 }
+#container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -2em;
+}
 #page {
   background: #fff;
   width: 720px;
-  margin: 30px auto;
+  margin: 30px auto 3em;
 }
 #output *:first-child {
   margin-top: 0;
@@ -192,7 +201,7 @@ textarea {
 #options {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   text-align: center;
   z-index: 100;
 }
@@ -221,7 +230,11 @@ textarea {
   text-align: center;
 }
 #params {
-   --float: right;
+  font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+  font-size: 0.8em;
+}
+#params input {
+  margin: 0 5px;
 }
 #delay {
   display: none;
@@ -244,9 +257,6 @@ textarea {
   text-shadow: #fff 1px 1px 0;
   padding: 1em;
   color: #333;
-}
-#params {
-  width: 250px;
 }
 #params .tinput {
   width: 80px;

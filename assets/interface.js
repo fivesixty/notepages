@@ -255,7 +255,7 @@ $(document).ready(function () {
   });
   
   // Save the page, displaying a notification of the result status.
-  $("#savebutton").click(function () {
+  $("#editform").submit(function () {
     $.post("/" + Page.pagename() + ".json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
       if (ret && ret.status === "success") {
         Grumble.show({message: "Saved successfully.", title: "Saved", icon: "success"});
@@ -267,6 +267,7 @@ $(document).ready(function () {
         }
       }
     }, "json");
+    return false;
   });
   
 });
