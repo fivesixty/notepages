@@ -87,13 +87,12 @@ gh.get('/{id}', function(args) {
     } else {
       conn.model.editting = "true";
       conn.model.content = "";
-    }  
+    }
     conn.model.pagename = args.id;
     
     if (isMobileBrowser(conn.request.headers["user-agent"])) {
       conn.render('mobile');
-    }
-    else {
+    } else {
       conn.render('page');
     }
   });

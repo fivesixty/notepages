@@ -37,7 +37,11 @@ Notepages serves the MathJax, Google Font API, and jQuery through their respecti
 
 ## Browser Support
 
-Reading and editing has been tested across all major browsers (IE7/8, Safari, Chrome, Firefox). Reading has been tested on mobile Safari and works, but page editing is not currently friendly to a mobile browser.
+Reading and editing has been tested across all major browsers (IE7/8, Safari, Chrome, Firefox).
+
+## Mobile support
+
+A mobile version is served to detected browsers, using jQuery Mobile Alpha 3. It has been tested on iPad/iPhone browsers. Reading experience is good on the iPad, somewhat constrained on the iPhone due to width. Editing is buggy due to alpha status of jQuery mobile., but functional.
 
 ## Printing
 
