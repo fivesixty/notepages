@@ -40,18 +40,82 @@
   </script>
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
   
-  <script>
+  <script src="./assets/lib/quickdiff/quickdiff.js"></script>
+  <script src="./assets/showdown.js"></script>
   
-  var loaded = false;
-  $("#editor").live("pageshow", function (event, ui) {
-    if (!loaded) {
-      $("#textarea").val("Loading..");
-      $.getJSON("/<%h pagename %>.json", function (data) {
-        $("#textarea").val(data.text);
-        loaded = true;
+  <script>
+    
+    // Setup a filter for comparing mathInline spans.
+    $.fn.quickdiff("filter", "mathSpanInline",
+      function (node) { return (node.nodeName === "SPAN"
+                                && $(node).hasClass("mathInline")); },
+      function (a, b) {
+        var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
+        return ("%%" + aHTML + "%%") !== bHTML;
       });
-    }
-  });
+
+    // Setup a filter for comparing math spans.
+    $.fn.quickdiff("filter", "mathSpan",
+      function (node) { return (node.nodeName === "SPAN"
+                                && $(node).hasClass("math")); },
+      function (a, b) {
+        var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
+        return ("$$" + aHTML + "$$") !== bHTML;
+      });
+    
+    $("document").ready(function () {
+    
+      var markdown = new Showdown.converter(),
+        preproc = $("<div>"),
+        inputarea = $("#textarea"),
+        outputel = $("#content > div");
+  
+      var redraw = function () {
+        preproc.html(markdown.makeHtml(inputarea.val()));
+        var patch = outputel.quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
+
+        if (patch.type !== "identical" && patch.replace.length > 0) {
+          $.each(patch.replace, function (i, el) {
+            if (el.innerHTML) {
+              MathJax.Hub.Typeset(el);
+            }
+          });
+        }
+      };
+  
+      var loaded = false;
+      $("#editor").live("pageshow", function (event, ui) {
+        if (!loaded) {
+          $("#textarea").val("Loading..");
+          $.getJSON("/<%h pagename %>.json", function (data) {
+            $("#textarea").val(data.text);
+            loaded = true;
+          });
+        }
+      });
+      
+      $("#reader").live("pageshow", function (event, ui) {
+        if (loaded) {
+          redraw();
+        }
+      });
+      
+      $("#saveform").live("click", function () {
+        $.post("/<%h pagename %>.json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
+          if (ret && ret.status === "success") {
+            $('.ui-dialog').dialog('close');
+          } else {
+            if (ret && ret.status === "failure") {
+              $("#formerror").text(ret.message);
+            } else {
+              $("#formerror").text("Unknown response from the server.");
+            }
+          }
+        }, "json");
+        return false;
+      });
+    });
+    
   </script>
 </head> 
 <body> 
@@ -66,7 +130,7 @@
   	<div data-role="content">
   	  <div id="page">
     	  <div id="content">
-    		  <%h content %>
+    		  <div><%h content %></div>
     		</div>
   		</div>
   	</div><!-- /content -->
@@ -79,6 +143,7 @@
   <div data-role="page" id="editor">
   	<div data-role="header">
   		<h1>edit <%h pagename %></h1>
+  		<a href="#savedialog" class='ui-btn-right' data-rel="dialog" data-transition="pop">save</a>
   	</div><!-- /header -->
 
   	<div data-role="content">
@@ -90,6 +155,26 @@
   	<div data-role="footer">
   		<h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
   	</div><!-- /footer -->
+  </div>
+  
+  <div data-role="page" id="savedialog">
+    <div data-role="header"><h1>Save <%h pagename %></h1></div>
+    
+    <div data-role="content">
+      <div data-role="fieldcontain">
+        <label for="password">Password (optional):</label>
+        <input type="password" name="password" id="password" value=""  />
+  		</div>
+  		
+  		<div id="formerror"></div>
+  
+      <div class="ui-body ui-body-b">
+    		<fieldset class="ui-grid-a">
+    			<div class="ui-block-a"><a data-role="button" data-rel="back">Cancel</a></div>
+  				<div class="ui-block-b"><a id="saveform" data-role="button">Save</a></div>
+  	    </fieldset>
+    	</div>
+  	</div>
   </div>
 
 </body>
