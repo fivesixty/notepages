@@ -90,7 +90,7 @@ gh.get('/{id}', function(args) {
     }
     conn.model.pagename = args.id;
     
-    if (isMobileBrowser(conn.request.headers["user-agent"])) {
+    if (conn.request.headers["user-agent"] && isMobileBrowser(conn.request.headers["user-agent"])) {
       conn.render('mobile');
     } else {
       conn.render('page');
