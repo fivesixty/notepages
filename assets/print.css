@@ -1,4 +1,4 @@
-#options, #footer, #rightcol {
+#options, #footer, #rightcol, .slide-out-div {
   display: none;
 }
 
