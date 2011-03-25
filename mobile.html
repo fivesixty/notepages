@@ -71,7 +71,8 @@
       var markdown = new Showdown.converter(),
         preproc = $("<div>"),
         inputarea = $("#textarea"),
-        outputel = $("#content > div");
+        outputel = $("#content > div"),
+        editing = <%= editting %>;
   
       var redraw = function () {
         preproc.html(markdown.makeHtml(inputarea.val()));
@@ -86,7 +87,7 @@
         }
       };
   
-      var loaded = false;
+      var loaded = editing;
       $("#editor").live("pageshow", function (event, ui) {
         if (!loaded) {
           $("#textarea").val("Loading..");
@@ -96,6 +97,10 @@
           });
         }
       });
+      
+      if (loaded) {
+        $.mobile.changePage("#editor", null, false, true);
+      }
       
       $("#reader").live("pageshow", function (event, ui) {
         if (loaded) {
