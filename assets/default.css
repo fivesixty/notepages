@@ -138,12 +138,14 @@ hr {
   position: fixed;
   top: 35px;
   margin: 0 auto;
-  width: 720px;
+  min-width: 500px;
+  max-width: 720px;
   text-align: center;
 }
 .narrowscreen #editor {
   margin: 0 auto;
-  width: 720px;
+  min-width: 500px;
+  max-width: 720px;
   text-align: center;
 }
 --.editing #page {
@@ -186,7 +188,8 @@ hr {
   padding: 40px 40px 40px 40px;
 }
 textarea {
-  width: 720px;
+  min-width: 500px;
+  max-width: 720px;
   font-family: monospace;
 }
 
