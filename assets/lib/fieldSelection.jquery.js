@@ -19,13 +19,17 @@
       
       /* mozilla / dom 3.0 */
       if ('selectionStart' in e) {
-        var l = e.selectionEnd - e.selectionStart;
-        return {
-          start: e.selectionStart,
-          end: e.selectionEnd,
-          length: l,
-          text: e.value.substr(e.selectionStart, l)
-        };
+        try {
+          var l = e.selectionEnd - e.selectionStart;
+          return {
+            start: e.selectionStart,
+            end: e.selectionEnd,
+            length: l,
+            text: e.value.substr(e.selectionStart, l)
+          };
+        } catch (e) {
+          return errCase;
+        }
       }
 
       /* exploder */
@@ -71,7 +75,11 @@
       if (!e) {
         return $(this);
       } else if (e.setSelectionRange) { /* WebKit */ 
-        e.focus(); e.setSelectionRange(start, end);
+        try {
+          e.focus(); e.setSelectionRange(start, end);
+        } catch (e) {
+          return $(this);
+        }
       } else if (e.createTextRange) { /* IE */
         var range = e.createTextRange();
         range.collapse(true);
