@@ -44,7 +44,8 @@ var Page = (function () {
     inputarea,
     preproc = $("<div></div>"),
     outputel,
-    renderDelay = 50;
+    renderDelay = 50,
+    redrawNeeded = false;
   
   // If draw latency sufficiently small, use a small delay on rendering.
   // Otherwise use a significantly larger one.
@@ -58,6 +59,12 @@ var Page = (function () {
 
   // Redraws the output using the content of the input.
   var redraw = function () {
+    if (!redrawNeeded) {
+      return;
+    } else {
+      redrawNeeded = false;
+    }
+    
     var startTime = (new Date()).getTime();
     preproc.html(markdown.makeHtml(inputarea.val()));
     var patch = outputel.quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
@@ -109,6 +116,7 @@ var Page = (function () {
     
     if (previewing) {
       restorePagePosition();
+      redraw();
       $("#preview-enable a").text("EDITOR");
     } else {
       restoreEditorState();
@@ -130,11 +138,12 @@ var Page = (function () {
       $("body").toggleClass("widescreen", !narrowscreen);
       $("body").toggleClass("narrowscreen", narrowscreen);
       
-      // If we're in widescreen, restore the page based on preview state.
+      // If we're now in widescreen, restore the page based on preview state.
       if (!narrowscreen) {
         if (previewing) {
           restoreEditorState();
         } else {
+          redraw();
           restorePagePosition();
         }
       }
@@ -176,9 +185,17 @@ var Page = (function () {
     } else {
       $("#page").css({height: "auto"});
       restorePagePosition();
+      redraw();
       $("#edit-enable a").text("EDIT");
     }
   };
+  
+  var setNeedsRedraw = function () {
+    redrawNeeded = true;
+    if (!narrowscreen || previewing || !editing) {
+      redraw();
+    }
+  }
   
   // Return functions for getting/setting parameters of the page.
   return {
@@ -206,10 +223,10 @@ var Page = (function () {
     pagename: function () {
       return pagename;
     },
-    redraw: redraw,
     renderDelay: function () {
       return renderDelay;
-    }
+    },
+    setNeedsRedraw: setNeedsRedraw
   };
 }());
 
@@ -229,7 +246,7 @@ $(document).ready(function () {
     if (this.timer) {
       clearTimeout(this.timer);
     }
-    this.timer = setTimeout(Page.redraw, Page.renderDelay());
+    this.timer = setTimeout(Page.setNeedsRedraw, Page.renderDelay());
   });
   
   // Toggle editing. If we haven't loaded the content, then load it via AJAX.
@@ -239,7 +256,7 @@ $(document).ready(function () {
       $.getJSON("/" + Page.pagename() + ".json", function (data) {
         inputarea.val(data.text);
         loaded = true;
-        Page.redraw();
+        Page.setNeedsRedraw();
       });
     }
     

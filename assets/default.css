@@ -142,7 +142,7 @@ hr {
   text-align: center;
 }
 .narrowscreen #editor {
-  margin: 10px auto;
+  margin: 0 auto;
   width: 500px;
   text-align: center;
 }
