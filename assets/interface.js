@@ -40,7 +40,7 @@ var Page = (function () {
     editor_position = {start: 0, end: 0},
     preview_scrolltop = 0,
     markdown = new Showdown.converter(),
-    narrowscreen = false,
+    narrowscreen = undefined,  // undefined so setNarrowscreen runs at page load
     inputarea,
     preproc = $("<div></div>"),
     outputel,
@@ -106,40 +106,39 @@ var Page = (function () {
       $("#preview-enable a").text("PREVIEW");
     }
   };
+  
+  var setNarrowscreen = function (toggle) {
+    if (narrowscreen !== toggle) {
+      // If we're going into narrowscreen mode, save where the page is
+      // and disable the preview.
+      if (toggle) {
+        savePagePosition();
+        setPreviewing(false);
+      }
+      
+      // Make the class/variable changes.
+      narrowscreen = toggle;
+      $("body").toggleClass("widescreen", !narrowscreen);
+      $("body").toggleClass("narrowscreen", narrowscreen);
+      
+      // If we're in widescreen, restore the page based on preview state.
+      if (!narrowscreen) {
+        if (previewing) {
+          restoreEditorState();
+        } else {
+          restorePagePosition();
+        }
+      }
+    }
+  }
 
   // Reconstrain the page based upon current window size.
   // Will resize the editor when editing, and toggle on/off narrowscreen mode.
   var reconstrain = function () {
-    var height = $(window).height(), width = $(window).width();
-
     if (editing) {
-      inputarea.height(height - 90);
+      inputarea.height($(window).height() - 90);
     }
-
-    var switched = false;
-    if (width < 1260 && !narrowscreen) {
-      if (editing) {
-        savePagePosition();
-      }
-      narrowscreen = true;
-      setPreviewing(false);
-      switched = true;
-    } else if (width >= 1260 && narrowscreen) {
-      if (editing) {
-        saveEditorState();
-      }
-      narrowscreen = false;
-      setPreviewing(true);
-      switched = true;
-    }
-
-    $("body").toggleClass("widescreen", !narrowscreen);
-    $("body").toggleClass("narrowscreen", narrowscreen);
-
-    if (editing && switched && !narrowscreen) {
-      restorePagePosition();
-      restoreEditorState();
-    }
+    setNarrowscreen($(window).width() < 1260);
   };
 
   // Set whether we are editing or not.
@@ -182,6 +181,7 @@ var Page = (function () {
       pagename = name;
       inputarea = input;
       outputel = output;
+      reconstrain();
     },
     reconstrain: reconstrain,
     pagename: function () {
@@ -203,7 +203,6 @@ $(document).ready(function () {
     outputel = $("#output > div");
   
   Page.init(pagename, inputarea, outputel);
-  Page.reconstrain();
   Page.editing(editing);
   
   $(window).resize(Page.reconstrain);
