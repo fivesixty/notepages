@@ -264,3 +264,20 @@ textarea {
 #params .tinput {
   width: 80px;
 }
+.readonly .slide-out-div {
+  display: none;
+}
+.slide-out-div {
+  font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+  font-size: 0.7em;
+  padding: 10px;
+  width: 250px;
+  background: #efefef;
+  border: 1px solid #29216d;
+}
+.slide-out-div h3 {
+  margin-top: 0;
+}
+.slide-out-div *:last-child {
+  margin-bottom: 0;
+}
