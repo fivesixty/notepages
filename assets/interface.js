@@ -3,8 +3,8 @@
 function size_images(context) {
   $("img", context).not(".MathJax_strut").each(function (i, obj) {
     obj = $(obj);
-    if (obj.width() > 625) {
-      var scale = 625 / obj.width();
+    if (obj.width() > 640) {
+      var scale = 640 / obj.width();
       obj.width(obj.width() * scale);
     }
   });
@@ -98,11 +98,20 @@ var Page = (function () {
 
   // Set whether we are previewing or not.
   var setPreviewing = function (toggle) {
+    if (previewing) {
+      savePagePosition();
+    } else {
+      saveEditorState();
+    }
+    
     previewing = toggle;
     $("body").toggleClass("preview", previewing);
+    
     if (previewing) {
+      restorePagePosition();
       $("#preview-enable a").text("EDITOR");
     } else {
+      restoreEditorState();
       $("#preview-enable a").text("PREVIEW");
     }
   };
@@ -132,22 +141,36 @@ var Page = (function () {
     }
   }
 
+  var editorResize = function () {
+    inputarea.height($(window).height() - 90);
+  }
+
   // Reconstrain the page based upon current window size.
   // Will resize the editor when editing, and toggle on/off narrowscreen mode.
   var reconstrain = function () {
     if (editing) {
-      inputarea.height($(window).height() - 90);
+      editorResize();
     }
     setNarrowscreen($(window).width() < 1260);
   };
 
   // Set whether we are editing or not.
   var setEditing = function (edit) {
+    if (editing) {
+      if (previewing || !narrowscreen) {
+        savePagePosition();
+      }
+    } else {
+      savePagePosition();
+    }
+    
     editing = edit;
     $("body").toggleClass("readonly", !editing);
     $("body").toggleClass("editing", editing);
+    
     if (editing) {
-      reconstrain();
+      setPreviewing(false);
+      editorResize();
       restoreEditorState();
       $("#edit-enable a").text("CANCEL");
     } else {
@@ -173,10 +196,6 @@ var Page = (function () {
         setPreviewing(arguments[0]);
       }
     },
-    savePagePosition: savePagePosition,
-    restorePagePosition: restorePagePosition,
-    saveEditorState: saveEditorState,
-    restoreEditorState: restoreEditorState,
     init : function (name, input, output) {
       pagename = name;
       inputarea = input;
@@ -186,9 +205,6 @@ var Page = (function () {
     reconstrain: reconstrain,
     pagename: function () {
       return pagename;
-    },
-    narrowscreen: function () {
-      return narrowscreen;
     },
     redraw: redraw,
     renderDelay: function () {
@@ -227,29 +243,13 @@ $(document).ready(function () {
       });
     }
     
-    if (Page.preview() || !Page.narrowscreen()) {
-      Page.savePagePosition();
-    }
-    if (Page.editing()) {
-      Page.saveEditorState();
-    }
-    
-    Page.preview(false);
     Page.editing(!Page.editing());
     return false;
   });
   
-  // Toggle preview on/off, keeping editor/page state as expected.
+  // Toggle preview on/off
   $("#preview-enable a").click(function () {
-    if (Page.preview()) {
-      Page.savePagePosition();
-      Page.preview(false);
-      Page.restoreEditorState();
-    } else {
-      Page.saveEditorState();
-      Page.preview(true);
-      Page.restorePagePosition();
-    }
+    Page.preview(!Page.preview());
     return false;
   });
   
