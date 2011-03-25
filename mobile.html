@@ -108,6 +108,8 @@
         }
       });
       
+      $("#content a").attr("rel", "external");
+      
       $("#saveform").live("click", function () {
         $.post("/<%h pagename %>.json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
           if (ret && ret.status === "success") {
