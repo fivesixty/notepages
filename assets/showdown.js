@@ -1378,12 +1378,16 @@ if(typeof String.prototype.trim !== 'function') {
 var stripUnwantedHTML = function (html /*, allowedTags, allowedAttributes, forceProtocol */){
     var allowedTags = arguments[1] || 
             'a|b|blockquote|code|del|dd|dl|dt|em|h1|h2|h3|h4|h5|h6|'+
-            'i|img|li|ol|p|pre|sup|sub|strong|strike|ul|br|hr|span',
+            'i|img|li|ol|p|pre|sup|sub|strong|strike|ul|br|hr|span|'+
+            'table|th|tr|td|tbody|thead|tfoot',
         allowedAttributes = arguments[2] || {
             'img': 'src|width|height|alt',
             'a':   'href',
             '*':   'title',
-            'span': 'class'
+            'span': 'class',
+            'tr': 'rowspan',
+            'td': 'colspan',
+            'th': 'rowspan'
         }, forceProtocol = arguments[3] || true;
         
         testAllowed = new RegExp('^('+allowedTags.toLowerCase()+')$'),

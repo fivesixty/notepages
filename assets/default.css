@@ -281,3 +281,17 @@ textarea {
 .slide-out-div *:last-child {
   margin-bottom: 0;
 }
+table {
+  font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+  font-size: 0.9em;
+}
+thead, th {
+  font-weight: bold;
+  border-bottom: 2px solid #666;
+}
+td, th {
+  padding: 10px;
+}
+tfoot {
+  border-top: 1px solid #666;
+}
