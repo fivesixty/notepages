@@ -32,6 +32,11 @@ $.fn.quickdiff("filter", "mathSpan",
     var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
     return ("$$" + aHTML + "$$") !== bHTML;
   });
+  
+$.fn.quickdiff("attributes", {
+  "td" : ["align"],
+  "th" : ["align"]
+});
 
 // Define the page and functions
 var Page = (function () {

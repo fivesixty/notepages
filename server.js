@@ -1,5 +1,5 @@
 var gh = require('grasshopper')
-  , sd = new (require('./assets/showdown').Showdown.converter)()
+  , sd = new (require('./assets/lib/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/techpages');
