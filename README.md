@@ -49,4 +49,13 @@ A print stylesheet is served which formats the document in a print friendly mann
 
 ## Syntax
 
-Notepag.es supports Markdown, but does not allow arbitrary HTML. HTML markup can still be used, but only insofar as elements that can naturally be created with markdown syntax. Future work is planned to provide syntax for common additional elements such as tables, footnotes, and captioned figures.
+Notepag.es supports Markdown, but does not allow arbitrary HTML. HTML markup can still be used, but only insofar as elements that can naturally be created with markdown syntax.
+
+Some extensions to markdown syntax have been provided, at this time: tables and figures. Tables are a port of the [PHP Markdown Extra syntax][mdextra]. Figures allow an optional `>` or `<` after the `!` when defining an image. `<` indicates a left floated figure, and `>` indicates right floated. The caption used will be the title of the image, which can be defined in two ways (standard markdown):
+
+    !>[right alt](http://image.url "right caption")
+    !<[left alt][lefturl]
+    
+      [lefturl]: http://image.url "left caption"
+      
+  [mdextra]: http://michelf.com/projects/php-markdown/extra/#table

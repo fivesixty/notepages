@@ -1,3 +1,11 @@
+### 0.4 (27/3/2011)
+
+*  Add mobile support via jQuery mobile
+*  Many big fixes
+*  Fork showdown renderer to mdext project
+*  Add Table and Figure support via mdext
+*  Add syntax help panel to edit mode
+
 ### 0.3 (23/3/2011)
 
 *  Use fonts from the Google Font API.
