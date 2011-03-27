@@ -4,6 +4,28 @@ var gh = require('grasshopper')
 
 mongoose.connect('mongodb://localhost/techpages');
 
+Object.defineProperty(Object.prototype, "extend", {
+    enumerable: false,
+    value: function(from) {
+        var props = Object.getOwnPropertyNames(from);
+        var dest = this;
+        props.forEach(function(name) {
+            if (name in dest) {
+                var destination = Object.getOwnPropertyDescriptor(from, name);
+                Object.defineProperty(dest, name, destination);
+            }
+        });
+        return this;
+    }
+});
+
+sd.config.extend({
+  stripHTML: true,
+  tables: true,
+  math: true,
+  figures: true
+});
+
 var PageSchema = new mongoose.Schema({
   iden : { type: String, index: { unique: true } },
   text : String,

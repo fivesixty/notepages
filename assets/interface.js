@@ -52,6 +52,13 @@ var Page = (function () {
     renderDelay = 50,
     redrawNeeded = false;
   
+  $.extend(markdown.config, {
+    stripHTML: true,
+    tables: true,
+    math: true,
+    figures: true
+  });
+  
   // If draw latency sufficiently small, use a small delay on rendering.
   // Otherwise use a significantly larger one.
   var setRenderDelay = function (rendertime) {
