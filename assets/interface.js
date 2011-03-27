@@ -35,7 +35,9 @@ $.fn.quickdiff("filter", "mathSpan",
   
 $.fn.quickdiff("attributes", {
   "td" : ["align"],
-  "th" : ["align"]
+  "th" : ["align"],
+  "img" : ["src", "alt", "title"],
+  "a" : ["href", "title"]
 });
 
 // Define the page and functions
