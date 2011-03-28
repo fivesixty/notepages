@@ -9,29 +9,7 @@
   <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
   
   <link rel="stylesheet" href="/assets/universal.css">
-  
-  <style>
-    
-    #page {
-      max-width: 640px;
-      margin: 0 auto;
-      font-size: 1.1em;
-      color: #333;
-      font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
-    }
-    #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
-      font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
-    }
-    #content *:first-child {
-      margin-top: 0;
-    }
-    #content *:last-child {
-      margin-bottom: 0;
-    }
-    #content p {
-      text-align: justify;
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/mobile.css">
   
   <script type="text/x-mathjax-config">
     // MathJax Configuration
@@ -47,89 +25,13 @@
   <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
   
   <script src="./assets/lib/quickdiff/quickdiff.js"></script>
-  <script src="./assets/showdown.js"></script>
+  <script src="./assets/lib/mdext/src/showdown.js"></script>
   
   <script>
-    
-    // Setup a filter for comparing mathInline spans.
-    $.fn.quickdiff("filter", "mathSpanInline",
-      function (node) { return (node.nodeName === "SPAN"
-                                && $(node).hasClass("mathInline")); },
-      function (a, b) {
-        var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
-        return ("%%" + aHTML + "%%") !== bHTML;
-      });
-
-    // Setup a filter for comparing math spans.
-    $.fn.quickdiff("filter", "mathSpan",
-      function (node) { return (node.nodeName === "SPAN"
-                                && $(node).hasClass("math")); },
-      function (a, b) {
-        var aHTML = $.trim($("script", a).html()), bHTML = $.trim($(b).html());
-        return ("$$" + aHTML + "$$") !== bHTML;
-      });
-    
-    $("document").ready(function () {
-    
-      var markdown = new Showdown.converter(),
-        preproc = $("<div>"),
-        inputarea = $("#textarea"),
-        outputel = $("#content > div"),
-        editing = <%= editting %>;
-  
-      var redraw = function () {
-        preproc.html(markdown.makeHtml(inputarea.val()));
-        var patch = outputel.quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
-
-        if (patch.type !== "identical" && patch.replace.length > 0) {
-          $.each(patch.replace, function (i, el) {
-            if (el.innerHTML) {
-              MathJax.Hub.Typeset(el);
-            }
-          });
-        }
-      };
-  
-      var loaded = editing;
-      $("#editor").live("pageshow", function (event, ui) {
-        if (!loaded) {
-          $("#textarea").val("Loading..");
-          $.getJSON("/<%h pagename %>.json", function (data) {
-            $("#textarea").val(data.text);
-            loaded = true;
-          });
-        }
-      });
-      
-      if (loaded) {
-        $.mobile.changePage("#editor", null, false, true);
-      }
-      
-      $("#reader").live("pageshow", function (event, ui) {
-        if (loaded) {
-          redraw();
-        }
-      });
-      
-      $("#content a").attr("rel", "external");
-      
-      $("#saveform").live("click", function () {
-        $.post("/<%h pagename %>.json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
-          if (ret && ret.status === "success") {
-            $('.ui-dialog').dialog('close');
-          } else {
-            if (ret && ret.status === "failure") {
-              $("#formerror").text(ret.message);
-            } else {
-              $("#formerror").text("Unknown response from the server.");
-            }
-          }
-        }, "json");
-        return false;
-      });
-    });
-    
+    var editing = <%= editting %>;
+    var pagename = "<%= pagename %>";
   </script>
+  <script src="./assets/mobile.js"></script>
 </head> 
 <body> 
 

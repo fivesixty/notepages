@@ -1,0 +1,19 @@
+#page {
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 1.1em;
+  color: #333;
+  font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
+}
+#content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+  font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
+}
+#content *:first-child {
+  margin-top: 0;
+}
+#content *:last-child {
+  margin-bottom: 0;
+}
+#content p {
+  text-align: justify;
+}
