@@ -1,12 +1,18 @@
 // In a given context, make sure all images (skipping MathJax related images)
 // Are no wider than the page width.
-function size_images(context) {
-  $("img", context).not(".MathJax_strut").each(function (i, obj) {
+function size_image(obj) {
+  setTimeout(function () {
     obj = $(obj);
     if (obj.width() > 640) {
       var scale = 640 / obj.width();
       obj.width(obj.width() * scale);
     }
+  }, 0);
+}
+
+function size_images(context) {
+  $("img", context).not(".MathJax_strut").each(function (i, obj) {
+    size_image(obj);
   });
 }
 

@@ -40,7 +40,9 @@ var Page = (function () {
           MathJax.Hub.Typeset(el, function () {
             setRenderDelay((new Date()).getTime() - startTime);
           });
-        } else {  
+        } else if (el instanceof HTMLImageElement) {
+          size_image(el);
+        } else {
           setRenderDelay((new Date()).getTime() - startTime);
         }
       });
