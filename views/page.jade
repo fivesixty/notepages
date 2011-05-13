@@ -1,0 +1,85 @@
+head
+  meta(http-equiv="Content-type", content="text/html;charset=UTF-8")
+  meta(http-equiv="X-UA-Compatible", content="IE=EmulateIE7")
+  meta(charset="UTF-8")
+  title Notepag.es - #{page.pagename}
+  link(href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic', rel='stylesheet', type='text/css')
+  link(href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold', rel='stylesheet', type='text/css')
+  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
+
+  script(type="text/x-mathjax-config")
+    :protect
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["%%","%%"]]},
+        "HTML-CSS": {
+          scale: 100
+        }
+      });
+  script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js")
+
+  script
+    var editing = #{page.editing};
+    var pagename = "#{page.pagename}";
+
+  script(src="/lib/quickdiff/quickdiff.js")
+  script(src="/lib/fieldSelection.jquery.js")
+  script(src="/lib/jquery.tabSlideOut.v1.3.js")
+
+  script(src="/lib/grumble/grumble.js")
+  script(src="/lib/mdext/src/showdown.js")
+  script(src="/javascripts/universal.js")
+  script(src="/javascripts/browser.js")
+
+  link(rel="stylesheet", href="/stylesheets/reset.css")
+  link(rel="stylesheet", href="/stylesheets/browser.css")
+  link(rel="stylesheet", href="/stylesheets/universal.css")
+  link(rel="stylesheet", href="/lib/grumble/smoke.css")
+  link(rel="stylesheet", href="/stylesheets/print.css", media="print")
+
+body.readonly
+  #options.page-options
+    #options-inner
+      #preview-enable
+        a(href="#") PREVIEW
+      #edit-enable
+        a(href="#") EDIT
+  #container
+    #leftcol
+      #page.drop-shadow
+        #output
+          div!= page.content
+          div(style="clear:both")
+    #rightcol
+      #editor
+        form(id="editform", method="POST", action="#{page.pagename}")
+          textarea
+          #params Password (optional):
+            input#password.tinput(type="password")
+            | &nbsp;
+            input#savebutton(type="submit", value="save")
+    div(style="clear:both")
+  #footer
+    Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+    
+  .slide-out-div
+      a.handle(href="#") Syntax Help
+      h3 Markdown
+      p # H1<br/>## H2
+      p *emphasis / italic*<br/>**strong / bold**
+      p Code blocks are done using an indent of 4 spaces, or inline using `backticks`.
+      p [link text](url)<br/>![image alt](url)<br/>&lt;autolinked-url&gt;<br/>[link text][link id]<br/>[link id]: link-url
+      p 1. Ordered<br/>2. List
+      p *  Unordered<br/> * List
+      p &gt; Blockquotes
+      
+  script(type="text/javascript)
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13129098-3']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();

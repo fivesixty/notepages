@@ -1,6 +1,6 @@
-[submodule "assets/lib/quickdiff"]
-	path = assets/lib/quickdiff
-	url = git://github.com/c-spencer/quickdiff.git
-[submodule "assets/lib/mdext"]
-	path = assets/lib/mdext
+[submodule "public/lib/mdext"]
+	path = public/lib/mdext
 	url = git@github.com:fivesixty/mdext.git
+[submodule "public/lib/quickdiff"]
+	path = public/lib/quickdiff
+	url = git@github.com:c-spencer/quickdiff.git
