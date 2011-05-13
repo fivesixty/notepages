@@ -168,11 +168,11 @@ app.get('/:id', prePage, function(req, res, next) {
       page.content = ""
     }
     
-    //if (conn.request.headers["user-agent"] && isMobileBrowser(conn.request.headers["user-agent"])) {
-      //conn.render('mobile');
-    //} else {
+    if (req.headers["user-agent"] && isMobileBrowser(req.headers["user-agent"])) {
+      res.render('mobile', { page: page });
+    } else {
       res.render('page', { page: page });
-    //}
+    }
   });
 });
 

@@ -1,97 +1,80 @@
-<!DOCTYPE html> 
-<html> 
-  <head> 
-  <title>Notepag.es - <%= pagename %></title> 
-  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css" />
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
-  <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js"></script>
-  <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css'>
+head
+  title Notepag.es - #{page.pagename}
+  link(rel="stylesheet", href="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.css")
+  script(type="text/javascript", src="http://code.jquery.com/jquery-1.5.min.js")
+  script(type="text/javascript", src="http://code.jquery.com/mobile/1.0a3/jquery.mobile-1.0a3.min.js")
+  link(href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic', rel='stylesheet', type='text/css')
+  link(href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold', rel='stylesheet', type='text/css')
   
-  <link rel="stylesheet" href="/assets/mobile.css">
-  <link rel="stylesheet" href="/assets/universal.css">
+  link(rel="stylesheet", href="/stylesheets/mobile.css")
+  link(rel="stylesheet", href="/stylesheets/universal.css")
   
-  <script type="text/x-mathjax-config">
-    // MathJax Configuration
-    MathJax.Hub.Config({
-      extensions: ["tex2jax.js"],
-      jax: ["input/TeX","output/HTML-CSS"],
-      tex2jax: {inlineMath: [["%%","%%"]]},
-      "HTML-CSS": {
-        scale: 80
-      }
-    });
-  </script>
-  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+  script(type="text/x-mathjax-config")
+    :protect
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["%%","%%"]]},
+        "HTML-CSS": {
+          scale: 100
+        }
+      });
+  script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js")
   
-  <script src="./assets/lib/quickdiff/quickdiff.js"></script>
-  <script src="./assets/lib/mdext/src/showdown.js"></script>
+  script(src="/lib/quickdiff/quickdiff.js")
+  script(src="/lib/mdext/src/showdown.js")
   
-  <script>
-    var editing = <%= editting %>;
-    var pagename = "<%= pagename %>";
-  </script>
-  <script src="./assets/universal.js"></script>
-  <script src="./assets/mobile.js"></script>
-</head> 
-<body> 
-
-  <div data-role="page" id="reader">
-
-    <div data-role="header">
-      <h1><%h pagename %></h1>
-      <a href="#editor" class='ui-btn-right' data-icon="arrow-r" data-iconpos="right">edit</a>
-    </div><!-- /header -->
-
-    <div data-role="content">
-      <div id="page">
-        <div id="content">
-          <div><%h content %></div>
-        </div>
-      </div>
-    </div><!-- /content -->
-
-    <div data-role="footer">
-      <h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
-    </div><!-- /footer -->
-  </div><!-- /page -->
+  script
+    var editing = #{page.editing};
+    var pagename = "#{page.pagename}";
   
-  <div data-role="page" id="editor">
-    <div data-role="header">
-      <h1>edit <%h pagename %></h1>
-      <a href="#savedialog" class='ui-btn-right' data-rel="dialog" data-transition="pop">save</a>
-    </div><!-- /header -->
+  script(src="./assets/universal.js")
+  script(src="./assets/mobile.js")
+body
 
-    <div data-role="content">
-      <div data-role="fieldcontain">
-        <textarea style="width: 98%" name="textarea" id="textarea"></textarea>
-      </div>
-    </div><!-- /content -->
+  #reader(data-role="page")
 
-    <div data-role="footer">
-      <h4>Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a></h4>
-    </div><!-- /footer -->
-  </div>
+    div(data-role="header")
+      h1= page.pagename
+      a.ui-btn-right(href="#editor", data-icon="arrow-r", data-iconpos="right") edit
+
+    div(data-role="content")
+      #page
+        #content
+          div!= page.content
+
+    div(data-role="footer")
+      h4 Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+
   
-  <div data-role="page" id="savedialog">
-    <div data-role="header"><h1>Save <%h pagename %></h1></div>
+  #editor(data-role="page")
+    div(data-role="header")
+      h1 edit #{page.pagename}
+      a.ui-btn-right(href="#savedialog", data-rel="dialog", data-transition="pop") save
+
+    div(data-role="content")
+      div(data-role="fieldcontain")
+        textarea#textarea(style="width: 98%", name="textarea")
+
+    div(data-role="footer")
+      h4 Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+  
+  
+  #savedialog(data-role="page")
+    div(data-role="header")
+      h1 Save #{page.pagename}
     
-    <div data-role="content">
-      <div data-role="fieldcontain">
-        <label for="password">Password (optional):</label>
-        <input type="password" name="password" id="password" value=""  />
-      </div>
+    div(data-role="content")
+      div(data-role="fieldcontain")
+        label(for="password") Password (optional):
+        input#password(type="password", name="password", value="")
       
-      <div id="formerror"></div>
+      #formerror
+        &nbsp;
   
-      <div class="ui-body ui-body-b">
-        <fieldset class="ui-grid-a">
-          <div class="ui-block-a"><a data-role="button" data-rel="back">Cancel</a></div>
-          <div class="ui-block-b"><a id="saveform" data-role="button">Save</a></div>
-        </fieldset>
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+      .ui-body.ui-body-b
+        fieldset.ui-grid-a
+          .ui-block-a
+            a(data-role="button", data-rel="back") Cancel
+          .ui-block-b
+            a#saveform(data-role="button") Save
