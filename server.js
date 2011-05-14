@@ -1,7 +1,7 @@
 var express = require('express')
   , sd = new (require('./public/lib/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose')
-  , url = require('url');
+  , _ = require('underscore');
 
 var app = module.exports = express.createServer();
 
@@ -32,25 +32,9 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-
 mongoose.connect('mongodb://localhost/techpages');
 
-Object.defineProperty(Object.prototype, "extend", {
-  enumerable: false,
-  value: function(from) {
-    var props = Object.getOwnPropertyNames(from);
-    var dest = this;
-    props.forEach(function(name) {
-      if (name in dest) {
-          var destination = Object.getOwnPropertyDescriptor(from, name);
-          Object.defineProperty(dest, name, destination);
-      }
-    });
-    return this;
-  }
-});
-
-sd.config.extend({
+_.extend(sd.config, {
   stripHTML: true,
   tables: true,
   math: true,
