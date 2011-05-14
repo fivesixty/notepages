@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <style>
+      body {
+        background: #e0e4cc;
+      }
+      #front {
+        position: relative;
+        width: 505px;
+        height: 489px;
+        background: url(notepages.png);
+        margin: 0 auto;
+      }
+      #front #page {
+        position: relative;
+        left: 56px;
+        top: 274px;
+        width: 238px;
+        height: 43px;
+        border: none;
+        padding: 5px;
+        font-size: 30px;
+        float: left;
+      }
+      #front #page.default {
+        color: #999;
+      }
+      #front #page:focus {
+        color: #333;
+      }
+      #front #write {
+        position: relative;
+        left: 80px;
+        top: 271px;
+        width: 163px;
+        height: 50px;
+        float: left;
+        background: #fff;
+        border: none;
+        text-indent: -99999px;
+        opacity: 0;
+        cursor: pointer;
+      }
+      #front #write:hover {
+        opacity: 0.2;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="front">
+      <form>
+        <input id="page" type="text" value="writehere" class="default">
+        <input id="write" type="submit" value="write!">
+      </form>
+    </div>
+  </body>
+</html>
