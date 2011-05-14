@@ -87,7 +87,7 @@ app.get('/', function(req, res) {
   res.redirect(rstring(6));
 });
 
-app.post(/^\/([a-zA-Z0-9_-]*)\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {
+app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {
   PageModel.findOne({iden: req.params.id}, function (err, post) {
     if (err) {
       res.send("Something went wrong.", 403);
@@ -113,7 +113,7 @@ app.post(/^\/([a-zA-Z0-9_-]*)\.?(json)?$/, prePage, express.bodyParser(), functi
   });
 });
 
-app.get(/^\/([a-zA-Z0-9_-]*)\.?(json)?$/, prePage, function(req, res, next) {
+app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
   var page = {
     pagename: req.params.id
   }
