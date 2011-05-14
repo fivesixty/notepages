@@ -90,7 +90,7 @@ app.get('/', function(req, res) {
 app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {
   PageModel.findOne({iden: req.params.id}, function (err, post) {
     if (err) {
-      res.send("Something went wrong.", 403);
+      res.send({status:"failure",message:"Internal error."}, 500);
       return;
     } else if (post) {
       if ((req.body.password || post.pass) && (post.pass != req.body.password)) {

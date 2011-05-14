@@ -1,3 +1,8 @@
+### 0.4.2 (x/5/2011)
+
+*  Switched from Grasshopper to Express framework
+*  Now have a front landing page with single click for random page.
+
 ### 0.4 (27/3/2011)
 
 *  Add mobile support via jQuery mobile
