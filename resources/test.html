@@ -1,0 +1,219 @@
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script src="../public/lib/jquery.event.drag-2.0.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #ccc;
+      }
+      
+      .drop-shadow {
+          position:relative;
+          background:#fff;
+          -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+             -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+                  box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+      }
+      
+      #outer {
+        width: 500px;
+        position: fixed;
+        top: 20px;
+        bottom: 0;
+        right: 0;
+        background: #aaa;
+        margin: 0 auto;
+        display: none;
+      }
+      
+      #inner {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        bottom: 10px;
+        right: 10px;
+        resize: none;
+      }
+      
+      #page {
+        width: 720px;
+        height: 4000px;
+        background: #fff;
+        margin: 30px auto;
+      }
+      
+      #panel {
+        position: fixed;
+        background: #aaa;
+        top: 0;
+        height: 20px;
+        line-height: 20px;
+        margin: 0;
+        right: 20px;
+        width: 200px;
+      }
+      
+      #panel a {
+        display: none;
+      }
+      
+      #panel.readonly a.readonly {
+        display: inline;
+      }
+      
+      #panel.edit a.edit {
+        display: inline;
+      }
+      
+      #dragger {
+        width: 10px;
+        height: 100px;
+        background: #666;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -50px;
+        cursor: move;
+      }
+      
+      #save {
+        opacity: 0.4;
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        
+        var panels = {
+          tool: 200,
+          edit: 500
+        };
+        
+        function setWidths(i) {
+          $("#outer, #panel").width(panels[i]);
+        }
+        
+        var editpanel = $("#outer"),
+          toolpanel = $("#panel"),
+          page = $("#page"),
+          content = "";
+        
+        
+        editpanel.slide = function (show) {
+          if (editpanel.slid === show) return;
+          
+          if (show) {
+            editpanel.show()
+              .css({width: panels.edit, marginRight: -panels.edit})
+              .animate({marginRight:0});
+          } else {
+            editpanel
+              .animate({marginRight:-panels.edit}, function () {
+                editpanel.hide();
+              });
+          }
+          editpanel.slid = show;
+        };
+        
+        toolpanel.slide = function (show) {
+          if (toolpanel.slid === show) return;
+          
+          if (show) {
+            toolpanel
+              .css({right: 20, width: panels.tool})
+              .animate({width: panels.edit, right: 0});
+            toolpanel.toggleClass("edit", true);
+            toolpanel.toggleClass("readonly", false);
+          } else {
+            toolpanel
+              .css({right: 0, width: panels.edit})
+              .animate({width: panels.tool, right: 20});
+            toolpanel.toggleClass("edit", false);
+            toolpanel.toggleClass("readonly", true);
+          }
+          toolpanel.slid = show;
+        };
+        
+        page.slide = function (show) {
+          if (page.slid === show) return;
+          
+          if (show) {
+            page
+              .css({marginLeft: $("#page").offset().left})
+              .animate({marginLeft:30});
+          } else {
+            page
+              .animate({marginLeft: ($(window).width()-$("#page").width())/2},
+                function () {
+                  page.css({margin:"30px auto"});
+                });
+          }
+          page.slid = show;
+        };
+        
+        var previewing = false, modified = false, origcontent;
+        
+        $("#edit").click(function () {
+          editpanel.slide(true);
+          toolpanel.slide(true);
+          page.slide(true);
+          return false;
+        });
+        $("#cancel").click(function () {
+          if (!modified || confirm("Are you sure you want to cancel? Edits will be lost.")) {
+            editpanel.slide(false);
+            toolpanel.slide(false);
+            page.slide(false);
+            previewing = false;
+            modified = false;
+            $("#save").css({opacity:0.4});
+            $("#inner").val(content);
+          }
+          return false;
+        });
+        $("#save").click(function () {
+          modified = false;
+          $("#save").css({opacity:0.4});
+          content = $("#inner").val();
+          return false;
+        });
+        
+        $("#inner").keyup(function () {
+          modified = true;
+          $("#save").css({opacity:1});
+        });
+        
+        $("#dragger").drag("start", function (ev, dd) {
+          $.data(this, 'startw', $("#outer").width());
+        }).drag(function(ev, dd) {
+          panels.edit = $.data(this, 'startw') - dd.deltaX;
+          setWidths("edit");
+        });
+        
+        $("#preview").click(function () {
+          page.slide(previewing);
+          editpanel.slide(previewing);
+          previewing = !previewing;
+          return false;
+        });
+        return false;
+      });
+    </script>
+  </head>
+  <body class="readonly">
+    <div id="page" class="drop-shadow">
+      
+    </div>
+    <div id="panel" class="readonly">
+      <a class="readonly" href="#edit" id="edit">edit</a>
+      <a class="edit" href="#cancel" id="cancel">cancel</a>
+      <a class="edit" href="#save" id="save"><img src="../public/images/save.png" alt="save" title="save" /></a>
+      <a class="edit" href="#preview" id="preview">preview</a>
+    </div>
+    <div id="outer">
+      <div id="dragger"></div>
+      <textarea id="inner"></textarea>
+    </div>
+  </body>
+</html>
