@@ -1,0 +1,20 @@
+head
+  title Notepag.es
+  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
+  script
+    $(document).ready(function () {
+      $("#front #page.default").live("click", function () {
+        $(this).select();
+        $(this).removeClass("default");
+      });
+      $("form").submit(function () {
+        window.location = "/" + $("#page").val();
+        return false;
+      });
+    });
+  link(rel="stylesheet", href="/stylesheets/front.css")
+body
+  #front
+    form
+      input#page.default(type="text", value=randid)
+      input#write(type="submit", value="write!")

@@ -53,7 +53,7 @@ body.readonly
           div(style="clear:both")
     #rightcol
       #editor
-        form(id="editform", method="POST", action="#{page.pagename}")
+        form(id="editform", method="POST", action=page.pagename)
           textarea
           #params Password (optional):
             input#password.tinput(type="password")

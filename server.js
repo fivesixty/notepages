@@ -84,7 +84,7 @@ function prePage(req, res, next) {
 // Routes
 
 app.get('/', function(req, res) {  
-  res.redirect(rstring(6));
+  res.render("front", {randid: rstring(6)});
 });
 
 app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {

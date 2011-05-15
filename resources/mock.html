@@ -1,50 +1,19 @@
 <html>
   <head>
-    <style>
-      body {
-        background: #e0e4cc;
-      }
-      #front {
-        position: relative;
-        width: 505px;
-        height: 489px;
-        background: url(notepages.png);
-        margin: 0 auto;
-      }
-      #front #page {
-        position: relative;
-        left: 56px;
-        top: 274px;
-        width: 238px;
-        height: 43px;
-        border: none;
-        padding: 5px;
-        font-size: 30px;
-        float: left;
-      }
-      #front #page.default {
-        color: #999;
-      }
-      #front #page:focus {
-        color: #333;
-      }
-      #front #write {
-        position: relative;
-        left: 80px;
-        top: 271px;
-        width: 163px;
-        height: 50px;
-        float: left;
-        background: #fff;
-        border: none;
-        text-indent: -99999px;
-        opacity: 0;
-        cursor: pointer;
-      }
-      #front #write:hover {
-        opacity: 0.2;
-      }
-    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#front #page").click(function () {
+          $(this).select();
+          $(this).removeClass("default");
+        });
+        $("form").submit(function () {
+          window.location = "http://notepag.es/" + $("#page").val()
+          return false;
+        });
+      });
+    </script>
+    <link rel="stylesheet" href="../public/stylesheets/front.css">
   </head>
   <body>
     <div id="front">

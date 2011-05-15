@@ -1,0 +1,48 @@
+body {
+  background: #e0e4cc;
+}
+#front {
+  position: relative;
+  width: 505px;
+  height: 489px;
+  background: url(../images/notepages.png);
+  margin: 0 auto;
+}
+#front #page {
+  position: relative;
+  float: left;
+  border: none;
+  
+  left: 56px;
+  top: 274px;
+  width: 238px;
+  height: 43px;
+  
+  font-size: 30px;
+  
+  background: transparent;
+}
+#front #page.default {
+  color: #999;
+}
+#front #page:focus {
+  color: #333;
+}
+#front #write {
+  position: relative;
+  float: left;
+  border: none;
+  
+  left: 80px;
+  top: 271px;
+  width: 163px;
+  height: 50px;
+  
+  background: #fff;
+  text-indent: -99999px;
+  opacity: 0;
+  cursor: pointer;
+}
+#front #write:hover {
+  opacity: 0.2;
+}
