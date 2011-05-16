@@ -43,7 +43,7 @@ $(document).ready(function () {
   };
   
   var MarkdownMode = require("ace/mode/markdown").Mode;
-  var editor = ace.edit("inner");
+  var editor = ace.edit("ace");
   editor.setTheme("ace/theme/twilight");
   editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
@@ -58,12 +58,12 @@ $(document).ready(function () {
   };
   
   function setWidths(i) {
-    $("#outer, #panel").width(panels[i]);
+    $("#toolpanel, #editpanel").width(panels[i]);
     editor.resize();
   }
   
-  var editpanel = $("#outer"),
-    toolpanel = $("#panel"),
+  var editpanel = $("#editpanel"),
+    toolpanel = $("#toolpanel"),
     page = $("#page"),
     content = "",
     password = "",
@@ -244,7 +244,7 @@ $(document).ready(function () {
   $("#inner").keyup(refreshModified);
   
   $("#dragger").drag("start", function (ev, dd) {
-    $.data(this, 'startw', $("#outer").width());
+    $.data(this, 'startw', editpanel.width());
   }).drag(function(ev, dd) {
     panels.edit = $.data(this, 'startw') - dd.deltaX;
     setWidths("edit");

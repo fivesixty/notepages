@@ -125,7 +125,7 @@ hr {
   width: 360px;
 }
 
-#outer {
+#editpanel {
   width: 500px;
   position: fixed;
   top: 35px;
@@ -136,7 +136,7 @@ hr {
   display: none;
 }
 
-#inner {
+#ace {
   position: absolute;
   top: 5px;
   left: 10px;
@@ -151,7 +151,7 @@ hr {
   margin: 30px auto;
 }
 
-#panel {
+#toolpanel {
   position: fixed;
   background: #666;
   top: 0;
@@ -163,11 +163,11 @@ hr {
   padding: 5px 0;
   text-align: center;
 }
-#panel a img {
+#toolpanel a img {
   vertical-align: middle;
   margin-left: 5px;
 }
-#panel a {
+#toolpanel a {
   color: white;
   text-decoration: none;
   margin: 0 5px;
@@ -176,15 +176,15 @@ hr {
   font-family: sans-serif;
 }
 
-#panel.readonly a.readonly {
+#toolpanel.readonly a.readonly {
   display: inline-block;
 }
 
-#panel.edit a.edit {
+#toolpanel.edit a.edit {
   display: inline-block;
 }
 
-#panel.edit a.passdisable {
+#toolpanel.edit a.passdisable {
   display: none;
 }
 

@@ -50,7 +50,8 @@ body
       div!= page.content
       div(style="clear:both")
     #footer Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
-  #panel.readonly
+  
+  #toolpanel.readonly
     a#edit.readonly(href="#edit") edit
       img(src="/images/pencil_24.png", alt="edit", title="edit")
     
@@ -66,9 +67,9 @@ body
     a#password.edit(href="#edit") password
       img(src="/images/lock_24.png", alt="password", title="password")
   
-  #outer
+  #editpanel
     #dragger
-    #inner
+    #ace
     
   script(type="text/javascript)
     var _gaq = _gaq || [];
