@@ -37,111 +37,23 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-define('ace/mode/markdown', ['require', 'exports', 'module' , 'ace/tokenizer', 'ace/mode/markdown_highlight_rules'], function(require, exports, module) {
+define('ace/mode/markdown', ['require', 'exports', 'module' , 'pilot/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/markdown_highlight_rules'], function(require, exports, module) {
 
+var oop = require("pilot/oop");
+var TextMode = require("ace/mode/text").Mode;
 var Tokenizer = require("ace/tokenizer").Tokenizer;
 var MarkdownHighlightRules = require("ace/mode/markdown_highlight_rules").MarkdownHighlightRules;
 
 var Mode = function() {
     this.$tokenizer = new Tokenizer(new MarkdownHighlightRules().getRules());
 };
+oop.inherits(Mode, TextMode);
 
 (function() {
-
-    this.getTokenizer = function() {
-        return this.$tokenizer;
-    };
-
-    this.toggleCommentLines = function(state, doc, startRow, endRow) {
-    };
-
     this.getNextLineIndent = function(state, line, tab) {
         var indent = this.$getIndent(line);
         return indent;
     };
-
-    this.checkOutdent = function(state, line, input) {
-        return false;
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-    };
-
-    this.$getIndent = function(line) {
-        var match = line.match(/^(\s+)/);
-        if (match) {
-            return match[1];
-        }
-
-        return "";
-    };
-    
-    this.createWorker = function(session) {
-        return null;
-    };
-
-    this.highlightSelection = function(editor) {
-        var session = editor.session;
-        if (!session.$selectionOccurrences)
-            session.$selectionOccurrences = [];
-
-        if (session.$selectionOccurrences.length)
-            this.clearSelectionHighlight(editor);
-
-        var selection = editor.getSelectionRange();
-        if (selection.isEmpty() || selection.isMultiLine())
-            return;
-
-        var startOuter = selection.start.column - 1;
-        var endOuter = selection.end.column + 1;
-        var line = session.getLine(selection.start.row);
-        var lineCols = line.length;
-        var needle = line.substring(Math.max(startOuter, 0),
-                                    Math.min(endOuter, lineCols));
-
-        // Make sure the outer characters are not part of the word.
-        if ((startOuter >= 0 && /^[\w\d]/.test(needle)) ||
-            (endOuter <= lineCols && /[\w\d]$/.test(needle)))
-            return;
-
-        needle = line.substring(selection.start.column, selection.end.column);
-        if (!/^[\w\d]+$/.test(needle))
-            return;
-
-        var cursor = editor.getCursorPosition();
-
-        var newOptions = {
-            wrap: true,
-            wholeWord: true,
-            caseSensitive: true,
-            needle: needle
-        };
-
-        var currentOptions = editor.$search.getOptions();
-        editor.$search.set(newOptions);
-
-        var ranges = editor.$search.findAll(session);
-        ranges.forEach(function(range) {
-            if (!range.contains(cursor.row, cursor.column)) {
-                var marker = session.addMarker(range, "ace_selected_word");
-                session.$selectionOccurrences.push(marker);
-            }
-        });
-
-        editor.$search.set(currentOptions);
-    };
-
-    this.clearSelectionHighlight = function(editor) {
-        if (!editor.session.$selectionOccurrences)
-            return;
-
-        editor.session.$selectionOccurrences.forEach(function(marker) {
-            editor.session.removeMarker(marker);
-        });
-
-        editor.session.$selectionOccurrences = [];
-    };
-
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -184,7 +96,10 @@ exports.Mode = Mode;
  *
  * ***** END LICENSE BLOCK ***** */
 
-define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module' ], function(require, exports, module) {
+define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module', 'pilot/oop', 'ace/mode/text_highlight_rules' ], function(require, exports, module) {
+
+var oop = require("pilot/oop");
+var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
 
 var MarkdownHighlightRules = function() {
 
@@ -201,29 +116,7 @@ var MarkdownHighlightRules = function() {
         } ]
     };
 };
-
-(function() {
-
-    this.addRules = function(rules, prefix) {
-        for (var key in rules) {
-            var state = rules[key];
-            for (var i=0; i<state.length; i++) {
-                var rule = state[i];
-                if (rule.next) {
-                    rule.next = prefix + rule.next;
-                } else {
-                    rule.next = prefix + key;
-                }
-            }
-            this.$rules[prefix + key] = state;
-        }
-    };
-
-    this.getRules = function() {
-        return this.$rules;
-    };
-
-}).call(MarkdownHighlightRules.prototype);
+oop.inherits(MarkdownHighlightRules, TextHighlightRules);
 
 exports.MarkdownHighlightRules = MarkdownHighlightRules;
 });

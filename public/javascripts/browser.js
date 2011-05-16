@@ -49,6 +49,7 @@ $(document).ready(function () {
   editor.getSession().setUseSoftTabs(true);
   editor.getSession().setMode(new MarkdownMode());
   editor.renderer.setShowGutter(false);
+  editor.renderer.setHScrollBarAlwaysVisible(false);
   editor.getSession().setUseWrapMode(true);
   editor.setShowPrintMargin(false);
   
