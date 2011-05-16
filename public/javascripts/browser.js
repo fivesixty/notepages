@@ -198,7 +198,7 @@ $(document).ready(function () {
     if (!modified) {
       doCancel()
     } else {
-      confirmDialog("Cancel", "Are you sure you want to cancel? Changes made will be lost.", function (answer) {
+      confirmDialog("Close", "Are you sure you want to close the editor? Changes made will be lost.", function (answer) {
         if (answer) {
           doCancel();
         }
@@ -213,7 +213,7 @@ $(document).ready(function () {
     if (newdocument) {
       if (!password) {
         confirmDialog("No Password",
-          "Saving without password will let this page be globally edited, and cannot be changed later.",
+          "Saving without password will allow this page to be edited by anyone, and cannot be changed later.",
           function (answer) {
             if (answer) {
               doSave();
@@ -221,7 +221,7 @@ $(document).ready(function () {
           });
       } else {
         confirmDialog("Password Entered",
-          "Saving with password. This cannot be removed later, continue?",
+          "Saving with password. Passwords cannot be removed later, continue?",
           function (answer) {
             if (answer) {
               doSave();
