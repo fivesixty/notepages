@@ -1,15 +1,6 @@
-// Define the page and functions
-var Page = (function () {
-  var previewing = false,
-    editor_scrolltop = 0,
-    editor_position = {start: 0, end: 0},
-    preview_scrolltop = 0,
-    narrowscreen = undefined,  // undefined so setNarrowscreen runs at page load
-    inputarea,
-    preproc = $("<div></div>"),
-    outputel,
-    renderDelay = 50,
-    redrawNeeded = false;
+$(document).ready(function () {
+  
+  var redrawNeeded = false, preproc = $("<div></div>"), renderDelay = 0, timer;
   
   // If draw latency sufficiently small, use a small delay on rendering.
   // Otherwise use a significantly larger one.
@@ -28,10 +19,10 @@ var Page = (function () {
     } else {
       redrawNeeded = false;
     }
-    
+
     var startTime = (new Date()).getTime();
-    preproc.html(markdown.makeHtml(inputarea.val()));
-    var patch = outputel.quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
+    preproc.html(markdown.makeHtml(editor.getSession().getValue()));
+    var patch = $("#output > div").quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
 
     if (patch.type !== "identical" && patch.replace.length > 0) {
       $.each(patch.replace, function (i, el) {
@@ -50,182 +41,107 @@ var Page = (function () {
       setRenderDelay((new Date()).getTime() - startTime);
     }
   };
-
-  // Helper functions to save/restore page position.
-  var savePagePosition = function () {
-    preview_scrolltop = $("body").scrollTop();
-  };
-  var restorePagePosition = function () {
-    $("body").scrollTop(preview_scrolltop);
-  };
-
-  // Helper functions to save/restore editor position and selection.
-  var saveEditorState = function () {
-    editor_scrolltop = inputarea.scrollTop();
-    editor_position = inputarea.getSelection();
-  };
-  var restoreEditorState = function () {
-    inputarea.setSelection(editor_position.start, editor_position.end);
-    inputarea.scrollTop(editor_scrolltop);
-  };
-
-  // Set whether we are previewing or not.
-  var setPreviewing = function (toggle) {
-    if (previewing) {
-      savePagePosition();
-    } else {
-      saveEditorState();
-    }
-    
-    previewing = toggle;
-    $("body").toggleClass("preview", previewing);
-    
-    if (previewing) {
-      restorePagePosition();
-      redraw();
-      $("#preview-enable a").text("EDITOR");
-    } else {
-      restoreEditorState();
-      $("#preview-enable a").text("PREVIEW");
-    }
+  
+  var MarkdownMode = require("ace/mode/markdown").Mode;
+  var editor = ace.edit("inner");
+  editor.setTheme("ace/theme/twilight");
+  editor.getSession().setTabSize(2);
+  editor.getSession().setUseSoftTabs(true);
+  editor.getSession().setMode(new MarkdownMode());
+  editor.renderer.setShowGutter(false);
+  editor.getSession().setUseWrapMode(true);
+  editor.setShowPrintMargin(false);
+  
+  var panels = {
+    tool: 80,
+    edit: 500
   };
   
-  var setNarrowscreen = function (toggle) {
-    if (narrowscreen !== toggle) {
-      // If we're going into narrowscreen mode, save where the page is
-      // and disable the preview.
-      if (toggle) {
-        savePagePosition();
-        setPreviewing(false);
-      }
-      
-      // Make the class/variable changes.
-      narrowscreen = toggle;
-      $("body").toggleClass("widescreen", !narrowscreen);
-      $("body").toggleClass("narrowscreen", narrowscreen);
-      
-      // If we're now in widescreen, restore the page based on preview state.
-      if (!narrowscreen) {
-        if (previewing) {
-          restoreEditorState();
-        } else {
-          redraw();
-          restorePagePosition();
-        }
-      }
-    }
+  function setWidths(i) {
+    $("#outer, #panel").width(panels[i]);
+    editor.resize();
   }
-
-  var editorResize = function () {
-    inputarea.height($(window).height() - 90);
-  }
-
-  // Reconstrain the page based upon current window size.
-  // Will resize the editor when editing, and toggle on/off narrowscreen mode.
-  var reconstrain = function () {
-    if (editing) {
-      editorResize();
-    }
-    setNarrowscreen($(window).width() < 1260);
-  };
-
-  // Set whether we are editing or not.
-  var setEditing = function (edit) {
-    if (editing) {
-      if (previewing || !narrowscreen) {
-        savePagePosition();
-      }
-    } else {
-      savePagePosition();
-    }
+  
+  var editpanel = $("#outer"),
+    toolpanel = $("#panel"),
+    page = $("#page"),
+    content = "",
+    password = "",
+    newdocument = editing,
+    loaded = editing;
+  
+  editpanel.slide = function (show) {
+    if (editpanel.slid === show) return;
     
-    editing = edit;
-    $("body").toggleClass("readonly", !editing);
-    $("body").toggleClass("editing", editing);
-    
-    if (editing) {
-      setPreviewing(false);
-      editorResize();
-      restoreEditorState();
-      $("#edit-enable a").text("CANCEL");
+    if (show) {
+      editpanel.show()
+        .css({width: panels.edit, marginRight: -panels.edit})
+        .animate({marginRight:0});
+      editor.resize();
     } else {
-      $("#page").css({height: "auto"});
-      restorePagePosition();
-      redraw();
-      $("#edit-enable a").text("EDIT");
+      editpanel
+        .animate({marginRight:-panels.edit}, function () {
+          editpanel.hide();
+        });
     }
+    editpanel.slid = show;
   };
   
-  var setNeedsRedraw = function () {
+  toolpanel.slide = function (show) {
+    if (toolpanel.slid === show) return;
+    
+    if (show) {
+      toolpanel
+        .css({right: 20, width: panels.tool})
+        .animate({width: panels.edit, right: 0}, function () {
+          toolpanel.toggleClass("edit", true);
+          toolpanel.toggleClass("readonly", false);
+        });
+    } else {
+      toolpanel
+        .css({right: 0, width: panels.edit})
+        .animate({width: panels.tool, right: 20});
+      toolpanel.toggleClass("edit", false);
+      toolpanel.toggleClass("readonly", true);
+    }
+    toolpanel.slid = show;
+  };
+  
+  toolpanel.setPasswordReq = function (flag) {
+    $("#password").toggleClass("passdisable", !flag);
+  }
+  
+  page.slide = function (show) {
+    if (page.slid === show) return;
+    
+    if (show) {
+      page
+        .css({marginLeft: $("#page").offset().left})
+        .animate({marginLeft:30});
+    } else {
+      page
+        .animate({marginLeft: ($(window).width()-$("#page").width())/2},
+          function () {
+            page.css({margin:"30px auto"});
+          });
+    }
+    page.slid = show;
+  };
+  
+  function refreshModified() {
     redrawNeeded = true;
-    if (!narrowscreen || previewing || !editing) {
-      redraw();
+    modified = editor.getSession().getValue() !== content;
+    $("#save").css({opacity:modified ? 1 : 0.5});
+    
+    if (timer) {
+      clearTimeout(timer);
     }
+    timer = setTimeout(redraw, renderDelay);
   }
   
-  // Return functions for getting/setting parameters of the page.
-  return {
-    editing: function () {
-      if (arguments.length === 0) {
-        return editing;
-      } else {
-        setEditing(arguments[0]);
-      }
-    },
-    preview: function () {
-      if (arguments.length === 0) {
-        return previewing;
-      } else {
-        setPreviewing(arguments[0]);
-      }
-    },
-    init : function (name, input, output) {
-      pagename = name;
-      inputarea = input;
-      outputel = output;
-      reconstrain();
-    },
-    reconstrain: reconstrain,
-    pagename: function () {
-      return pagename;
-    },
-    renderDelay: function () {
-      return renderDelay;
-    },
-    setNeedsRedraw: setNeedsRedraw
-  };
-}());
-
-$(document).ready(function () {
-  var loaded = editing,
-    inputarea = $("textarea"),
-    outputel = $("#output > div");
+  var previewing = false, modified = false, origcontent;
   
-  Page.init(pagename, inputarea, outputel);
-  Page.editing(editing);
-  
-  $(window).resize(Page.reconstrain);
-  
-  $('.slide-out-div').tabSlideOut({
-      tabHandle: '.handle',                              //class of the element that will be your tab
-      pathToTabImage: 'images/sidehelp.png',          //path to the image for the tab *required*
-      imageHeight: '122px',                               //height of tab image *required*
-      imageWidth: '40px',                               //width of tab image *required*    
-      tabLocation: 'left',                               //side of screen where tab lives, top, right, bottom, or left
-      speed: 300,                                        //speed of animation
-      action: 'click',                                   //options: 'click' or 'hover', action to trigger animation
-      topPos: '100px',                                   //position from the top
-      fixedPosition: false                               //options: true makes it stick(fixed position) on scroll
-  });
-  
-  // On keyup, clear any timer and instate a new one using the current
-  // render relay.
-  $("textarea").keyup(function () {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-    this.timer = setTimeout(Page.setNeedsRedraw, Page.renderDelay());
-  });
+  toolpanel.setPasswordReq(passreq || newdocument);
   
   // Toggle editing. If we haven't loaded the content, then load it via AJAX.
   $("#edit-enable a").click(function () {
@@ -237,22 +153,82 @@ $(document).ready(function () {
         Page.setNeedsRedraw();
       });
     }
-    
+
     Page.editing(!Page.editing());
     return false;
   });
   
-  // Toggle preview on/off
-  $("#preview-enable a").click(function () {
-    Page.preview(!Page.preview());
+  var toggleEditOn = function () {
+    editpanel.slide(true);
+    toolpanel.slide(true);
+    page.slide(true);
+    if (!loaded) {
+      editor.getSession().setValue("Loading..")
+      $.getJSON("/" + pagename + ".json", function (data) {
+        content = data.text;
+        editor.getSession().setValue(data.text);
+        editor.renderer.scrollToY(0);
+        loaded = true;
+        refreshModified();
+      });
+    }
+    editor.focus();
+    return false;
+  };
+  
+  $("#edit").click(toggleEditOn);
+  
+  if (editing) {
+    toggleEditOn();
+  }
+  
+  $("#cancel").click(function () {
+    if (!modified || confirm("Are you sure you want to cancel? Edits will be lost.")) {
+      editpanel.slide(false);
+      toolpanel.slide(false);
+      page.slide(false);
+      previewing = false;
+      modified = false;
+      var y = editor.renderer.getScrollTop();
+      editor.getSession().setValue(content);
+      editor.renderer.scrollToY(y);
+      refreshModified();
+    }
     return false;
   });
-  
-  // Save the page, displaying a notification of the result status.
-  $("#editform").submit(function () {
-    $.post("/" + Page.pagename() + ".json", {text: inputarea.val(), password: $("#password").val()}, function (ret) {
+  $("#save").click(function () {
+    refreshModified();
+    if (!modified) return false;
+    
+    if (newdocument) {
+      if (!password && !confirm("Saving without password will let this page be globally edited, and cannot be changed later. Continue?")) {
+        return false;
+      } else if (password && !confirm("Saving with password. This cannot be removed later, continue?")) {
+        return false;
+      }
+    }
+    
+    if (passreq && !password) {
+      var newpassword = prompt("Please enter page password.");
+      if (newpassword !== null) {
+        password = newpassword;
+      } else {
+        return false;
+      }
+    }
+    
+    if (newdocument && password) {
+      passreq = true;
+    }
+    
+    var cont = editor.getSession().getValue();
+    $.post("/" + pagename + ".json", {text: cont, password: password}, function (ret) {
       if (ret && ret.status === "success") {
+        content = cont;
         Grumble.show({message: "Saved successfully.", title: "Saved", icon: "success"});
+        toolpanel.setPasswordReq(passreq);
+        newdocument = false;
+        refreshModified();
       } else {
         if (ret && ret.status === "failure") {
           Grumble.show({message: ret.message, title: "Error", icon: "error"});
@@ -261,7 +237,32 @@ $(document).ready(function () {
         }
       }
     }, "json");
+    
     return false;
   });
   
+  $("#inner").keyup(refreshModified);
+  
+  $("#dragger").drag("start", function (ev, dd) {
+    $.data(this, 'startw', $("#outer").width());
+  }).drag(function(ev, dd) {
+    panels.edit = $.data(this, 'startw') - dd.deltaX;
+    setWidths("edit");
+  });
+  
+  $("#preview").click(function () {
+    page.slide(previewing);
+    editpanel.slide(previewing);
+    previewing = !previewing;
+    return false;
+  });
+  
+  $("#password").click(function () {
+    var newpassword = prompt("Please enter page password.");
+    if (newpassword !== null) {
+      password = newpassword;
+    }
+    return false;
+  });
+  return false;
 });

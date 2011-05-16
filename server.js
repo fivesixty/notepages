@@ -124,6 +124,12 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
       return;
     }
     
+    if (post && post.pass) {
+      page.passreq = "true";
+    } else {
+      page.passreq = "false";
+    }
+    
     if (!err && post) {
       if (req.params.extn === "json") {
         res.send({text:post.text});

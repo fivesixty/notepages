@@ -5,282 +5,52 @@
     <script src="../public/lib/ace/build/src/ace-uncompressed.js" type="text/javascript" charset="utf-8"></script> 
     <script src="../public/lib/ace/build/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script> 
     <script src="../public/lib/ace/build/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-    <script src="markdown-mode.js"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        background: #ccc;
-      }
-      
-      .drop-shadow {
-          position:relative;
-          background:#fff;
-          -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
-             -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
-                  box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
-      }
-      
-      #outer {
-        width: 500px;
-        position: fixed;
-        top: 35px;
-        bottom: 0;
-        right: 0;
-        background: #666;
-        margin: 0 auto;
-        display: none;
-      }
-      
-      #inner {
-        position: absolute;
-        top: 5px;
-        left: 10px;
-        bottom: 10px;
-        right: 10px;
-        resize: none;
-      }
-      
-      #page {
-        width: 720px;
-        height: 4000px;
-        background: #fff;
-        margin: 30px auto;
-      }
-      
-      #panel {
-        position: fixed;
-        background: #666;
-        top: 0;
-        height: 30px;
-        margin: 0;
-        right: 20px;
-        width: 80px;
-        vertical-align: middle;
-        padding: 5px 0;
-        text-align: center;
-      }
-      #panel a img {
-        vertical-align: middle;
-        margin-left: 5px;
-      }
-      #panel a {
-        color: white;
-        text-decoration: none;
-        margin: 0 5px;
-        display: none;
-        padding: 3px;
-        font-family: sans-serif;
-      }
-      
-      #panel.readonly a.readonly {
-        display: inline-block;
-      }
-      
-      #panel.edit a.edit {
-        display: inline-block;
-      }
-      
-      #panel.edit a.passdisable {
-        display: none;
-      }
-      
-      #dragger {
-        width: 10px;
-        height: 100px;
-        background: #999;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        margin-top: -70px;
-        cursor: move;
-      }
-      
-      #save {
-        opacity: 0.4;
-      }
-    </style>
-    <script>
-      $(document).ready(function () {
-        
-        var MarkdownMode = require("ace/mode/markdown").Mode;
-        var editor = ace.edit("inner");
-        editor.setTheme("ace/theme/twilight");
-        editor.getSession().setTabSize(2);
-        editor.getSession().setUseSoftTabs(true);
-        editor.getSession().setMode(new MarkdownMode());
-        editor.renderer.setShowGutter(false);
-        editor.getSession().setUseWrapMode(true);
-        editor.setShowPrintMargin(false);
-        
-        var panels = {
-          tool: 80,
-          edit: 500
-        };
-        
-        function setWidths(i) {
-          $("#outer, #panel").width(panels[i]);
-          editor.resize();
+    <script src="../public/javascripts/markdown-mode.js"></script>
+    
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["%%","%%"]]},
+        "HTML-CSS": {
+          scale: 100
         }
-        
-        var editpanel = $("#outer"),
-          toolpanel = $("#panel"),
-          page = $("#page"),
-          content = "",
-          password = false,
-          newdocument = true,
-          passreq = false;
-        
-        editpanel.slide = function (show) {
-          if (editpanel.slid === show) return;
-          
-          if (show) {
-            editpanel.show()
-              .css({width: panels.edit, marginRight: -panels.edit})
-              .animate({marginRight:0});
-            editor.resize();
-          } else {
-            editpanel
-              .animate({marginRight:-panels.edit}, function () {
-                editpanel.hide();
-              });
-          }
-          editpanel.slid = show;
-        };
-        
-        toolpanel.slide = function (show) {
-          if (toolpanel.slid === show) return;
-          
-          if (show) {
-            toolpanel
-              .css({right: 20, width: panels.tool})
-              .animate({width: panels.edit, right: 0}, function () {
-                toolpanel.toggleClass("edit", true);
-                toolpanel.toggleClass("readonly", false);
-              });
-          } else {
-            toolpanel
-              .css({right: 0, width: panels.edit})
-              .animate({width: panels.tool, right: 20});
-            toolpanel.toggleClass("edit", false);
-            toolpanel.toggleClass("readonly", true);
-          }
-          toolpanel.slid = show;
-        };
-        
-        toolpanel.setPasswordReq = function (flag) {
-          $("#password").toggleClass("passdisable", !flag);
-        }
-        
-        page.slide = function (show) {
-          if (page.slid === show) return;
-          
-          if (show) {
-            page
-              .css({marginLeft: $("#page").offset().left})
-              .animate({marginLeft:30});
-          } else {
-            page
-              .animate({marginLeft: ($(window).width()-$("#page").width())/2},
-                function () {
-                  page.css({margin:"30px auto"});
-                });
-          }
-          page.slid = show;
-        };
-        
-        function refreshModified() {
-          modified = editor.getSession().getValue() !== content;
-          $("#save").css({opacity:modified ? 1 : 0.5});
-        }
-        
-        var previewing = false, modified = false, origcontent;
-        
-        toolpanel.setPasswordReq(passreq || newdocument);
-        
-        $("#edit").click(function () {
-          editpanel.slide(true);
-          toolpanel.slide(true);
-          page.slide(true);
-          return false;
-        });
-        $("#cancel").click(function () {
-          if (!modified || confirm("Are you sure you want to cancel? Edits will be lost.")) {
-            editpanel.slide(false);
-            toolpanel.slide(false);
-            page.slide(false);
-            previewing = false;
-            modified = false;
-            var y = editor.renderer.getScrollTop();
-            editor.getSession().setValue(content);
-            editor.renderer.scrollToY(y);
-            refreshModified();
-          }
-          return false;
-        });
-        $("#save").click(function () {
-          refreshModified();
-          if (!modified) return false;
-          
-          if (newdocument) {
-            if (!password && !confirm("Saving without password will let this page be globally edited, and cannot be changed later. Continue?")) {
-              return false;
-            } else if (password && !confirm("Saving with password. This cannot be removed later, continue?")) {
-              return false;
-            }
-          }
-          
-          if (passreq && !password) {
-            password = prompt("Please enter page password.");
-            if (password === null) {
-              return false;
-            }
-          }
-          
-          if (newdocument && password) {
-            passreq = true;
-          }
-          
-          toolpanel.setPasswordReq(passreq);
-          newdocument = false;
-          content = editor.getSession().getValue();
-          refreshModified();
-          return false;
-        });
-        
-        $("#inner").keyup(refreshModified);
-        
-        $("#dragger").drag("start", function (ev, dd) {
-          $.data(this, 'startw', $("#outer").width());
-        }).drag(function(ev, dd) {
-          panels.edit = $.data(this, 'startw') - dd.deltaX;
-          setWidths("edit");
-        });
-        
-        $("#preview").click(function () {
-          page.slide(previewing);
-          editpanel.slide(previewing);
-          previewing = !previewing;
-          return false;
-        });
-        
-        $("#password").click(function () {
-          console.log(password);
-          password = prompt("Please enter page password.");
-          console.log(password);
-          return false;
-        });
-        return false;
       });
     </script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
+    
+    <script>
+      editing = true;
+      pagename = "TEST";
+      passreq = false;
+    </script>
+    
+    <script src="../public/lib/quickdiff/quickdiff.js"></script>
+    <script src="../public/lib/grumble/grumble.js"></script>
+    <script src="../public/lib/mdext/src/showdown.js"></script>
+    <script src="../public/javascripts/universal.js"></script>
+    <script src="../public/javascripts/browser.js"></script>
+    
+    <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css') />
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css') />
+    
+    <!--link href="../public/stylesheets/reset.css" rel="stylesheet" /-->
+    <link href="../public/stylesheets/browser.css" rel="stylesheet" />
+    <link href="../public/stylesheets/universal.css" rel="stylesheet" />
   </head>
   <body class="readonly">
     <div id="page" class="drop-shadow">
-      
+      <div id="output">
+        <div></div>
+        <div style="clear:both"></div>
+      </div>
+      <div id="footer">
+        Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+      </footer>
     </div>
     <div id="panel" class="readonly">
       <a class="readonly" href="#edit" id="edit">edit<img src="../public/images/pencil_24.png" alt="edit" title="edit" /></a>
-      <a class="edit" href="#cancel" id="cancel">cancel<img src="../public/images/cancel_24.png" alt="cancel" title="cancel" /></a>
+      <a class="edit" href="#cancel" id="cancel">close<img src="../public/images/cancel_24.png" alt="cancel" title="cancel" /></a>
       <a class="edit" href="#save" id="save">save<img src="../public/images/save_24.png" alt="save" title="save" /></a>
       <a class="edit" href="#preview" id="preview">preview<img src="../public/images/magnifier_24.png" alt="preview" title="preview" /></a>
       <a class="edit" href="#password" id="password">password<img src="../public/images/lock_24.png" alt="password" title="password"></a>

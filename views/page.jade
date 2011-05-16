@@ -5,7 +5,11 @@ head
   title Notepag.es - #{page.pagename}
   link(href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic', rel='stylesheet', type='text/css')
   link(href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold', rel='stylesheet', type='text/css')
-  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
+  script(src="http://code.jquery.com/jquery-1.6.1.min.js")
+  script(src="/lib/jquery.event.drag-2.0.js")
+  script(src="/lib/ace/build/src/ace-uncompressed.js", type="text/javascript", charset="utf-8")
+  script(src="/lib/ace/build/src/theme-twilight.js", type="text/javascript", charset="utf-8")
+  script(src="/javascripts/markdown-mode.js", type="text/javascript", charset="utf-8")
 
   script(type="text/x-mathjax-config")
     :protect
@@ -22,6 +26,7 @@ head
   script
     var editing = #{page.editing};
     var pagename = "#{page.pagename}";
+    var passreq = #{page.passreq};
 
   script(src="/lib/quickdiff/quickdiff.js")
   script(src="/lib/fieldSelection.jquery.js")
@@ -32,49 +37,39 @@ head
   script(src="/javascripts/universal.js")
   script(src="/javascripts/browser.js")
 
-  link(rel="stylesheet", href="/stylesheets/reset.css")
+  // link(rel="stylesheet", href="/stylesheets/reset.css") something going wrong here.
   link(rel="stylesheet", href="/stylesheets/browser.css")
   link(rel="stylesheet", href="/stylesheets/universal.css")
   link(rel="stylesheet", href="/lib/grumble/smoke.css")
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
 
-body.readonly
-  #options.page-options
-    #options-inner
-      #preview-enable
-        a(href="#") PREVIEW
-      #edit-enable
-        a(href="#") EDIT
-  #container
-    #leftcol
-      #page.drop-shadow
-        #output
-          div!= page.content
-          div(style="clear:both")
-    #rightcol
-      #editor
-        form(id="editform", method="POST", action=page.pagename)
-          textarea
-          #params Password (optional):
-            input#password.tinput(type="password")
-            | &nbsp;
-            input#savebutton(type="submit", value="save")
-    div(style="clear:both")
-  #footer
-    Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+body
+  #page.drop-shadow
+    #output
+      div!= page.content
+      div(style="clear:both")
+    #footer Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a>
+  #panel.readonly
+    a#edit.readonly(href="#edit") edit
+      img(src="/images/pencil_24.png", alt="edit", title="edit")
     
-  .slide-out-div
-      a.handle(href="#") Syntax Help
-      h3 Markdown
-      p # H1<br/>## H2
-      p *emphasis / italic*<br/>**strong / bold**
-      p Code blocks are done using an indent of 4 spaces, or inline using `backticks`.
-      p [link text](url)<br/>![image alt](url)<br/>&lt;autolinked-url&gt;<br/>[link text][link id]<br/>[link id]: link-url
-      p 1. Ordered<br/>2. List
-      p *  Unordered<br/> * List
-      p &gt; Blockquotes
-      
+    a#cancel.edit(href="#edit") close
+      img(src="/images/cancel_24.png", alt="close", title="close")
+          
+    a#save.edit(href="#edit") save
+      img(src="/images/save_24.png", alt="save", title="save")
+              
+    a#preview.edit(href="#edit") preview
+      img(src="/images/magnifier_24.png", alt="preview", title="preview")
+                  
+    a#password.edit(href="#edit") password
+      img(src="/images/lock_24.png", alt="password", title="password")
+  
+  #outer
+    #dragger
+    #inner
+    
   script(type="text/javascript)
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-13129098-3']);
