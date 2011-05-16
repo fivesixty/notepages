@@ -25,100 +25,101 @@ body {
   margin-bottom: 0;
 }
 
-h1,h2,h3,h4,h5,h6 {
+
+#page h1, #page h2, #page h3, #page h4, #page h5, #page h6 {
   font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
   font-weight: bold;
   margin-top: 2em;
   margin-bottom: 0.5em;
 }
-h1 {
+#page h1 {
   font-size: 2em;
 }
-h2 {
+#page h2 {
   font-size: 1.7em;
 }
-h3 {
+#page h3 {
   font-size: 1.4em;
 }
-h4 {
+#page h4 {
   font-size: 1.2em;
   text-transform: uppercase;
 }
-h5 {
+#page h5 {
   font-size: 1.2em;
 }
-h6 {
+#page h6 {
   font-size: 1.2em;
   font-style: italic;
   font-weight: inherit;
 }
-em {
+#page em {
   font-style: italic;
 }
-strong {
+#page strong {
   font-weight: bold;
 }
-p {
+#page p {
   font-size: 1.1em;
   line-height: 1.5em;
   margin: 0 0 1.5em 0;
   text-align: justify;
 }
-code {
+#page code {
   font-family: "Courier New", "Courier", monospace, serif;
   font-size: 0.8em;
   background: #eee;
   border: 1px solid #ddd;
   padding: 2px;
 }
-pre code {
+#page pre code {
   display: block;
   line-height: 1.1em;
   padding: 0.5em;
 }
-pre {
+#page pre {
   margin-bottom: 20px;
 }
-ol,ul {
+#page ol,ul {
   padding-left: 2em;
   line-height: 1.3em;
   margin-bottom: 1em;
 }
-ul {
+#page ul {
   list-style: disc;
 }
-ul ul {
+#page ul ul {
   list-style: square;
 }
-ul ul ul {
+#page ul ul ul {
   list-style: circle;
 }
-ol {
+#page ol {
   list-style: decimal;
 }
-ol ol {
+#page ol ol {
   list-style: lower-alpha;
 }
-ol ol ol {
+#page ol ol ol {
   list-style: lower-roman;
 }
-li {
+#page li {
   margin: 0 0 1.5em 0;
 }
-blockquote {
+#page blockquote {
 	margin: 1em 3em;
 	color: #999;
 	border-left: 2px solid #999;
 	padding-left: 1em;
 }
-blockquote p:first-child:first-letter {
+#page blockquote p:first-child:first-letter {
   font-variant: small-caps;
   font-size: 3em;
   line-height: 0.75em;
   margin: 7px 5px 0 0;
   float: left;
 }
-hr {
+#page hr {
   border: 0;
   border-top: 2px solid #aaa;
   margin: 20px auto;

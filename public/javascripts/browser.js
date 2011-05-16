@@ -182,17 +182,27 @@ $(document).ready(function () {
     toggleEditOn();
   }
   
+  var doCancel = function () {
+    editpanel.slide(false);
+    toolpanel.slide(false);
+    page.slide(false);
+    previewing = false;
+    modified = false;
+    var y = editor.renderer.getScrollTop();
+    editor.getSession().setValue(content);
+    editor.renderer.scrollToY(y);
+    refreshModified();
+  }
+  
   $("#cancel").click(function () {
-    if (!modified || confirm("Are you sure you want to cancel? Edits will be lost.")) {
-      editpanel.slide(false);
-      toolpanel.slide(false);
-      page.slide(false);
-      previewing = false;
-      modified = false;
-      var y = editor.renderer.getScrollTop();
-      editor.getSession().setValue(content);
-      editor.renderer.scrollToY(y);
-      refreshModified();
+    if (!modified) {
+      doCancel()
+    } else {
+      confirmDialog("Cancel", "Are you sure you want to cancel? Changes made will be lost.", function (answer) {
+        if (answer) {
+          doCancel();
+        }
+      });
     }
     return false;
   });
@@ -201,22 +211,38 @@ $(document).ready(function () {
     if (!modified) return false;
     
     if (newdocument) {
-      if (!password && !confirm("Saving without password will let this page be globally edited, and cannot be changed later. Continue?")) {
-        return false;
-      } else if (password && !confirm("Saving with password. This cannot be removed later, continue?")) {
-        return false;
-      }
-    }
-    
-    if (passreq && !password) {
-      var newpassword = prompt("Please enter page password.");
-      if (newpassword !== null) {
-        password = newpassword;
+      if (!password) {
+        confirmDialog("No Password",
+          "Saving without password will let this page be globally edited, and cannot be changed later.",
+          function (answer) {
+            if (answer) {
+              doSave();
+            }
+          });
       } else {
-        return false;
+        confirmDialog("Password Entered",
+          "Saving with password. This cannot be removed later, continue?",
+          function (answer) {
+            if (answer) {
+              doSave();
+            }
+          });
+      }
+    } else {
+      if (passreq && !password) {
+        passwordDialog("Password", "Please enter the page password.", function (newpassword) {
+          password = newpassword;
+          doSave();
+        });
+      } else {
+        doSave();
       }
     }
     
+    return false;
+  });
+    
+  var doSave = function () {
     if (newdocument && password) {
       passreq = true;
     }
@@ -239,9 +265,42 @@ $(document).ready(function () {
     }, "json");
     
     return false;
-  });
+  };
   
-  $("#inner").keyup(refreshModified);
+  function confirmDialog(title, text, callback) {
+    $('<div title="' + title + '"><p>' + text + '</p></div>')
+      .dialog({
+        resizable: false,
+        modal: true,
+        width: 400,
+        height: "auto",
+        buttons: {
+          "Cancel": function () { $(this).dialog("close"); $(this).remove(); callback(false); },
+          "Continue": function () { $(this).dialog("close"); $(this).remove(); callback(true); }
+        }
+      });
+  }
+  
+  function passwordDialog(title, text, callback) {
+    $('<div title="' + title + '"><p>' + text + '</p><input type="password"></div>')
+      .dialog({
+        resizable: false,
+        modal: true,
+        width: "auto",
+        height: "auto",
+        buttons: {
+          "Cancel": function () { $(this).dialog("close"); $(this).remove(); },
+          "Continue": function () {
+            $(this).dialog("close");
+            var pass = $("input", this).val();
+            $(this).remove();
+            callback(pass);
+          }
+        }
+      });
+  }
+  
+  editor.getSession().on('change', refreshModified);
   
   $("#dragger").drag("start", function (ev, dd) {
     $.data(this, 'startw', editpanel.width());
@@ -258,10 +317,9 @@ $(document).ready(function () {
   });
   
   $("#password").click(function () {
-    var newpassword = prompt("Please enter page password.");
-    if (newpassword !== null) {
+    passwordDialog("Password", "Please enter a page password.", function (newpassword) {
       password = newpassword;
-    }
+    });
     return false;
   });
   return false;
