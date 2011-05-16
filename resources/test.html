@@ -81,6 +81,10 @@
         display: inline-block;
       }
       
+      #panel.edit a.passdisable {
+        display: none;
+      }
+      
       #dragger {
         width: 10px;
         height: 100px;
@@ -121,8 +125,10 @@
         var editpanel = $("#outer"),
           toolpanel = $("#panel"),
           page = $("#page"),
-          content = "";
-        
+          content = "",
+          password = false,
+          newdocument = true,
+          passreq = false;
         
         editpanel.slide = function (show) {
           if (editpanel.slid === show) return;
@@ -161,6 +167,10 @@
           toolpanel.slid = show;
         };
         
+        toolpanel.setPasswordReq = function (flag) {
+          $("#password").toggleClass("passdisable", !flag);
+        }
+        
         page.slide = function (show) {
           if (page.slid === show) return;
           
@@ -180,6 +190,8 @@
         
         var previewing = false, modified = false, origcontent;
         
+        toolpanel.setPasswordReq(passreq || newdocument);
+        
         $("#edit").click(function () {
           editpanel.slide(true);
           toolpanel.slide(true);
@@ -194,14 +206,34 @@
             previewing = false;
             modified = false;
             $("#save").css({opacity:0.4});
-            $("#inner").val(content);
+            editor.getSession().setValue(content);
           }
           return false;
         });
         $("#save").click(function () {
           modified = false;
+          if (newdocument) {
+            if (!password && !confirm("Saving without password will let this page be globally edited, and cannot be changed later. Continue?")) {
+              return false;
+            } else if (!confirm("Saving with password. This cannot be removed later, continue?")) {
+              return false;
+            }
+          }
+          
+          if (passreq && !password) {
+            password = prompt("Please enter page password.");
+            if (password === null) {
+              return false;
+            }
+          }
+          
+          if (newdocument && password) {
+            passreq = true;
+          }
+          
+          toolpanel.setPasswordReq(passreq);
           $("#save").css({opacity:0.4});
-          content = $("#inner").val();
+          content = editor.getSession().getValue();
           return false;
         });
         
@@ -223,6 +255,13 @@
           previewing = !previewing;
           return false;
         });
+        
+        $("#password").click(function () {
+          console.log(password);
+          password = prompt("Please enter page password.");
+          console.log(password);
+          return false;
+        });
         return false;
       });
     </script>
@@ -236,6 +275,7 @@
       <a class="edit" href="#cancel" id="cancel">cancel<img src="../public/images/cancel_24.png" alt="cancel" title="cancel" /></a>
       <a class="edit" href="#save" id="save">save<img src="../public/images/save_24.png" alt="save" title="save" /></a>
       <a class="edit" href="#preview" id="preview">preview<img src="../public/images/magnifier_24.png" alt="preview" title="preview" /></a>
+      <a class="edit" href="#password" id="password">password<img src="../public/images/lock_24.png" alt="password" title="password"></a>
     </div>
     <div id="outer">
       <div id="dragger"></div>
