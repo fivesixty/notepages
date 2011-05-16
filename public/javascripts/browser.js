@@ -128,7 +128,9 @@ $(document).ready(function () {
     page.slid = show;
   };
   
+  var suppress_redraw = false;
   function refreshModified() {
+    if (suppress_redraw) return;
     redrawNeeded = true;
     modified = editor.getSession().getValue() !== content;
     $("#save").css({opacity:modified ? 1 : 0.5});
@@ -163,13 +165,14 @@ $(document).ready(function () {
     toolpanel.slide(true);
     page.slide(true);
     if (!loaded) {
+      suppress_redraw = true;
       editor.getSession().setValue("Loading..")
       $.getJSON("/" + pagename + ".json", function (data) {
         content = data.text;
         editor.getSession().setValue(data.text);
         editor.renderer.scrollToY(0);
         loaded = true;
-        refreshModified();
+        suppress_redraw = false;
       });
     }
     editor.focus();
