@@ -111,6 +111,7 @@
         editor.getSession().setMode(new MarkdownMode());
         editor.renderer.setShowGutter(false);
         editor.getSession().setUseWrapMode(true);
+        editor.setShowPrintMargin(false);
         
         var panels = {
           tool: 80,
@@ -188,6 +189,11 @@
           page.slid = show;
         };
         
+        function refreshModified() {
+          modified = editor.getSession().getValue() !== content;
+          $("#save").css({opacity:modified ? 1 : 0.5});
+        }
+        
         var previewing = false, modified = false, origcontent;
         
         toolpanel.setPasswordReq(passreq || newdocument);
@@ -205,17 +211,21 @@
             page.slide(false);
             previewing = false;
             modified = false;
-            $("#save").css({opacity:0.4});
+            var y = editor.renderer.getScrollTop();
             editor.getSession().setValue(content);
+            editor.renderer.scrollToY(y);
+            refreshModified();
           }
           return false;
         });
         $("#save").click(function () {
-          modified = false;
+          refreshModified();
+          if (!modified) return false;
+          
           if (newdocument) {
             if (!password && !confirm("Saving without password will let this page be globally edited, and cannot be changed later. Continue?")) {
               return false;
-            } else if (!confirm("Saving with password. This cannot be removed later, continue?")) {
+            } else if (password && !confirm("Saving with password. This cannot be removed later, continue?")) {
               return false;
             }
           }
@@ -232,15 +242,13 @@
           }
           
           toolpanel.setPasswordReq(passreq);
-          $("#save").css({opacity:0.4});
+          newdocument = false;
           content = editor.getSession().getValue();
+          refreshModified();
           return false;
         });
         
-        $("#inner").keyup(function () {
-          modified = true;
-          $("#save").css({opacity:1});
-        });
+        $("#inner").keyup(refreshModified);
         
         $("#dragger").drag("start", function (ev, dd) {
           $.data(this, 'startw', $("#outer").width());
