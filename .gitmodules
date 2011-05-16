@@ -4,3 +4,6 @@
 [submodule "public/lib/quickdiff"]
 	path = public/lib/quickdiff
 	url = git@github.com:c-spencer/quickdiff.git
+[submodule "public/lib/ace"]
+	path = public/lib/ace
+	url = git://github.com/ajaxorg/ace.git
