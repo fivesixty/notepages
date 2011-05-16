@@ -6,11 +6,11 @@ This is the source code behind [notepag.es][0], a page site designed to allow qu
 
 ##Dependencies
 
-Notepages is built upon [Node.js][1]/[MongoDB][2], and uses the [Express][3] and [Mongoose][4] libraries. Both libraries are available through `npm`. Bundled libraries are [quickdiff][5] (created for notepages), [mdext][7] (a showdown fork) and [grumble][6].
+The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Express][3] and [Mongoose][4] libraries. Both libraries are available through `npm`. Bundled libraries are [quickdiff][5] (created for notepages), [mdext][7] (a showdown fork) and [grumble][6].
 
     npm install express mongoose jade sass underscore
     
-Icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/).
+The client editor uses the [Ace][8] editor by Mozilla/Ajax.org with a custom MarkdownMode. Icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/).
 
 The server is expected to be run behind a webserver proxy (such as nginx), and for requests into the assets directory are served by the front end.
 
@@ -23,6 +23,7 @@ The database configuration is trivial and at the top of the `server.js` file. Ru
   [5]: https://github.com/c-spencer/quickdiff
   [6]: http://plugins.jquery.com/project/grumble
   [7]: https://github.com/fivesixty/mdext
+  [8]: https://github.com/ajaxorg/ace
 
 ### Sample nginx configuration
 
