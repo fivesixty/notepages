@@ -2,6 +2,10 @@
   <head>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script src="../public/lib/jquery.event.drag-2.0.js"></script>
+    <script src="../public/lib/ace/build/src/ace-uncompressed.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="../public/lib/ace/build/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script> 
+    <script src="../public/lib/ace/build/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
+    <script src="markdown-mode.js"></script>
     <style>
       body {
         margin: 0;
@@ -85,6 +89,15 @@
     <script>
       $(document).ready(function () {
         
+        var MarkdownMode = require("ace/mode/markdown").Mode;
+        var editor = ace.edit("inner");
+        editor.setTheme("ace/theme/twilight");
+        editor.getSession().setTabSize(2);
+        editor.getSession().setUseSoftTabs(true);
+        editor.getSession().setMode(new MarkdownMode());
+        //editor.renderer.setShowGutter(false);
+        editor.getSession().setUseWrapMode(true);
+        
         var panels = {
           tool: 200,
           edit: 500
@@ -92,6 +105,7 @@
         
         function setWidths(i) {
           $("#outer, #panel").width(panels[i]);
+          editor.resize();
         }
         
         var editpanel = $("#outer"),
@@ -107,6 +121,7 @@
             editpanel.show()
               .css({width: panels.edit, marginRight: -panels.edit})
               .animate({marginRight:0});
+            editor.resize();
           } else {
             editpanel
               .animate({marginRight:-panels.edit}, function () {
@@ -213,7 +228,7 @@
     </div>
     <div id="outer">
       <div id="dragger"></div>
-      <textarea id="inner"></textarea>
+      <div id="inner"></div>
     </div>
   </body>
 </html>
