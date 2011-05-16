@@ -24,17 +24,17 @@
       #outer {
         width: 500px;
         position: fixed;
-        top: 20px;
+        top: 35px;
         bottom: 0;
         right: 0;
-        background: #aaa;
+        background: #666;
         margin: 0 auto;
         display: none;
       }
       
       #inner {
         position: absolute;
-        top: 10px;
+        top: 5px;
         left: 10px;
         bottom: 10px;
         right: 10px;
@@ -50,31 +50,41 @@
       
       #panel {
         position: fixed;
-        background: #aaa;
+        background: #666;
         top: 0;
-        height: 20px;
-        line-height: 20px;
+        height: 30px;
         margin: 0;
         right: 20px;
-        width: 200px;
+        width: 80px;
+        vertical-align: middle;
+        padding: 5px 0;
+        text-align: center;
       }
-      
+      #panel a img {
+        vertical-align: middle;
+        margin-left: 5px;
+      }
       #panel a {
+        color: white;
+        text-decoration: none;
+        margin: 0 5px;
         display: none;
+        padding: 3px;
+        font-family: sans-serif;
       }
       
       #panel.readonly a.readonly {
-        display: inline;
+        display: inline-block;
       }
       
       #panel.edit a.edit {
-        display: inline;
+        display: inline-block;
       }
       
       #dragger {
         width: 10px;
         height: 100px;
-        background: #666;
+        background: #999;
         position: absolute;
         left: 0;
         top: 50%;
@@ -95,11 +105,11 @@
         editor.getSession().setTabSize(2);
         editor.getSession().setUseSoftTabs(true);
         editor.getSession().setMode(new MarkdownMode());
-        //editor.renderer.setShowGutter(false);
+        editor.renderer.setShowGutter(false);
         editor.getSession().setUseWrapMode(true);
         
         var panels = {
-          tool: 200,
+          tool: 80,
           edit: 500
         };
         
@@ -137,9 +147,10 @@
           if (show) {
             toolpanel
               .css({right: 20, width: panels.tool})
-              .animate({width: panels.edit, right: 0});
-            toolpanel.toggleClass("edit", true);
-            toolpanel.toggleClass("readonly", false);
+              .animate({width: panels.edit, right: 0}, function () {
+                toolpanel.toggleClass("edit", true);
+                toolpanel.toggleClass("readonly", false);
+              });
           } else {
             toolpanel
               .css({right: 0, width: panels.edit})
@@ -221,10 +232,10 @@
       
     </div>
     <div id="panel" class="readonly">
-      <a class="readonly" href="#edit" id="edit">edit</a>
-      <a class="edit" href="#cancel" id="cancel">cancel</a>
-      <a class="edit" href="#save" id="save"><img src="../public/images/save.png" alt="save" title="save" /></a>
-      <a class="edit" href="#preview" id="preview">preview</a>
+      <a class="readonly" href="#edit" id="edit">edit<img src="../public/images/pencil_24.png" alt="edit" title="edit" /></a>
+      <a class="edit" href="#cancel" id="cancel">cancel<img src="../public/images/cancel_24.png" alt="cancel" title="cancel" /></a>
+      <a class="edit" href="#save" id="save">save<img src="../public/images/save_24.png" alt="save" title="save" /></a>
+      <a class="edit" href="#preview" id="preview">preview<img src="../public/images/magnifier_24.png" alt="preview" title="preview" /></a>
     </div>
     <div id="outer">
       <div id="dragger"></div>
