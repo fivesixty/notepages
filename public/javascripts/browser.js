@@ -1,6 +1,6 @@
 $(document).ready(function () {
   
-  var redrawNeeded = false, preproc = $("<div></div>"), renderDelay = 0, timer;
+  var redrawNeeded = false, preproc, renderDelay = 0, timer;
   
   // If draw latency sufficiently small, use a small delay on rendering.
   // Otherwise use a significantly larger one.
@@ -21,16 +21,16 @@ $(document).ready(function () {
     }
 
     var startTime = (new Date()).getTime();
-    preproc.html(markdown.makeHtml(editor.getSession().getValue()));
+    preproc = $("<div></div>").html(markdown.makeHtml(editor.getSession().getValue()));
     var patch = $("#output > div").quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
 
     if (patch.type !== "identical" && patch.replace.length > 0) {
       $.each(patch.replace, function (i, el) {
         if (el.innerHTML) {
-          size_images(el);
           MathJax.Hub.Typeset(el, function () {
             setRenderDelay((new Date()).getTime() - startTime);
           });
+          size_images(el);
         } else if (el instanceof HTMLImageElement) {
           size_image(el);
         } else {

@@ -108,11 +108,35 @@ var MarkdownHighlightRules = function() {
 
     this.$rules = {
         "start" : [ {
+            token : "comment",
+            regex : "\\/\\/.*$"
+        }, {
             token : "empty_line",
             regex : '^$'
         }, {
+            token : "keyword",
+            regex : "^\#{1,6}.+$"
+        }, {
+            token : "keyword",
+            regex : "[\\%]{2}.+[\\%]{2}"
+        }, {
+            token : "keyword",
+            regex : "[\\$]{2}.+[\\$]{2}"
+        }, {
+            token : "string",
+            regex : "[*]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[*]{2}"
+        }, {
+            token : "string",
+            regex : "[*](?=\\S)(?:[^\\r]*?\\S[*_]*)[*]"
+        }, {
+            token : "string",
+            regex : "[_]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[_]{2}"
+        }, {
+            token : "string",
+            regex : "[_](?=\\S)(?:[^\\r]*?\\S[*_]*)[_]"
+        }, {
             token : "text",
-            regex : ".+"
+            regex : "[^\\*_%$]+"
         } ]
     };
 };
