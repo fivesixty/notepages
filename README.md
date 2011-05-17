@@ -6,7 +6,7 @@ This is the source code behind [notepag.es][0], a page site designed to allow qu
 
 ## Dependencies
 
-The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Express][3] and [Mongoose][4] libraries. Both libraries are available through `npm`. Bundled libraries are [quickdiff][5] (created for notepages), [mdext][7] (a showdown fork) and [grumble][6].
+The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Express][3] and [Mongoose][4] libraries. Both libraries are available through `npm`. Bundled libraries are [quickdiff][5] (created for notepages), and [mdext][7] (a showdown fork).
 
     npm install express mongoose jade sass underscore
     
@@ -21,7 +21,6 @@ The database configuration is trivial and at the top of the `server.js` file. Ru
   [3]: https://github.com/visionmedia/express
   [4]: https://github.com/LearnBoost/mongoose
   [5]: https://github.com/c-spencer/quickdiff
-  [6]: http://plugins.jquery.com/project/grumble
   [7]: https://github.com/fivesixty/mdext
   [8]: https://github.com/ajaxorg/ace
 

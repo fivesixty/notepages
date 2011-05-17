@@ -1,5 +1,32 @@
 $(document).ready(function () {
   
+  // Notification script
+  
+  var notify = $("#notify");
+  notify.timer = undefined;
+  
+  notify.setFade = function () {
+    notify.timer = setTimeout(function () {
+      notify.hide("slide", {direction:"up"});
+      notify.timer = undefined;
+    }, 1500)
+  }
+
+  notify.setMessage = function (text, icon) {
+    $("span.message", notify).text(text);
+    notify.removeClass().addClass(icon);
+    notify.css({right:$("#ace").width()/2 - 185});
+    if (notify.timer) {
+      clearTimeout(notify.timer);
+      notify.setFade();
+    } else {
+      notify.show("slide", {direction:"up"}, function () {
+        notify.setFade();
+      });
+    }
+  }
+  
+  
   var redrawNeeded = false, preproc, renderDelay = 0, timer;
   
   // If draw latency sufficiently small, use a small delay on rendering.
@@ -255,15 +282,15 @@ $(document).ready(function () {
     $.post("/" + pagename + ".json", {text: cont, password: password}, function (ret) {
       if (ret && ret.status === "success") {
         content = cont;
-        Grumble.show({message: "Saved successfully.", title: "Saved", icon: "success"});
+        notify.setMessage("Saved.", "success");
         toolpanel.setPasswordReq(passreq);
         newdocument = false;
         refreshModified();
       } else {
         if (ret && ret.status === "failure") {
-          Grumble.show({message: ret.message, title: "Error", icon: "error"});
+          notify.setMessage(ret.message, "warning");
         } else {
-          Grumble.show({message: "Unknown response from the server.", title: "Error", icon: "error"});
+          notify.setMessage("Unknown response from the server.", "warning");
         }
       }
     }, "json");

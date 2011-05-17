@@ -5,9 +5,9 @@ head
   title Notepag.es - #{page.pagename}
   link(href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic', rel='stylesheet', type='text/css')
   link(href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold', rel='stylesheet', type='text/css')
-  link(href="/lib/jquery-ui-1.8.12.custom/css/ui-darkness/jquery-ui-1.8.12.custom.css", rel="stylesheet")
+  link(href="/lib/jquery-ui-1.8.13.custom/css/ui-darkness/jquery-ui-1.8.13.custom.css", rel="stylesheet")
   script(src="http://code.jquery.com/jquery-1.6.1.min.js")
-  script(src="/lib/jquery-ui-1.8.12.custom/js/jquery-ui-1.8.12.custom.min.js")
+  script(src="/lib/jquery-ui-1.8.13.custom/js/jquery-ui-1.8.13.custom.min.js")
   script(src="/lib/jquery.event.drag-2.0.js")
   script(src="/lib/ace/build/src/ace-uncompressed.js", type="text/javascript", charset="utf-8")
   script(src="/lib/ace/build/src/theme-twilight.js", type="text/javascript", charset="utf-8")
@@ -34,7 +34,6 @@ head
   script(src="/lib/fieldSelection.jquery.js")
   script(src="/lib/jquery.tabSlideOut.v1.3.js")
 
-  script(src="/lib/grumble/grumble.js")
   script(src="/lib/mdext/src/showdown.js")
   script(src="/javascripts/universal.js")
   script(src="/javascripts/browser.js")
@@ -43,11 +42,12 @@ head
   link(rel="stylesheet", href="/stylesheets/browser.css")
   link(rel="stylesheet", href="/stylesheets/universal.css")
   link(rel="stylesheet", href="/stylesheets/ace-twilight.css")
-  link(rel="stylesheet", href="/lib/grumble/smoke.css")
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
 
 body
+  #notify.drop-shadow
+    span.message
   #page.drop-shadow
     #output
       div!= page.content
