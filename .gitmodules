@@ -3,7 +3,7 @@
 	url = git@github.com:fivesixty/mdext.git
 [submodule "public/lib/quickdiff"]
 	path = public/lib/quickdiff
-	url = git@github.com:c-spencer/quickdiff.git
+	url = git@github.com:fivesixty/quickdiff.git
 [submodule "public/lib/ace"]
 	path = public/lib/ace
 	url = git://github.com/ajaxorg/ace.git
