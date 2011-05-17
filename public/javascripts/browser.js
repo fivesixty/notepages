@@ -5,27 +5,74 @@ $(document).ready(function () {
   var notify = $("#notify");
   notify.timer = undefined;
   
-  notify.setFade = function () {
+  notify.setFade = function (delay) {
     notify.timer = setTimeout(function () {
       notify.hide("slide", {direction:"up"});
       notify.timer = undefined;
-    }, 1500)
+    }, delay)
   }
 
   notify.setMessage = function (text, icon) {
-    $("span.message", notify).text(text);
+    notify.empty().append($("<span class=\"message\"></span>").text(text));
     notify.removeClass().addClass(icon);
     notify.css({right:$("#ace").width()/2 - 185});
     if (notify.timer) {
       clearTimeout(notify.timer);
-      notify.setFade();
+      notify.setFade(1500);
     } else {
       notify.show("slide", {direction:"up"}, function () {
-        notify.setFade();
+        notify.setFade(1500);
       });
     }
   }
   
+  notify.confirm = function (text, confirm_cb, cancel_cb) {
+    var confirm = $('<input type="button" value="continue"></input>')
+        .click(function () {
+          notify.hide();
+          if (confirm) {
+            confirm_cb();
+          }
+        }),
+      cancel = $('<input type="button" value="cancel"></input>')
+        .click(function () {
+          notify.setFade(0);
+          if (cancel) {
+            cancel_cb();
+          }
+        }),
+      buttons = $('<span class="buttons"></span>')
+        .append(cancel).append(confirm),
+      content = $("<span class=\"confirm\"></span>")
+        .text(text);
+    
+    notify.empty().append(content, buttons).removeClass().addClass("help");
+    notify.css({right:$("#ace").width()/2 - 185});
+    notify.show("slide", {direction:"up"});
+  }
+  
+  notify.password = function (text, password_cb) {
+    var passbox = $('<input type="password"></input>'),
+      confirm = $('<input type="button" value="continue"></input>')
+        .click(function () {
+          if (confirm) {
+            password_cb(passbox.val());
+            notify.setFade(0);
+          }
+        }),
+      cancel = $('<input type="button" value="cancel"></input>')
+        .click(function () {
+          notify.setFade(0);
+        }),
+      buttons = $('<span class="buttons"></span>')
+        .append(passbox).append(cancel).append(confirm),
+      content = $("<span class=\"confirm\"></span>")
+        .text(text);
+    
+    notify.empty().append(content, buttons).removeClass().addClass("help");
+    notify.css({right:$("#ace").width()/2 - 185});
+    notify.show("slide", {direction:"up"});
+  }
   
   var redrawNeeded = false, preproc, renderDelay = 0, timer;
   
@@ -229,11 +276,7 @@ $(document).ready(function () {
     if (!modified) {
       doCancel()
     } else {
-      confirmDialog("Close", "Are you sure you want to close the editor? Changes made will be lost.", function (answer) {
-        if (answer) {
-          doCancel();
-        }
-      });
+      notify.confirm("Closing editor will lose unsaved changes.", doCancel);
     }
     return false;
   });
@@ -243,25 +286,13 @@ $(document).ready(function () {
     
     if (newdocument) {
       if (!password) {
-        confirmDialog("No Password",
-          "Saving without password will allow this page to be edited by anyone, and cannot be changed later.",
-          function (answer) {
-            if (answer) {
-              doSave();
-            }
-          });
+        notify.confirm("Saving without password.", doSave);
       } else {
-        confirmDialog("Password Entered",
-          "Saving with password. Passwords cannot be removed later, continue?",
-          function (answer) {
-            if (answer) {
-              doSave();
-            }
-          });
+        notify.confirm("Saving with password.", doSave);
       }
     } else {
       if (passreq && !password) {
-        passwordDialog("Password", "Please enter the page password.", function (newpassword) {
+        notify.password("Please enter the page password.", function (newpassword) {
           password = newpassword;
           doSave();
         });
@@ -311,39 +342,6 @@ $(document).ready(function () {
     return false;
   };
   
-  function confirmDialog(title, text, callback) {
-    $('<div title="' + title + '"><p>' + text + '</p></div>')
-      .dialog({
-        resizable: false,
-        modal: true,
-        width: 400,
-        height: "auto",
-        buttons: {
-          "Cancel": function () { $(this).dialog("close"); $(this).remove(); callback(false); },
-          "Continue": function () { $(this).dialog("close"); $(this).remove(); callback(true); }
-        }
-      });
-  }
-  
-  function passwordDialog(title, text, callback) {
-    $('<div title="' + title + '"><p>' + text + '</p><input type="password"></div>')
-      .dialog({
-        resizable: false,
-        modal: true,
-        width: "auto",
-        height: "auto",
-        buttons: {
-          "Cancel": function () { $(this).dialog("close"); $(this).remove(); },
-          "Continue": function () {
-            $(this).dialog("close");
-            var pass = $("input", this).val();
-            $(this).remove();
-            callback(pass);
-          }
-        }
-      });
-  }
-  
   editor.getSession().on('change', refreshModified);
   
   $("#dragger").drag("start", function (ev, dd) {
@@ -361,7 +359,7 @@ $(document).ready(function () {
   });
   
   $("#password").click(function () {
-    passwordDialog("Password", "Please enter a page password.", function (newpassword) {
+    notify.password("Please enter a page password.", function (newpassword) {
       password = newpassword;
     });
     return false;

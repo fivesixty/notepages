@@ -247,3 +247,27 @@ body {
   font-family: sans-serif;
   line-height: 50px;
 }
+#notify span.confirm {
+  position: relative;
+  top: 10px;
+  width: 312px;
+  left: 68px;
+  color: #eee;
+  font-family: sans-serif;
+  line-height: 1.2em;
+}
+#notify span.buttons {
+  position: absolute;
+  bottom: 5px;
+  left: 68px;
+  width: 312px;
+  text-align: center;
+}
+#notify span.buttons input {
+  padding: 5px 10px;
+  margin: 5px;
+  border: 0;
+}
+#notify span.buttons input[type=button] {
+  cursor: pointer;
+}
