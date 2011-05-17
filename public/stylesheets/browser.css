@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   background: #ccc;
-  font-family: 'OFL Sorts Mill Goudy TT', "Georgia", "Times", "Times New Roman", serif, sans-serif;
+  font-family: 'Crimson Text', "Georgia", "Times", "Times New Roman", serif, sans-serif;
   font-size: 1em;
   color: #333;
 }
@@ -27,22 +27,22 @@ body {
 
 
 #page h1, #page h2, #page h3, #page h4, #page h5, #page h6 {
-  font-family: 'Droid Sans', "Helvetica", "Arial", sans-serif, serif;
   font-weight: bold;
   margin-top: 2em;
   margin-bottom: 0.5em;
 }
 #page h1 {
-  font-size: 2em;
+  font-size: 2.5em;
+  text-align: center;
 }
 #page h2 {
-  font-size: 1.7em;
+  font-size: 2.0em;
 }
 #page h3 {
-  font-size: 1.4em;
+  font-size: 1.6em;
 }
 #page h4 {
-  font-size: 1.2em;
+  font-size: 1.4em;
   text-transform: uppercase;
 }
 #page h5 {
