@@ -273,6 +273,19 @@ $(document).ready(function () {
     return false;
   });
     
+  notify.ajaxError(function (event, xhr, settings, thrown) {
+    if (xhr.responseText) {
+      try {
+        var response = $.parseJSON(xhr.responseText);
+        if (response.message) {
+          notify.setMessage(response.message, "warning");
+          return;
+        }
+      } catch (exc) {}
+    }
+    notify.setMessage(thrown, "warning");
+  });
+    
   var doSave = function () {
     if (newdocument && password) {
       passreq = true;
