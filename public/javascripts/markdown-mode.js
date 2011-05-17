@@ -101,6 +101,10 @@ define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module', 'pi
 var oop = require("pilot/oop");
 var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
 
+var trex = function (name) {
+  return { token: name, regex: name };
+}
+
 var MarkdownHighlightRules = function() {
 
     // regexp must not have capturing parentheses
@@ -108,35 +112,72 @@ var MarkdownHighlightRules = function() {
 
     this.$rules = {
         "start" : [ {
-            token : "comment",
-            regex : "\\/\\/.*$"
-        }, {
             token : "empty_line",
             regex : '^$'
-        }, {
-            token : "keyword",
-            regex : "^\#{1,6}.+$"
-        }, {
+        },
+        /*
+           trex("constant"),
+           trex("keyword"),
+           trex("string.regexp"),
+           trex("string"),
+           trex("comment"),
+           trex("invalid.illegal"),
+           trex("invalid.deprecated"),
+           trex("support.function"),
+           trex("support"),
+           trex("variable"),
+           trex("xml_pe"),
+           trex("url"),
+        */
+        { // code span `
+            token : "constant",
+            regex : "`[^\\r]*?[^`]`"
+        }, { // code block
+            token : "constant",
+            regex : "^[ ]{4}.+"
+        }, { // HR *
+            token : "constant",
+            regex : "^[ ]{0,2}(?:[ ]?\\*[ ]?){3,}[ \\t]*$"
+        }, { // HR -
+            token : "constant",
+            regex : "^[ ]{0,2}(?:[ ]?\\-[ ]?){3,}[ \\t]*$"
+        }, { // HR _
+            token : "constant",
+            regex : "^[ ]{0,2}(?:[ ]?\\_[ ]?){3,}[ \\t]*$"
+        }, { // header
+            token : "constant",
+            regex : "^\#{1,6}",
+            next  : "header"
+        }, { // math span
             token : "keyword",
             regex : "[\\%]{2}.+[\\%]{2}"
-        }, {
+        }, { // math div
             token : "keyword",
             regex : "[\\$]{2}.+[\\$]{2}"
-        }, {
+        }, { // strong **
             token : "string",
             regex : "[*]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[*]{2}"
-        }, {
+        }, { // emphasis *
             token : "string",
             regex : "[*](?=\\S)(?:[^\\r]*?\\S[*_]*)[*]"
-        }, {
+        }, { // strong __
             token : "string",
             regex : "[_]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[_]{2}"
-        }, {
+        }, { // emphasis _
             token : "string",
             regex : "[_](?=\\S)(?:[^\\r]*?\\S[*_]*)[_]"
         }, {
             token : "text",
-            regex : "[^\\*_%$]+"
+            regex : "[^\\*_%$`]+"
+        } ],
+        "header" : [ { // end of header
+            token : "keyword",
+            regex : ".+$",
+            next  : "start"
+        }, {
+            token : "text",
+            regex : ".",
+            next  : "start"
         } ]
     };
 };
