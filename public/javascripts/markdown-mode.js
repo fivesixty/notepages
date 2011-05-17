@@ -130,11 +130,30 @@ var MarkdownHighlightRules = function() {
            trex("url"),
         */
         { // code span `
-            token : "constant",
+            token : "support.function",
             regex : "`[^\\r]*?[^`]`"
         }, { // code block
-            token : "constant",
+            token : "support.function",
             regex : "^[ ]{4}.+"
+        }, { // header
+            token : "constant",
+            regex : "^\#{1,6}",
+            next  : "header"
+        }, { // reference
+            token : "text",
+            regex : "^[ ]{0,3}\\[(?=[^\\]]+\\]:\\s*[^ ]+\\s*(?:[\"][^\"]+[\"])?\\s*$)",
+            next  : "reference"
+        }, { // link by reference
+            token : "text",
+            regex : "\\[(?=(?:[[^\\]]*\\]|[^\\[\\]])*\\][ ]?(?:\\n[ ]*)?\\[(?:.*?)\\])",
+            next  : "linkref"
+        }, { // link by url
+            token : "text",
+            regex : "\\[(?=(?:\\[[^\\]]*\\]|[^\\[\\]])*\\]"+
+                    "\\([ \\t]*<?(?:(?:[^\\(]*?\\([^\\)]*?\\)\\S*?)|(?:.*?))>?[ \t]*"+
+                    "(?:\"(.*?)\"[ \\t]*)?"+
+                    "\\))",
+            next  : "linkurl"
         }, { // HR *
             token : "constant",
             regex : "^[ ]{0,2}(?:[ ]?\\*[ ]?){3,}[ \\t]*$"
@@ -144,10 +163,6 @@ var MarkdownHighlightRules = function() {
         }, { // HR _
             token : "constant",
             regex : "^[ ]{0,2}(?:[ ]?\\_[ ]?){3,}[ \\t]*$"
-        }, { // header
-            token : "constant",
-            regex : "^\#{1,6}",
-            next  : "header"
         }, { // math span
             token : "keyword",
             regex : "[\\%]{2}.+[\\%]{2}"
@@ -168,8 +183,56 @@ var MarkdownHighlightRules = function() {
             regex : "[_](?=\\S)(?:[^\\r]*?\\S[*_]*)[_]"
         }, {
             token : "text",
-            regex : "[^\\*_%$`]+"
+            regex : "[^\\*_%$`\\[#]+"
         } ],
+        
+        "linkurl" : [ {
+            token : "string",
+            regex : "(?:\\[[^\\]]*\\]|[^\\[\\]])+"
+        }, {
+            token : "text",
+            regex : "\\]\\([ \\t]*<?",
+            next  : "linkurl-mid"
+        } ],
+        "linkurl-mid" : [ {
+            token : "url",
+            regex : "[^\\s\\)]+"
+        }, {
+            token : "string",
+            regex : "\\s*[\"][^\"]+[\"]",
+            next  : "linkurl-end"
+        }, {
+            token : "text",
+            regex : "\\s*\\)",
+            next  : "start"
+        }, {
+            token : "text",
+            regex : ".",
+            next  : "start"
+        } ],
+        "linkurl-end" : [ {
+            token : "text",
+            regex : "\\s*\\)",
+            next  : "start"
+        } ],
+        
+        "linkref" : [ {
+            token : "string",
+            regex : "[^\\]]+",
+            next  : "linkref-mid"
+        }],
+        "linkref-mid": [ {
+            token : "text",
+            regex : "\\][ ]?(?:\\n[ ]*)?\\["
+        }, {
+            token : "constant",
+            regex : "[^\\]]+"
+        }, {
+            token : "text",
+            regex : "\\]",
+            next : "start"
+        }],
+        
         "header" : [ { // end of header
             token : "keyword",
             regex : ".+$",
@@ -178,7 +241,37 @@ var MarkdownHighlightRules = function() {
             token : "text",
             regex : ".",
             next  : "start"
-        } ]
+        } ],
+        
+        "reference" : [ {
+            token : "constant",
+            regex : "[^\\]]+",
+            next  : "reflink"
+        }, {
+            token : "text",
+            regex : ".",
+            next  : "start"
+        } ],
+        
+        "reflink" : [ {
+            token : "text",
+            regex : "\\]:\\s*"
+        }, {
+            token : "url",
+            regex : "[^ ]+$",
+            next  : "start"
+        }, {
+            token : "url",
+            regex : "[^ ]+"
+        }, {
+            token : "string",
+            regex : "\\s*[\"][^\"]+[\"]\\s*$",
+            next  : "start"
+        }, {
+            token : "text",
+            regex : "\\s*$",
+            next  : "start"
+        }]
     };
 };
 oop.inherits(MarkdownHighlightRules, TextHighlightRules);
