@@ -1,7 +1,9 @@
-### 0.4.2 (x/5/2011)
+### 0.4.2 (17/5/2011)
 
 *  Switched from Grasshopper to Express framework
 *  Now have a front landing page with single click for random page.
+*  New UI based on a fixed side-panel.
+*  Integrated ajax.org Ace editor and implemented a Markdown editor Mode.
 
 ### 0.4 (27/3/2011)
 
