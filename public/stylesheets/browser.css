@@ -138,8 +138,7 @@ a img {
   bottom: 0;
   right: 0;
   background: #666;
-  margin: 0 auto;
-  display: none;
+  margin: 0 -500px 0 0;
 }
 
 #ace {

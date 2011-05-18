@@ -2,8 +2,7 @@ var express = require('express')
   , markdown = new (require('./public/lib/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose')
   , _ = require('underscore')
-  , app = module.exports = express.createServer()
-  , sha256 = require('./public/lib/sha256.js').sha256;
+  , app = module.exports = express.createServer();
 
 // By default Jade will kill itself inside a MathJax configuration script
 // So we need this filter
@@ -48,7 +47,6 @@ mongoose.connect('mongodb://localhost/techpages');
 var PageSchema = new mongoose.Schema({
   iden : { type: String, index: { unique: true } },
   text : String,
-  pass : String,
   hash : String
 });
 mongoose.model('Page', PageSchema);
@@ -87,21 +85,6 @@ function prePage(req, res, next) {
 
 app.get('/', function(req, res) {  
   res.render("front", {randid: rstring(6)});
-});
-
-/* migrate to hashed passwords */
-
-PageModel.find({}, function (err, docs) {
-  docs.forEach(function (doc) {
-    if (doc.hash === undefined) {
-      if (doc.pass) {
-        doc.hash = sha256(doc.pass);
-      } else {
-        doc.hash = false;
-      }
-      doc.save();
-    }
-  });
 });
 
 app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {
@@ -175,6 +158,6 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
 // Start the server
 
 if (!module.parent) {
-  app.listen(8888);
+  app.listen(8080);
   console.log("Express server listening on port %d", app.address().port);
 }

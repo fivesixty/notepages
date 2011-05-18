@@ -189,15 +189,12 @@ $(document).ready(function () {
     if (editpanel.slid === show) return;
     
     if (show) {
-      editpanel.show()
+      editpanel
         .css({width: panels.edit, marginRight: -panels.edit})
         .animate({marginRight:0});
       editor.resize();
     } else {
-      editpanel
-        .animate({marginRight:-panels.edit}, function () {
-          editpanel.hide();
-        });
+      editpanel.animate({marginRight:-panels.edit});
     }
     editpanel.slid = show;
   };
