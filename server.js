@@ -159,6 +159,6 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
 // Start the server
 
 if (!module.parent) {
-  app.listen(8080);
+  app.listen(8888);
   console.log("Express server listening on port %d", app.address().port);
 }

@@ -13,7 +13,7 @@ The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Expr
 
     npm install express mongoose jade sass underscore
     
-The client editor uses the [Ace][8] editor by Mozilla/Ajax.org with a custom MarkdownMode. Icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/).
+The client editor uses the [Ace][8] editor by Mozilla/Ajax.org with a custom MarkdownMode. Some icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/). Editor icons are from the Fugue set, Copyright © [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/).
 
 The database configuration is trivial and at the top of the `server.js` file. Running `node server.js` will start the server listening on port 8080 or 8888 depending on what I pushed last.
 

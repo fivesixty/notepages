@@ -144,9 +144,28 @@ a img {
   margin: 0 -500px 0 0;
 }
 
-#ace {
+#acetools {
   position: absolute;
   top: 5px;
+  height: 24px;
+  left: 10px;
+  right: 10px;
+  background: #666;
+}
+#acetools img {
+  border: 1px solid #333;
+  padding: 2px;
+  margin: 1px;
+  background: #888;
+  cursor: pointer;
+}
+#acetools img:hover {
+  background: #999;
+}
+
+#ace {
+  position: absolute;
+  top: 32px;
   left: 10px;
   bottom: 10px;
   right: 10px;
