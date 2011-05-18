@@ -15,6 +15,10 @@ body {
             box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
+a img {
+  border: none;
+}
+
 #output {
   padding: 40px;
 }

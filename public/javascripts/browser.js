@@ -13,9 +13,9 @@ $(document).ready(function () {
     }, delay)
   }
   
-  notify.display = function (class, contents, on_display) {
+  notify.display = function (cssclass, contents, on_display) {
     notify.conceal().empty().removeClass()
-      .addClass(class).css({right:$("#toolpanel").width()/2 - 200});
+      .addClass(cssclass).css({right:$("#toolpanel").width()/2 - 200});
     $.each(contents, function (i, el) {
       notify.append(el);
     });
@@ -140,7 +140,7 @@ $(document).ready(function () {
             setRenderDelay((new Date()).getTime() - startTime);
           });
           size_images(el);
-        } else if (el instanceof HTMLImageElement) {
+        } else if (el.tagName && el.tagName.toLowerCase() === 'img') {
           size_image(el);
         } else {
           setRenderDelay((new Date()).getTime() - startTime);

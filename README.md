@@ -2,7 +2,10 @@
 
 This is the source code behind [notepag.es][0], a page site designed to allow quick, technical documents to be written online, without access to a LaTeX distribution or editor such as LyX. The main formatting of the documents is done in Markdown, and maths can be embedded using LaTeX format.
 
+This repository contains the development version, which is available at [dev.notepag.es][dev] and runs on the same database. The development version is deployed to live when it has been shown sufficiently stable.
+
   [0]: http://notepag.es/introduction
+  [dev]: http://dev.notepag.es/introduction
 
 ## Dependencies
 
@@ -12,9 +15,7 @@ The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Expr
     
 The client editor uses the [Ace][8] editor by Mozilla/Ajax.org with a custom MarkdownMode. Icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/).
 
-The server is expected to be run behind a webserver proxy (such as nginx), and for requests into the assets directory are served by the front end.
-
-The database configuration is trivial and at the top of the `server.js` file. Running `node server.js` will start the server listening on port 8080.
+The database configuration is trivial and at the top of the `server.js` file. Running `node server.js` will start the server listening on port 8080 or 8888 depending on what I pushed last.
 
   [1]: http://nodejs.org
   [2]: http://www.mongodb.org/
@@ -24,25 +25,13 @@ The database configuration is trivial and at the top of the `server.js` file. Ru
   [7]: https://github.com/fivesixty/mdext
   [8]: https://github.com/ajaxorg/ace
 
-### Sample nginx configuration
-
-    server {
-      server_name notepag.es;
-      location /assets {
-        root /home/www/notepages/;
-      }
-      location / {
-        proxy_pass http://127.0.0.1:8080/;
-      }
-    }
-
 ### CDN Content
 
 Notepages serves the MathJax, Google Font API, and jQuery through their respective CDNs.
 
 ## Browser Support
 
-Reading and editing has been tested across all major browsers (IE7/8, Safari, Chrome, Firefox).
+Reading and editing has been tested across all major browsers (IE8/9, Safari, Chrome, Firefox). IE6 is not supported and IE7 support is marginal.
 
 ## Mobile support
 
