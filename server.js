@@ -2,7 +2,8 @@ var express = require('express')
   , markdown = new (require('./public/lib/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose')
   , _ = require('underscore')
-  , app = module.exports = express.createServer();
+  , app = module.exports = express.createServer()
+  , sha256 = require('./public/lib/sha256.js').sha256;
 
 // By default Jade will kill itself inside a MathJax configuration script
 // So we need this filter
@@ -47,7 +48,8 @@ mongoose.connect('mongodb://localhost/techpages');
 var PageSchema = new mongoose.Schema({
   iden : { type: String, index: { unique: true } },
   text : String,
-  pass : String
+  pass : String,
+  hash : String
 });
 mongoose.model('Page', PageSchema);
 
@@ -87,25 +89,44 @@ app.get('/', function(req, res) {
   res.render("front", {randid: rstring(6)});
 });
 
+/* migrate to hashed passwords */
+
+PageModel.find({}, function (err, docs) {
+  docs.forEach(function (doc) {
+    if (doc.hash === undefined) {
+      if (doc.pass) {
+        doc.hash = sha256(doc.pass);
+      } else {
+        doc.hash = false;
+      }
+      doc.save();
+    }
+  });
+});
+
 app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), function(req, res, next) {
   PageModel.findOne({iden: req.params.id}, function (err, post) {
     if (err) {
-      res.send({status:"failure",message:"Internal error."}, 500);
+      res.send({status:"failure", message:"Internal error."}, 500);
       return;
-    } else if (post) {
-      if ((req.body.password || post.pass) && (post.pass != req.body.password)) {
+    } else if (post) {  
+      if ((req.body.password || (post.hash !== "false")) && (post.hash !== req.body.password)) {
         res.send({status:"failure",message:"Invalid password."}, 403);
-        return;
+      } else {
+        post.text = req.body.text;
+        post.save(function(err) {
+          if (!err) res.send({status:"success",message:"Page updated."}, 200);
+        });
       }
-      post.text = req.body.text;
-      post.save(function(err) {
-        if (!err) res.send({status:"success",message:"Page updated."}, 200);
-      });
     } else {
       post = new PageModel();
       post.iden = req.params.id;
       post.text = req.body.text;
-      post.pass = req.body.password;
+      if (req.body.password) {
+        post.hash = req.body.password;
+      } else {
+        post.hash = false;
+      }
       post.save(function (err) {
         if (!err) res.send({status:"success",message:"Page created."}, 200);
       });
@@ -124,7 +145,7 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
       return;
     }
     
-    if (post && post.pass) {
+    if (post && post.hash !== "false") {
       page.passreq = "true";
     } else {
       page.passreq = "false";

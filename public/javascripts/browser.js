@@ -176,7 +176,7 @@ $(document).ready(function () {
     toolpanel = $("#toolpanel"),
     page = $("#page"),
     content = "",
-    password = "",
+    password = false,
     newdocument = editing,
     loaded = editing;
   
@@ -332,7 +332,11 @@ $(document).ready(function () {
     } else {
       if (passreq && !password) {
         notify.password("Please enter the page password.", function (newpassword) {
-          password = newpassword;
+          if (newpassword !== "") {
+            password = hex_sha256(newpassword);
+          } else {
+            password = false;
+          }
           doSave();
         });
       } else {
@@ -366,7 +370,11 @@ $(document).ready(function () {
     }
     
     var cont = editor.getSession().getValue();
-    $.post("/" + pagename + ".json", {text: cont, password: password}, function (ret) {
+    var payload = {text: cont};
+    if (password !== false) {
+      payload.password = password;
+    }
+    $.post("/" + pagename + ".json", payload, function (ret) {
       if (ret && ret.status === "success") {
         content = cont;
         notify.setMessage("Saved.", "success");
@@ -403,7 +411,11 @@ $(document).ready(function () {
   
   $("#password").click(function () {
     notify.password("Please enter a page password.", function (newpassword) {
-      password = newpassword;
+      if (password !== "") {
+        password = hex_sha256(newpassword);
+      } else {
+        password = false;
+      }
     });
     return false;
   });
