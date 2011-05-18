@@ -1,5 +1,5 @@
-#options, #footer, #rightcol, .slide-out-div {
-  display: none;
+#notify, #toolpanel, #editpanel, #footer {
+  display: none !important;
 }
 
 body {
@@ -20,4 +20,23 @@ body {
 #output {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.print {
+  display: inline !important;
+}
+
+span.linkref.print {
+  vertical-align: super;
+  font-size: 0.5em;
+}
+
+ul.reflist.print {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style-type: none !important;
+}
+ul.reflist.print li {
+  margin: 0 !important;
+  padding: 0 !important;
 }

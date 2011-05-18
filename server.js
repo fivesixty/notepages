@@ -37,7 +37,8 @@ _.extend(markdown.config, {
   stripHTML: true,
   tables: true,
   math: true,
-  figures: true
+  figures: true,
+  refprint: true
 });
 
 // Mongoose connection and Model

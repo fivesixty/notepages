@@ -15,6 +15,10 @@ body {
             box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
+.print {
+  display: none;
+}
+
 a img {
   border: none;
 }
@@ -28,7 +32,6 @@ a img {
 #output *:last-child {
   margin-bottom: 0;
 }
-
 
 #page h1, #page h2, #page h3, #page h4, #page h5, #page h6 {
   font-weight: bold;
