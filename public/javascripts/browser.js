@@ -15,7 +15,7 @@ $(document).ready(function () {
   
   notify.display = function (class, contents, on_display) {
     notify.conceal().empty().removeClass()
-      .addClass(class).css({right:$("#ace").width()/2 - 185});
+      .addClass(class).css({right:$("#toolpanel").width()/2 - 200});
     $.each(contents, function (i, el) {
       notify.append(el);
     });
@@ -180,7 +180,12 @@ $(document).ready(function () {
     newdocument = editing,
     loaded = editing;
   
-  editpanel.slide = function (show) {
+  editpanel.slide = function (show, preview) {
+    if (!preview) {
+      notify.conceal();
+      notify.hide();
+    }
+  
     if (editpanel.slid === show) return;
     
     if (show) {
@@ -189,10 +194,6 @@ $(document).ready(function () {
         .animate({marginRight:0});
       editor.resize();
     } else {
-      if (notify.cancel) {
-        notify.cancel()
-      }
-      notify.hide()
       editpanel
         .animate({marginRight:-panels.edit}, function () {
           editpanel.hide();
@@ -404,7 +405,7 @@ $(document).ready(function () {
   
   $("#preview").click(function () {
     page.slide(previewing);
-    editpanel.slide(previewing);
+    editpanel.slide(previewing, true);
     previewing = !previewing;
     return false;
   });

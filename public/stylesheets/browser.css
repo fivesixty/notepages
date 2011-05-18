@@ -76,6 +76,7 @@ body {
   display: block;
   line-height: 1.1em;
   padding: 0.5em;
+  overflow: auto;
 }
 #page pre {
   margin-bottom: 20px;
