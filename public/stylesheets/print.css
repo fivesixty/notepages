@@ -26,6 +26,11 @@ body {
   display: inline !important;
 }
 
+a {
+  text-decoration: none !important;
+  color: #000 !important;
+}
+
 span.linkref.print {
   vertical-align: super;
   font-size: 0.5em;
