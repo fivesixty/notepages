@@ -4,6 +4,7 @@ $(document).ready(function () {
   
   var notify = $("#notify");
   notify.timer = undefined;
+  notify.cancel = undefined;
   
   notify.setFade = function (delay) {
     notify.timer = setTimeout(function () {
@@ -11,50 +12,83 @@ $(document).ready(function () {
       notify.timer = undefined;
     }, delay)
   }
-
-  notify.setMessage = function (text, icon) {
-    notify.empty().append($("<span class=\"message\"></span>").text(text));
-    notify.removeClass().addClass(icon);
-    notify.css({right:$("#ace").width()/2 - 185});
-    if (notify.timer) {
-      clearTimeout(notify.timer);
-      notify.setFade(1500);
+  
+  notify.display = function (class, contents, on_display) {
+    notify.conceal().empty().removeClass()
+      .addClass(class).css({right:$("#ace").width()/2 - 185});
+    $.each(contents, function (i, el) {
+      notify.append(el);
+    });
+    
+    if (notify.is(":visible")) {
+      notify.stop(true, true).show();
+      if (notify.timer) {
+        clearTimeout(notify.timer);
+      }
+      if (on_display) {
+        on_display();
+      }
     } else {
       notify.show("slide", {direction:"up"}, function () {
-        notify.setFade(1500);
+        if (on_display) {
+          on_display();
+        }
       });
     }
   }
   
+  notify.conceal = function () {
+    if (notify.cancel) {
+      notify.cancel();
+      notify.cancel = undefined;
+    }
+    return this;
+  }
+
+  notify.setMessage = function (text, icon) {
+    notify.display(icon, $("<span class=\"message\"></span>").text(text), function () {
+      notify.setFade(1500);
+    });
+  }
+  
   notify.confirm = function (text, confirm_cb, cancel_cb) {
-    var confirm = $('<input type="button" value="continue"></input>')
-        .click(function () {
+    var confirm = $('<input type="submit" value="continue"></input>')
+        .click(function (e) {
+          e.preventDefault();
           notify.hide();
-          if (confirm) {
+          if (confirm_cb) {
             confirm_cb();
           }
         }),
       cancel = $('<input type="button" value="cancel"></input>')
         .click(function () {
           notify.setFade(0);
-          if (cancel) {
+          if (cancel_cb) {
             cancel_cb();
           }
         }),
-      buttons = $('<span class="buttons"></span>')
-        .append(cancel).append(confirm),
+      form = $('<form>').append(cancel).append(confirm),
+      buttons = $('<span class="buttons"></span>').append(form),
       content = $("<span class=\"confirm\"></span>")
         .text(text);
     
-    notify.empty().append(content, buttons).removeClass().addClass("help");
-    notify.css({right:$("#ace").width()/2 - 185});
-    notify.show("slide", {direction:"up"});
+    notify.display("help", [content, buttons], function () {
+      confirm.focus();
+    });
+    confirm.focus();
+    
+    notify.cancel = function () {
+      if (cancel_cb) {
+        cancel_cb();
+      }
+    }
   }
   
   notify.password = function (text, password_cb) {
     var passbox = $('<input type="password"></input>'),
-      confirm = $('<input type="button" value="continue"></input>')
-        .click(function () {
+      confirm = $('<input type="submit" value="continue"></input>')
+        .click(function (e) {
+          e.preventDefault();
           if (confirm) {
             password_cb(passbox.val());
             notify.setFade(0);
@@ -64,14 +98,15 @@ $(document).ready(function () {
         .click(function () {
           notify.setFade(0);
         }),
-      buttons = $('<span class="buttons"></span>')
-        .append(passbox).append(cancel).append(confirm),
+      form = $('<form>').append(passbox).append(cancel).append(confirm),
+      buttons = $('<span class="buttons"></span>').append(form),
       content = $("<span class=\"confirm\"></span>")
         .text(text);
     
-    notify.empty().append(content, buttons).removeClass().addClass("help");
-    notify.css({right:$("#ace").width()/2 - 185});
-    notify.show("slide", {direction:"up"});
+    notify.display("help", [content, buttons], function () {
+      passbox.focus();
+    });
+    passbox.focus();
   }
   
   var redrawNeeded = false, preproc, renderDelay = 0, timer;
@@ -154,6 +189,10 @@ $(document).ready(function () {
         .animate({marginRight:0});
       editor.resize();
     } else {
+      if (notify.cancel) {
+        notify.cancel()
+      }
+      notify.hide()
       editpanel
         .animate({marginRight:-panels.edit}, function () {
           editpanel.hide();
@@ -314,7 +353,11 @@ $(document).ready(function () {
         }
       } catch (exc) {}
     }
-    notify.setMessage(thrown, "warning");
+    if (thrown) {
+      notify.setMessage(thrown, "warning");
+    } else {
+      notify.setMessage("Communication error.", "warning");
+    }
   });
     
   var doSave = function () {

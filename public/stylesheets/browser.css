@@ -226,6 +226,7 @@ body {
   z-index: 2000;
   background: #444 url(../images/warning1_48.png) no-repeat 11px;
   display: none;
+  font-family: sans-serif;
 }
 #notify.warning {
   background: #444 url(../images/warning1_48.png) no-repeat 11px;
@@ -239,29 +240,30 @@ body {
 #notify.info {
   background: #444 url(../images/info_48.png) no-repeat 11px;
 }
-#notify span.message {
-  position: relative;
-  top: 10px;
+#notify span {
+  position: absolute;
   left: 68px;
+  width: 312px;
+  text-align: center;
+}
+#notify form {
+  margin: 0;
+  padding: 0;
+}
+#notify span.message {
+  top: 10px;
   color: #eee;
-  font-family: sans-serif;
   line-height: 50px;
 }
 #notify span.confirm {
-  position: relative;
+  position: absolute;
   top: 10px;
-  width: 312px;
-  left: 68px;
   color: #eee;
-  font-family: sans-serif;
-  line-height: 1.2em;
+  line-height: 20px;
 }
 #notify span.buttons {
   position: absolute;
   bottom: 5px;
-  left: 68px;
-  width: 312px;
-  text-align: center;
 }
 #notify span.buttons input {
   padding: 5px 10px;
