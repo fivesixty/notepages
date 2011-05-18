@@ -105,6 +105,13 @@ var trex = function (name) {
   return { token: name, regex: name };
 }
 
+var debugToken = function (show, token) {
+  return function (input) {
+    console.log(input, show);
+    return token;
+  }
+}
+
 var MarkdownHighlightRules = function() {
 
     // regexp must not have capturing parentheses
@@ -151,7 +158,7 @@ var MarkdownHighlightRules = function() {
             token : "text",
             regex : "\\[(?=(?:\\[[^\\]]*\\]|[^\\[\\]])*\\]"+
                     "\\([ \\t]*<?(?:(?:[^\\(]*?\\([^\\)]*?\\)\\S*?)|(?:.*?))>?[ \t]*"+
-                    "(?:\"(.*?)\"[ \\t]*)?"+
+                    "(?:\"(?:.*?)\"[ \\t]*)?"+
                     "\\))",
             next  : "linkurl"
         }, { // HR *
@@ -163,12 +170,16 @@ var MarkdownHighlightRules = function() {
         }, { // HR _
             token : "constant",
             regex : "^[ ]{0,2}(?:[ ]?\\_[ ]?){3,}[ \\t]*$"
+        }, { // list
+            token : "support.function",
+            regex : "^(?:[*+-]\\s.+)",
+            next  : "listblock"
         }, { // math span
             token : "keyword",
-            regex : "[\\%]{2}.+[\\%]{2}"
+            regex : "%%.+?%%"
         }, { // math div
             token : "keyword",
-            regex : "[\\$]{2}.+[\\$]{2}"
+            regex : "[$]{2}.+?[$]{2}"
         }, { // strong **
             token : "string",
             regex : "[*]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[*]{2}"
@@ -184,6 +195,15 @@ var MarkdownHighlightRules = function() {
         }, {
             token : "text",
             regex : "[^\\*_%$`\\[#]+"
+        } ],
+        
+        "listblock" : [ {
+            token : "empty_line",
+            regex : "^$",
+            next  : "start",
+        }, {
+            token : "support.function",
+            regex : ".+"
         } ],
         
         "linkurl" : [ {

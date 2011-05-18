@@ -174,13 +174,29 @@ $(document).ready(function () {
   
   Range = require("ace/range").Range;
   var docroot = "";
-  // docroot = "../public"
+  docroot = "../public"
+  
+  function replaceAndSelect(editor, session, selection, newtext) {
+    session.replace(selection, newtext);
+    editor.selection.setSelectionRange(
+      new Range(selection.start.row, selection.start.column,
+                selection.start.row, selection.start.column + newtext.length));
+  }
+  
+  function replaceAndSelectLine(editor, session, selection, newline) {
+    session.replace(
+      new Range(selection.start.row, 0,
+                selection.start.row, session.getLine(selection.start.row).length),
+      newline);
+    editor.selection.setSelectionRange(new Range(selection.start.row, 0, selection.start.row, newline.length));
+  }
+  
   $("#acetools").append(
     $('<img src="' + docroot + '/images/fugue/edit-heading.png">')
       .click(function () {
         var session = editor.getSession(),
-          linenum = editor.getCursorPosition().row,
-          line = session.getLine(linenum),
+          selection = editor.getSelectionRange(),
+          line = session.getLine(selection.start.row),
           match = /^(#*)\s*(.*)$/.exec(line),
           newline;
         
@@ -192,15 +208,12 @@ $(document).ready(function () {
           newline = match[2];
         }
         
-        replaceRange = new Range(linenum, 0, linenum, line.length);
-        session.replace(replaceRange, newline);
-        editor.selection.setSelectionRange(new Range(linenum, 0, linenum, newline.length));
+        replaceAndSelectLine(editor, session, selection, newline);
         editor.focus();
       }),
     $('<img src="' + docroot + '/images/fugue/edit-bold.png">')
       .click(function () {
         var session = editor.getSession(),
-          cursor = editor.getCursorPosition(),
           selection = editor.getSelectionRange(),
           selected = session.doc.getTextRange(selection),
           newtext, match;
@@ -213,13 +226,9 @@ $(document).ready(function () {
         if (selected) {
           match = /^[*]{2}(.+?)[*]{2}$/.exec(selected);
           if (match) {
-            newtext = match[1];
-            session.replace(selection, newtext);
-            editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column, selection.end.row, selection.end.column-4));
+            replaceAndSelect(editor, session, selection, match[1]);
           } else {
-            newtext = "**" + selected + "**";
-            session.replace(selection, newtext);
-            editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column, selection.end.row, selection.end.column+4));
+            replaceAndSelect(editor, session, selection, "**" + selected + "**");
           }
         } else {
           editor.insert("****");
@@ -230,7 +239,6 @@ $(document).ready(function () {
     $('<img src="' + docroot + '/images/fugue/edit-italic.png">')
       .click(function () {
         var session = editor.getSession(),
-          cursor = editor.getCursorPosition(),
           selection = editor.getSelectionRange(),
           selected = session.doc.getTextRange(selection),
           newtext, match;
@@ -242,14 +250,11 @@ $(document).ready(function () {
         
         if (selected) {
           match = /^[*](.+?)[*]$/.exec(selected);
-          if (match && !/^[*]{2}([^*].+?[^*])[*]{2}$/.test(selected)) {
-            newtext = match[1];
-            session.replace(selection, newtext);
-            editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column, selection.end.row, selection.end.column-2));
+          if (match && (!/^[*]{2}([^*].*?)[*]{2}$/.test(selected) ||
+                        !/^[*]{2}(.*?[^*])[*]{2}$/.test(selected))) {
+            replaceAndSelect(editor, session, selection, match[1]);
           } else {
-            newtext = "*" + selected + "*";
-            session.replace(selection, newtext);
-            editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column, selection.end.row, selection.end.column+2));
+            replaceAndSelect(editor, session, selection, "*" + selected + "*");
           }
         } else {
           editor.insert("**");
@@ -274,29 +279,95 @@ $(document).ready(function () {
           session.replace(selection, newtext);
           editor.selection.setSelectionRange(new Range(selection.start.row, selection.end.column+3, selection.start.row, selection.end.column+3));
         } else {
-          newtext = "[]()";
-          session.replace(selection, newtext);
-          editor.selection.setSelectionRange(new Range(selection.start.row, selection.end.column+1, selection.start.row, selection.end.column+1));
+          editor.insert("[]()");
+          editor.moveCursorTo(selection.start.row, selection.start.column+1);
         }
         editor.focus();
       }),
     //$('<img src="' + docroot + '/images/fugue/edit-list.png">'),
     //$('<img src="' + docroot + '/images/fugue/edit-list-order.png">'),
-    //$('<img src="' + docroot + '/images/fugue/edit-image.png">'),
-    //$('<img src="' + docroot + '/images/fugue/edit-image-center.png">'),
-    //$('<img src="' + docroot + '/images/fugue/edit-image-right.png">'),
+    $('<img src="' + docroot + '/images/fugue/edit-image.png">')
+      .click(function () {
+        var session = editor.getSession(),
+          cursor = editor.getCursorPosition(),
+          selection = editor.getSelectionRange(),
+          selected = session.doc.getTextRange(selection);
+          
+        if (selection.start.row !== selection.end.row) {  
+          editor.focus();
+          return;
+        }
+          
+        if (selected) {
+          newtext = "!<[alt](" + selected + " \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(
+            new Range(selection.start.row, selection.start.column+10 + selected.length,
+                      selection.start.row, selection.start.column+15 + selected.length));
+        } else {
+          newtext = "!<[alt](url \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column+8, selection.start.row, selection.start.column+11));
+        }
+        editor.focus();
+      }),
+    $('<img src="' + docroot + '/images/fugue/edit-image-center.png">')
+      .click(function () {
+        var session = editor.getSession(),
+          cursor = editor.getCursorPosition(),
+          selection = editor.getSelectionRange(),
+          selected = session.doc.getTextRange(selection);
+
+        if (selection.start.row !== selection.end.row) {  
+          editor.focus();
+          return;
+        }
+
+        if (selected) {
+          newtext = "![alt](" + selected + " \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(
+            new Range(selection.start.row, selection.start.column+9 + selected.length,
+                      selection.start.row, selection.start.column+14 + selected.length));
+        } else {
+          newtext = "![alt](url \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column+7, selection.start.row, selection.start.column+10));
+        }
+        editor.focus();
+      }),
+    $('<img src="' + docroot + '/images/fugue/edit-image-right.png">')
+      .click(function () {
+        var session = editor.getSession(),
+          cursor = editor.getCursorPosition(),
+          selection = editor.getSelectionRange(),
+          selected = session.doc.getTextRange(selection);
+
+        if (selection.start.row !== selection.end.row) {  
+          editor.focus();
+          return;
+        }
+
+        if (selected) {
+          newtext = "!>[alt](" + selected + " \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(
+            new Range(selection.start.row, selection.start.column+10 + selected.length,
+                      selection.start.row, selection.start.column+15 + selected.length));
+        } else {
+          newtext = "!>[alt](url \"title\")";
+          session.replace(selection, newtext);
+          editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column+8, selection.start.row, selection.start.column+11));
+        }
+        editor.focus();
+      }),
     $('<img src="' + docroot + '/images/fugue/edit-rule.png">')
       .click(function () {
         var session = editor.getSession(),
           selection = editor.getSelectionRange();
-          
-        if (session.getLine(selection.start.row) !== "") {
-          editor.insert("\n\n---\n");
-          editor.selection.setSelectionRange(new Range(selection.start.row+2, 0, selection.start.row+2, 3));
-        } else {
-          editor.insert("\n---\n");
-          editor.selection.setSelectionRange(new Range(selection.start.row+1, 0, selection.start.row+1, 3));
-        }  
+        
+        editor.insert("\n---\n");
+        editor.selection.setSelectionRange(new Range(selection.start.row+1, 0, selection.start.row+1, 3));
         editor.focus();
       }),
     $('<img src="' + docroot + '/images/fugue/edit-quotation.png">')
@@ -318,14 +389,75 @@ $(document).ready(function () {
           } else {
             newline = "> " + match[2];
           }
-      
-          replaceRange = new Range(selection.start.row, 0, selection.start.row, line.length);
-          session.replace(replaceRange, newline);
-          editor.selection.setSelectionRange(new Range(selection.start.row, 0, selection.start.row, newline.length));
+          
+          replaceAndSelectLine(editor, session, selection, newline);
         }  
         editor.focus();
       }),
-    //$('<img src="' + docroot + '/images/fugue/edit-code.png">'),
+    $('<img src="' + docroot + '/images/fugue/edit-code.png">')
+      .click(function () {
+        var session = editor.getSession(),
+          selection = editor.getSelectionRange(),
+          selected, match, newtext, longest, line, replaceRange;
+          
+        if (selection.start.row !== selection.end.row) {
+          selected = session.getLines(selection.start.row, selection.end.row);
+          var min_indent = 40000;
+          $.each(selected, function (i, row) {
+            match = /^[ ]*/.exec(row);
+            console.log(match);
+            if (match[0].length < min_indent) {
+              min_indent = match[0].length;
+            }
+          });
+          
+          $.each(selected, function (i, row) {
+            if (min_indent > 3) {
+              replaceRange = new Range(selection.start.row + i, 0, selection.start.row + i, min_indent);
+              session.replace(replaceRange, "");
+            } else {
+              replaceRange = new Range(selection.start.row + i, 0, selection.start.row + i, 0);
+              console.log(replaceRange);
+              session.replace(replaceRange, new Array(5 - min_indent).join(" "));
+            }
+          });
+          
+          editor.selection.setSelectionRange(new Range(selection.start.row, 0, selection.end.row, session.getLine(selection.end.row).length));
+          
+        } else {
+          selected = session.doc.getTextRange(selection);
+          line = session.getLine(selection.start.row);
+          if (selected === "") {
+            if (/^\s*$/.test(line)) {
+              newtext = "    "
+              replaceRange = new Range(selection.start.row, 0, selection.start.row, line.length);
+              session.replace(replaceRange, newtext);
+              editor.selection.setSelectionRange(new Range(selection.start.row, 4, selection.start.row, 4));
+            } else {
+              editor.insert("``");
+              editor.moveCursorTo(selection.start.row, selection.start.column+1);
+            }
+          } else {
+            match = /^(`+)(.+?)\1$/.exec(selected);
+            if (match) {
+              newtext = match[2];
+            } else {
+              match = selected.match(/`+/g);
+              longest = "";
+              if (match) {
+                $.each(match, function (i, match) {
+                  if (match.length > longest.length) {
+                    longest = match;
+                  }
+                });
+              }
+              newtext = "`" + longest + selected + longest + "`";
+            }
+            replaceAndSelect(editor, session, selection, newtext);
+          }
+        }
+        editor.focus();
+      }),
     $('<img src="' + docroot + '/images/fugue/edit-mathematics.png">')
       .click(function () {
         var session = editor.getSession(),
@@ -359,11 +491,10 @@ $(document).ready(function () {
           } else {
             newtext = "%%" + selected + "%%";
           }
-          session.replace(selection, newtext);
-          editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column, selection.end.row, selection.start.column+newtext.length));
+          replaceAndSelect(editor, session, selection, newtext);
         } else {
           editor.insert("%%%%");
-          editor.selection.setSelectionRange(new Range(selection.start.row, selection.start.column+2, selection.start.row, selection.start.column+2));
+          editor.moveCursorTo(selection.start.row, selection.start.column+2);
         }  
         
         editor.focus();
