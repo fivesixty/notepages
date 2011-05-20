@@ -1,4 +1,4 @@
-Range = require("ace/range").Range;
+var Range = require("ace/range").Range;
 
 function EditorTools (editor, panel, docroot) {
   this.editor = editor;
@@ -59,6 +59,22 @@ EditorTools.prototype.utils = {
         new Range(this.selection.start.row, this.selection.start.column + newtext.length + offset,
                   this.selection.start.row, this.selection.start.column + newtext.length + offset));
     }
+  },
+  forSelectedLines: function (callback) {
+    var lines = this.session.getLines(this.selection.start.row, this.selection.end.row);
+    var start_row = this.selection.start.row;
+    $.each(lines, function (i, line) {
+      callback(start_row + i, line);
+    });
+  },
+  selectedLineRange: function () {
+    return new Range(this.selection.start.row, 0, this.selection.end.row, this.session.getLine(this.selection.end.row).length);
+  },
+  selectRange: function (range) {
+    this.editor.selection.setSelectionRange(range);
+  },
+  repeatString: function (str, n) {
+    return new Array(n + 1).join(str);
   }
 }
 
@@ -68,6 +84,7 @@ EditorTools.prototype.callback = function (callback) {
     tools.utils.session = tools.editor.getSession();
     tools.utils.selection = tools.editor.getSelectionRange();
     tools.utils.selected = tools.utils.session.doc.getTextRange(tools.utils.selection);
+    tools.utils.multiline = tools.utils.selection.start.row !== tools.utils.selection.end.row;
     callback(tools.utils);
     tools.editor.focus();
   }
@@ -105,11 +122,9 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('edit-bold.png',
     function (u) {
+      if (u.multiline) return;
+      
       var newtext, match;
-
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
 
       if (u.selected) {
         match = /^[*]{2}(.+?)[*]{2}$/.exec(u.selected);
@@ -126,9 +141,7 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('edit-italic.png',
     function (u) {
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
+      if (u.multiline) return;
 
       var newtext, match;
       if (u.selected) {
@@ -147,9 +160,7 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('chain.png',
     function (u) {
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
+      if (u.multiline) return;
 
       if (u.selected) {
         u.replaceAndOffset("[" + u.selected + "]()", -1);
@@ -159,14 +170,40 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  //this.addButton('edit-list.png">'),
-  //this.addButton('edit-list-order.png">'),
+  tools.addButton('edit-list.png',
+    function (u) {
+      u.forSelectedLines(function (row, line) {
+        replaceRange = new Range(row, 0, row, line.length);
+        u.session.replace(replaceRange, "*   " + line);
+      });
+      u.selectRange(u.selectedLineRange());
+    });
+  
+  tools.addButton('edit-list-order.png',
+    function (u) {
+      marker = 1;
+      u.forSelectedLines(function (row, line) {
+        replaceRange = new Range(row, 0, row, line.length);
+        var markerText = marker + ".";
+        u.session.replace(replaceRange, markerText + u.repeatString(" ", 4-markerText.length) + line);
+        marker++;
+      });
+      u.selectRange(u.selectedLineRange());
+    });
+    
+  tools.addButton('edit-indent.png',
+    function (u) {
+      
+    });
+      
+  tools.addButton('edit-outdent.png',
+    function (u) {
+      
+    });
   
   tools.addButton('edit-image.png',
     function (u) {
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
+      if (u.multiline) return;
 
       if (u.selected) {
         u.joinReplaceAndSelect(["!<[alt](", u.selected, " \"", "title", "\")"], 3);
@@ -177,9 +214,7 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('edit-image-center.png',
     function (u) {
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
+      if (u.multiline) return;
 
       if (u.selected) {
         u.joinReplaceAndSelect(["![alt](", u.selected, " \"", "title", "\")"], 3);
@@ -190,9 +225,7 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('edit-image-right.png',
     function (u) {
-      if (u.selection.start.row !== u.selection.end.row) {
-        return;
-      }
+      if (u.multiline) return;
 
       if (u.selected) {
         u.joinReplaceAndSelect(["!>[alt](", u.selected, " \"", "title", "\")"], 3);
@@ -208,15 +241,16 @@ function MarkdownTools (editor, panel, docroot) {
     
   tools.addButton('edit-quotation.png',
     function (u) {
+      if (u.multiline) return;
+      
       var line = u.currentLine(),
         match = /^(\>?)\s*(.*)$/.exec(line),
         newline;
 
       if (/^\s*$/.test(line)) {
         newline = "> \n"
-        replaceRange = new Range(u.selection.start.row, 0, u.selection.start.row, line.length);
-        u.session.replace(replaceRange, newline);
-        u.editor.selection.setSelectionRange(new Range(u.selection.start.row, 2, u.selection.start.row, 2));
+        u.session.replace(u.selectedLineRange(), newline);
+        u.selectRange(new Range(u.selection.start.row, 2, u.selection.start.row, 2));
       } else {
         if (match[1]) {
           newline = match[2];
@@ -232,38 +266,35 @@ function MarkdownTools (editor, panel, docroot) {
     function (u) {
       var selected, match, newtext, longest, line, replaceRange;
 
-      if (u.selection.start.row !== u.selection.end.row) {
-        selected = u.session.getLines(u.selection.start.row, u.selection.end.row);
+      if (u.multiline) {
         var min_indent = 40000;
-        $.each(selected, function (i, row) {
+        u.forSelectedLines(function (i, row) {
           match = /^[ ]*/.exec(row);
-          console.log(match);
           if (match[0].length < min_indent) {
             min_indent = match[0].length;
           }
         });
-
-        $.each(selected, function (i, row) {
+        
+        u.forSelectedLines(function (i, row) {
           if (min_indent > 3) {
-            replaceRange = new Range(u.selection.start.row + i, 0, u.selection.start.row + i, min_indent);
+            replaceRange = new Range(i, 0, i, min_indent);
             u.session.replace(replaceRange, "");
           } else {
-            replaceRange = new Range(u.selection.start.row + i, 0, u.selection.start.row + i, 0);
+            replaceRange = new Range(i, 0, i, 0);
             u.session.replace(replaceRange, new Array(5 - min_indent).join(" "));
           }
         });
 
-        u.editor.selection.setSelectionRange(new Range(u.selection.start.row, 0, u.selection.end.row, u.session.getLine(u.selection.end.row).length));
+        u.selectRange(u.selectedLineRange());
 
       } else {
         selected = u.selected;
         line = u.currentLine();
         if (selected === "") {
           if (/^\s*$/.test(line)) {
-            newtext = "    "
-            replaceRange = new Range(u.selection.start.row, 0, u.selection.start.row, line.length);
-            u.session.replace(replaceRange, newtext);
-            u.editor.selection.setSelectionRange(new Range(u.selection.start.row, 4, u.selection.start.row, 4));
+            newtext = "    ";
+            u.session.replace(u.selectedLineRange(), newtext);
+            u.selectRange(new Range(u.selection.start.row, 4, u.selection.start.row, 4));
           } else {
             u.editor.insert("``");
             u.offsetCursor(1);
@@ -306,9 +337,8 @@ function MarkdownTools (editor, panel, docroot) {
         u.replaceAndSelectLine(newline);
       } else if (/^\s*$/.test(line)) {
         newline = "$$$$\n"
-        replaceRange = new Range(u.selection.start.row, 0, u.selection.start.row, line.length);
-        u.session.replace(replaceRange, newline);
-        u.editor.selection.setSelectionRange(new Range(u.selection.start.row, 2, u.selection.start.row, 2));
+        u.session.replace(u.selectedLineRange(), newline);
+        u.selectRange(new Range(u.selection.start.row, 2, u.selection.start.row, 2));
       } else if (u.selected) {
         match = /^[%]{2}(.*?)[%]{2}$/.exec(u.selected);
         if (match) {

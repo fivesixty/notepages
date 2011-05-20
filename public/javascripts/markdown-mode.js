@@ -22,6 +22,7 @@
  * Contributor(s):
  *      Fabian Jakobs <fabian AT ajax DOT org>
  *      Mihai Sucan <mihai DOT sucan AT gmail DOT com>
+ *      Chris Spencer <chris.ag.spencer AT googlemail DOT com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -51,8 +52,16 @@ oop.inherits(Mode, TextMode);
 
 (function() {
     this.getNextLineIndent = function(state, line, tab) {
-        var indent = this.$getIndent(line);
-        return indent;
+        if (state == "listblock") {
+            var match = /^((?:.+)?)([-+*][ ]+)/.exec(line);
+            if (match) {
+                return new Array(match[1].length + 1).join(" ") + match[2];
+            } else {
+                return "";
+            }
+        } else {
+            return this.$getIndent(line);
+        }
     };
 }).call(Mode.prototype);
 
@@ -81,6 +90,7 @@ exports.Mode = Mode;
  *
  * Contributor(s):
  *      Fabian Jakobs <fabian AT ajax DOT org>
+ *      Chris Spencer <chris.ag.spencer AT googlemail DOT com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -101,17 +111,6 @@ define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module', 'pi
 var oop = require("pilot/oop");
 var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
 
-var trex = function (name) {
-  return { token: name, regex: name };
-}
-
-var debugToken = function (show, token) {
-  return function (input) {
-    console.log(input, show);
-    return token;
-  }
-}
-
 var MarkdownHighlightRules = function() {
 
     // regexp must not have capturing parentheses
@@ -121,46 +120,33 @@ var MarkdownHighlightRules = function() {
         "start" : [ {
             token : "empty_line",
             regex : '^$'
-        },
-        /*
-           trex("constant"),
-           trex("keyword"),
-           trex("string.regexp"),
-           trex("string"),
-           trex("comment"),
-           trex("invalid.illegal"),
-           trex("invalid.deprecated"),
-           trex("support.function"),
-           trex("support"),
-           trex("variable"),
-           trex("xml_pe"),
-           trex("url"),
-        */
-        { // code span `
+        }, { // code span `
             token : "support.function",
-            regex : "`[^\\r]*?[^`]`"
+            regex : "(`+)([^\\r]*?[^`])(\\1)"
         }, { // code block
             token : "support.function",
             regex : "^[ ]{4}.+"
+        }, { // block quote
+            token : "string",
+            regex : "^>[ ].+$",
+            next  : "blockquote"
         }, { // header
-            token : "constant",
-            regex : "^\#{1,6}",
-            next  : "header"
+            token : ["constant", "keyword"],
+            regex : "^(#{1,6})(.+)$"
         }, { // reference
-            token : "text",
-            regex : "^[ ]{0,3}\\[(?=[^\\]]+\\]:\\s*[^ ]+\\s*(?:[\"][^\"]+[\"])?\\s*$)",
-            next  : "reference"
+            token : ["text", "constant", "text", "url", "string", "text"],
+            regex : "^([ ]{0,3}\\[)([^\\]]+)(\\]:\\s*)([^ ]+)(\\s*(?:[\"][^\"]+[\"])?\\s*)$"
         }, { // link by reference
-            token : "text",
-            regex : "\\[(?=(?:[[^\\]]*\\]|[^\\[\\]])*\\][ ]?(?:\\n[ ]*)?\\[(?:.*?)\\])",
-            next  : "linkref"
+            token : ["text", "string", "text", "constant", "text"],
+            regex : "(\\[)((?:[[^\\]]*\\]|[^\\[\\]])*)(\\][ ]?(?:\\n[ ]*)?\\[)(.*?)(\\])"
         }, { // link by url
-            token : "text",
-            regex : "\\[(?=(?:\\[[^\\]]*\\]|[^\\[\\]])*\\]"+
-                    "\\([ \\t]*<?(?:(?:[^\\(]*?\\([^\\)]*?\\)\\S*?)|(?:.*?))>?[ \t]*"+
-                    "(?:\"(?:.*?)\"[ \\t]*)?"+
-                    "\\))",
-            next  : "linkurl"
+            token : ["text", "string", "text", "url", "string", "text"],
+            regex : "(\\[)"+
+                    "(\\[[^\\]]*\\]|[^\\[\\]]*)"+
+                    "(\\]\\([ \\t]*)"+
+                    "(<?(?:(?:[^\\(]*?\\([^\\)]*?\\)\\S*?)|(?:.*?))>?)"+
+                    "((?:[ \t]*\"(?:.*?)\"[ \\t]*)?)"+
+                    "(\\))"
         }, { // HR *
             token : "constant",
             regex : "^[ ]{0,2}(?:[ ]?\\*[ ]?){3,}[ \\t]*$"
@@ -180,24 +166,25 @@ var MarkdownHighlightRules = function() {
         }, { // math div
             token : "keyword",
             regex : "[$]{2}.+?[$]{2}"
-        }, { // strong **
+        }, { // strong ** __
             token : "string",
-            regex : "[*]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[*]{2}"
-        }, { // emphasis *
+            regex : "([*]{2}|[_]{2}(?=\\S))([^\\r]*?\\S[*_]*)(\\1)"
+        }, { // emphasis * _
             token : "string",
-            regex : "[*](?=\\S)(?:[^\\r]*?\\S[*_]*)[*]"
-        }, { // strong __
-            token : "string",
-            regex : "[_]{2}(?=\\S)(?:[^\\r]*?\\S[*_]*)[_]{2}"
-        }, { // emphasis _
-            token : "string",
-            regex : "[_](?=\\S)(?:[^\\r]*?\\S[*_]*)[_]"
+            regex : "([*]|[_](?=\\S))([^\\r]*?\\S[*_]*)(\\1)"
+        }, { // 
+            token : ["text", "url", "text"],
+            regex : "(<)("+
+                      "(?:https?|ftp|dict):[^'\">\\s]+"+
+                      "|"+
+                      "(?:mailto:)?[-.\\w]+\\@[-a-z0-9]+(?:\\.[-a-z0-9]+)*\\.[a-z]+"+
+                    ")(>)"
         }, {
             token : "text",
-            regex : "[^\\*_%$`\\[#]+"
+            regex : "[^\\*_%$`\\[#<>]+"
         } ],
         
-        "listblock" : [ {
+        "listblock" : [ { // Lists only escape on completely blank lines.
             token : "empty_line",
             regex : "^$",
             next  : "start",
@@ -206,92 +193,14 @@ var MarkdownHighlightRules = function() {
             regex : ".+"
         } ],
         
-        "linkurl" : [ {
-            token : "string",
-            regex : "(?:\\[[^\\]]*\\]|[^\\[\\]])+"
-        }, {
-            token : "text",
-            regex : "\\]\\([ \\t]*<?",
-            next  : "linkurl-mid"
-        } ],
-        "linkurl-mid" : [ {
-            token : "url",
-            regex : "[^\\s\\)]+"
+        "blockquote" : [ { // BLockquotes only escape on blank lines.
+            token : "empty_line",
+            regex : "^\\s*$",
+            next  : "start",
         }, {
             token : "string",
-            regex : "\\s*[\"][^\"]+[\"]",
-            next  : "linkurl-end"
-        }, {
-            token : "text",
-            regex : "\\s*\\)",
-            next  : "start"
-        }, {
-            token : "text",
-            regex : ".",
-            next  : "start"
-        } ],
-        "linkurl-end" : [ {
-            token : "text",
-            regex : "\\s*\\)",
-            next  : "start"
-        } ],
-        
-        "linkref" : [ {
-            token : "string",
-            regex : "[^\\]]+",
-            next  : "linkref-mid"
-        }],
-        "linkref-mid": [ {
-            token : "text",
-            regex : "\\][ ]?(?:\\n[ ]*)?\\["
-        }, {
-            token : "constant",
-            regex : "[^\\]]+"
-        }, {
-            token : "text",
-            regex : "\\]",
-            next : "start"
-        }],
-        
-        "header" : [ { // end of header
-            token : "keyword",
-            regex : ".+$",
-            next  : "start"
-        }, {
-            token : "text",
-            regex : ".",
-            next  : "start"
-        } ],
-        
-        "reference" : [ {
-            token : "constant",
-            regex : "[^\\]]+",
-            next  : "reflink"
-        }, {
-            token : "text",
-            regex : ".",
-            next  : "start"
-        } ],
-        
-        "reflink" : [ {
-            token : "text",
-            regex : "\\]:\\s*"
-        }, {
-            token : "url",
-            regex : "[^ ]+$",
-            next  : "start"
-        }, {
-            token : "url",
-            regex : "[^ ]+"
-        }, {
-            token : "string",
-            regex : "\\s*[\"][^\"]+[\"]\\s*$",
-            next  : "start"
-        }, {
-            token : "text",
-            regex : "\\s*$",
-            next  : "start"
-        }]
+            regex : ".+"
+        } ]
     };
 };
 oop.inherits(MarkdownHighlightRules, TextHighlightRules);
