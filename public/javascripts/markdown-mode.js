@@ -42,27 +42,66 @@ define('ace/mode/markdown', function(require, exports, module) {
 
 var oop = require("pilot/oop");
 var TextMode = require("ace/mode/text").Mode;
+var JavaScriptMode = require("ace/mode/javascript").Mode;
 var Tokenizer = require("ace/tokenizer").Tokenizer;
 var MarkdownHighlightRules = require("ace/mode/markdown_highlight_rules").MarkdownHighlightRules;
 
 var Mode = function() {
     this.$tokenizer = new Tokenizer(new MarkdownHighlightRules().getRules());
+    
+    this.$js = new JavaScriptMode();
 };
 oop.inherits(Mode, TextMode);
 
 (function() {
-    this.getNextLineIndent = function(state, line, tab) {
-        if (state == "listblock") {
-            var match = /^((?:.+)?)([-+*][ ]+)/.exec(line);
-            if (match) {
-                return new Array(match[1].length + 1).join(" ") + match[2];
-            } else {
-                return "";
-            }
-        } else {
-            return this.$getIndent(line);
-        }
+
+    this.toggleCommentLines = function(state, doc, startRow, endRow) {
+        this.$delegate("toggleCommentLines", arguments, function() {
+            return 0;
+        });
     };
+
+    this.getNextLineIndent = function(state, line, tab) {
+        var self = this;
+        
+        return this.$delegate("getNextLineIndent", arguments, function(state, line, tab) {
+            if (state == "listblock") {
+                var match = /^((?:.+)?)([-+*][ ]+)/.exec(line);
+                if (match) {
+                    return new Array(match[1].length + 1).join(" ") + match[2];
+                } else {
+                    return "";
+                }
+            } else {
+                return self.$getIndent(line);
+            }
+        });
+    };
+
+    this.checkOutdent = function(state, line, input) {
+        return this.$delegate("checkOutdent", arguments, function() {
+            return false;
+        });
+    };
+
+    this.autoOutdent = function(state, doc, row) {
+        this.$delegate("autoOutdent", arguments);
+    };
+
+    this.$delegate = function(method, args, defaultHandler) {
+        var state = args[0];
+        var split = state.split("js-");
+        
+        console.log(state, method);
+        
+        if (!split[0] && split[1]) {
+            args[0] = split[1];
+            return this.$js[method].apply(this.$js, args);
+        }
+        
+        return defaultHandler ? defaultHandler.apply(this, args) : undefined;
+    };
+    
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -110,6 +149,7 @@ define('ace/mode/markdown_highlight_rules', function(require, exports, module) {
 
 var oop = require("pilot/oop");
 var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
+var JavaScriptHighlightRules = require("ace/mode/javascript_highlight_rules").JavaScriptHighlightRules;
 
 var MarkdownHighlightRules = function() {
 
@@ -126,6 +166,14 @@ var MarkdownHighlightRules = function() {
         }, { // code block
             token : "support.function",
             regex : "^[ ]{4}.+"
+        }, { // Github style javascript block
+            token : "invalid.illegal.deprecated", // Pick something really obvious
+            regex : "^```javascript\\s*$",
+            next  : "js-start"
+        }, { // Github style block
+            token : "support.function",
+            regex : "^```[a-zA-Z]+\\s*$",
+            next  : "githubblock"
         }, { // block quote
             token : "string",
             regex : "^>[ ].+$",
@@ -200,8 +248,26 @@ var MarkdownHighlightRules = function() {
         }, {
             token : "string",
             regex : ".+"
+        } ],
+        
+        "githubblock" : [ {
+            token : "support.function",
+            regex : "^```",
+            next  : "start"
+        }, {
+            token : "support.function",
+            regex : ".+"
         } ]
     };
+    
+    var jsRules = new JavaScriptHighlightRules().getRules();
+    this.addRules(jsRules, "js-");
+    
+    this.$rules["js-start"].unshift({
+       token : "invalid.illegal.deprecated", // Pick something really obvious
+       regex : "^```",
+       next  : "start"
+    });
 };
 oop.inherits(MarkdownHighlightRules, TextHighlightRules);
 
