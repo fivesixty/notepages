@@ -54,5 +54,6 @@ $.extend(markdown.config, {
   tables: true,
   math: true,
   figures: true,
+  refprint: true,
   github_flavouring: true
 });
