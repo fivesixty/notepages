@@ -43,7 +43,8 @@ $.fn.quickdiff("attributes", {
   "td" : ["align"],
   "th" : ["align"],
   "img" : ["src", "alt", "title"],
-  "a" : ["href", "title"]
+  "a" : ["href", "title"],
+  "code" : ["class"]
 });
 
 var markdown = new Showdown.converter();
@@ -52,5 +53,6 @@ $.extend(markdown.config, {
   stripHTML: true,
   tables: true,
   math: true,
-  figures: true
+  figures: true,
+  github_flavouring: true
 });

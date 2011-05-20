@@ -38,7 +38,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-define('ace/mode/markdown', ['require', 'exports', 'module' , 'pilot/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/markdown_highlight_rules'], function(require, exports, module) {
+define('ace/mode/markdown', function(require, exports, module) {
 
 var oop = require("pilot/oop");
 var TextMode = require("ace/mode/text").Mode;
@@ -106,7 +106,7 @@ exports.Mode = Mode;
  *
  * ***** END LICENSE BLOCK ***** */
 
-define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module', 'pilot/oop', 'ace/mode/text_highlight_rules' ], function(require, exports, module) {
+define('ace/mode/markdown_highlight_rules', function(require, exports, module) {
 
 var oop = require("pilot/oop");
 var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
