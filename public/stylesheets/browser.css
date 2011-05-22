@@ -111,9 +111,6 @@ a img {
 #page ol ol ol {
   list-style: lower-roman;
 }
-#page li {
-  margin: 0 0 1.5em 0;
-}
 #page blockquote {
 	margin: 1em 3em;
 	color: #999;
