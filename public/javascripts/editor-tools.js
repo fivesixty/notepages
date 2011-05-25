@@ -84,7 +84,7 @@ EditorTools.prototype.callback = function (callback) {
     tools.utils.session = tools.editor.getSession();
     tools.utils.selection = tools.editor.getSelectionRange();
     tools.utils.selected = tools.utils.session.doc.getTextRange(tools.utils.selection);
-    tools.utils.multiline = tools.utils.selection.start.row !== tools.utils.selection.end.row;
+    tools.utils.multiline = tools.utils.selection.isMultiLine();
     callback(tools.utils);
     tools.editor.focus();
   }

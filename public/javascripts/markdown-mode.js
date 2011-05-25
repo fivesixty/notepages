@@ -43,65 +43,67 @@ define('ace/mode/markdown', function(require, exports, module) {
 var oop = require("pilot/oop");
 var TextMode = require("ace/mode/text").Mode;
 var JavaScriptMode = require("ace/mode/javascript").Mode;
+var XmlMode = require("ace/mode/xml").Mode;
+var HtmlMode = require("ace/mode/html").Mode;
 var Tokenizer = require("ace/tokenizer").Tokenizer;
 var MarkdownHighlightRules = require("ace/mode/markdown_highlight_rules").MarkdownHighlightRules;
+var Range = require("ace/range").Range;
 
 var Mode = function() {
-    this.$tokenizer = new Tokenizer(new MarkdownHighlightRules().getRules());
+    var highlighter = new MarkdownHighlightRules();
     
-    this.$js = new JavaScriptMode();
+    this.$tokenizer = new Tokenizer(highlighter.getRules());
+    this.$embeds = highlighter.getEmbeds();
+    this.createModeDelegates({
+      "js-": JavaScriptMode,
+      "xml-": XmlMode,
+      "html-": HtmlMode
+    });
+    
+    /*
+    this.addBehaviour("codespan", function (state, editor, session, text) {
+        if (text == '`') {
+            var selection = editor.getSelectionRange();
+            var selected = session.doc.getTextRange(selection);
+            if (selected !== "") {
+                return {
+                    text: '`' + selected + '`',
+                    selection: false
+                }
+            } else {
+                return {
+                    text: '``',
+                    selection: [1,1]
+                }
+            }
+        }
+        return false;
+    }, function (state, editor, session, range) {
+        var selected = session.doc.getTextRange(range);
+        if (!range.isMultiLine() && selected == '`') {
+            var rightChar = session.doc.getLine(range.start.row).substring(range.start.column+1, range.start.column+2);
+            if (rightChar == '`') {
+                return new Range(range.start.row, range.start.column, range.start.row, range.end.column+1);
+            }
+        }
+        return false;
+    });*/
 };
 oop.inherits(Mode, TextMode);
 
 (function() {
-
-    this.toggleCommentLines = function(state, doc, startRow, endRow) {
-        this.$delegate("toggleCommentLines", arguments, function() {
-            return 0;
-        });
-    };
-
     this.getNextLineIndent = function(state, line, tab) {
-        var self = this;
-        
-        return this.$delegate("getNextLineIndent", arguments, function(state, line, tab) {
-            if (state == "listblock") {
-                var match = /^((?:.+)?)([-+*][ ]+)/.exec(line);
-                if (match) {
-                    return new Array(match[1].length + 1).join(" ") + match[2];
-                } else {
-                    return "";
-                }
+        if (state == "listblock") {
+            var match = /^((?:.+)?)([-+*][ ]+)/.exec(line);
+            if (match) {
+                return new Array(match[1].length + 1).join(" ") + match[2];
             } else {
-                return self.$getIndent(line);
+                return "";
             }
-        });
-    };
-
-    this.checkOutdent = function(state, line, input) {
-        return this.$delegate("checkOutdent", arguments, function() {
-            return false;
-        });
-    };
-
-    this.autoOutdent = function(state, doc, row) {
-        this.$delegate("autoOutdent", arguments);
-    };
-
-    this.$delegate = function(method, args, defaultHandler) {
-        var state = args[0];
-        var split = state.split("js-");
-        
-        console.log(state, method);
-        
-        if (!split[0] && split[1]) {
-            args[0] = split[1];
-            return this.$js[method].apply(this.$js, args);
+        } else {
+            return this.$getIndent(line);
         }
-        
-        return defaultHandler ? defaultHandler.apply(this, args) : undefined;
     };
-    
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -150,6 +152,8 @@ define('ace/mode/markdown_highlight_rules', function(require, exports, module) {
 var oop = require("pilot/oop");
 var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
 var JavaScriptHighlightRules = require("ace/mode/javascript_highlight_rules").JavaScriptHighlightRules;
+var XmlHighlightRules = require("ace/mode/xml_highlight_rules").XmlHighlightRules;
+var HtmlHighlightRules = require("ace/mode/html_highlight_rules").HtmlHighlightRules;
 
 var MarkdownHighlightRules = function() {
 
@@ -170,6 +174,14 @@ var MarkdownHighlightRules = function() {
             token : "invalid.illegal.deprecated", // Pick something really obvious
             regex : "^```javascript\\s*$",
             next  : "js-start"
+        }, { // Github style xml block
+            token : "invalid.illegal.deprecated", // Pick something really obvious
+            regex : "^```xml\\s*$",
+            next  : "xml-start"
+        }, { // Github style html block
+            token : "invalid.illegal.deprecated", // Pick something really obvious
+            regex : "^```html\\s*$",
+            next  : "html-start"
         }, { // Github style block
             token : "support.function",
             regex : "^```[a-zA-Z]+\\s*$",
@@ -260,14 +272,23 @@ var MarkdownHighlightRules = function() {
         } ]
     };
     
-    var jsRules = new JavaScriptHighlightRules().getRules();
-    this.addRules(jsRules, "js-");
-    
-    this.$rules["js-start"].unshift({
+    this.embedRules(JavaScriptHighlightRules, "js-", [{
        token : "invalid.illegal.deprecated", // Pick something really obvious
        regex : "^```",
        next  : "start"
-    });
+    }]);
+    
+    this.embedRules(HtmlHighlightRules, "html-", [{
+       token : "invalid.illegal.deprecated", // Pick something really obvious
+       regex : "^```",
+       next  : "start"
+    }]);
+    
+    this.embedRules(XmlHighlightRules, "xml-", [{
+       token : "invalid.illegal.deprecated", // Pick something really obvious
+       regex : "^```",
+       next  : "start"
+    }]);
 };
 oop.inherits(MarkdownHighlightRules, TextHighlightRules);
 
