@@ -39,12 +39,15 @@ $.fn.quickdiff("filter", "mathSpan",
     return ("$$" + aHTML + "$$") !== bHTML;
   });
   
+// Filter for highlighted code segments;
 $.fn.quickdiff("filter", "codePre",
   function (node) { return node.nodeName === "PRE"; },
   function (a, b) {
-    if ($(a).data("session")) {
-      var aValue = $.trim($(a).data("session").getValue());
-      $(a).data("updateMode")($("code", b).attr("class")); // hack
+    if ($(a).data("highlighter")) {
+      var aValue = $.trim($(a).data("highlighter").getValue());
+      
+      // Hack to update mode.
+      $(a).data("highlighter").setMode($("code", b).attr("class"));
     } else {
       var aValue = $.trim($(a).text());
     }

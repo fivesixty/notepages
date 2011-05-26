@@ -14,6 +14,10 @@ Somehow the above is interacting badly with jQuery UI's .show(slide).
 
 $(document).ready(function () {
   
+  // Ace highlighter
+  
+  var Highlight = require("ace/highlight").Highlight;
+  
   // Notification script
   
   var notify = $("#notify");
@@ -152,8 +156,8 @@ $(document).ready(function () {
       return;
     }
     
-    if (patch.type === "replace" && patch.source.length === 1 && patch.replace.length === 1 && $(patch.replace[0]).is("pre") && $(patch.source[0]).data("session")) {
-      $(patch.source[0]).data("update")($(patch.replace[0]).text());
+    if (patch.type === "replace" && patch.source.length === 1 && patch.replace.length === 1 && $(patch.replace[0]).is("pre") && $(patch.source[0]).data("highlighter")) {
+      $(patch.source[0]).data("highlighter").setValue($(patch.replace[0]).text());
       setRenderDelay((new Date()).getTime() - startTime);
       return;
     }
@@ -163,11 +167,11 @@ $(document).ready(function () {
     if (patch.type !== "identical" && patch.replace.length > 0) {
       $.each(patch.replace, function (i, el) {
         $("pre", el).each(function (i, el) {
-          aceHighlight($(el));
+          new Highlight($(el));
         });
         
         if ($(el).is("pre")) {
-          aceHighlight($(el));
+          new Highlight($(el));
         } else if (el.innerHTML) {
           MathJax.Hub.Typeset(el, function () {
             setRenderDelay((new Date()).getTime() - startTime);
@@ -199,101 +203,10 @@ $(document).ready(function () {
   editor.setShowPrintMargin(false);
   //editor.setBehavioursEnabled(true);
   
-  
-  var EditSession = require("ace/edit_session").EditSession;
-  var TextLayer = require("ace/layer/text").Text;
-  var Theme = require("ace/theme/twilight");
-  
-  function aceHighlight(el) {
-    var codeclass = $("code", el).attr("class");
-    if (codeclass == "javascript") {
-      var mode = new JavaScriptMode();
-    } else {
-      var mode = new TextMode();
-    }
-    
-    var session = new EditSession("");
-    session.setUseWorker(false);
-    session.setMode(mode);
-    session.setValue(el.text());
-    session.setUseWrapMode(true);
-    
-    var width = el.width();
-    
-    var contel = $("<div>")
-      .addClass("acecode ace_editor " + Theme.cssClass)
-      .css({ position: "static" });
-    
-    el.append(contel);
-    $("code", el).hide();
-    
-    var textlayer = new TextLayer(contel[0]);
-    textlayer.setSession(session);
-    $(textlayer.element).addClass("ace_scroller").css({
-      width: width
-    });
-    
-    function getDocLength() {
-      var total = 0;
-      for (var i = 0; i < session.getLength(); i++) {
-        total += session.getRowLength(i);
-      }
-      return total;
-    }
-    
-    session.adjustWrapLimit(Math.floor(width / textlayer.getCharacterWidth()));
-    
-    function refreshRender() {
-      var lineHeight = textlayer.getLineHeight();
-      var numRows = getDocLength();
-      var height = (numRows-1) * lineHeight;
-      textlayer.update({
-        firstRow: 0,
-        lastRow: session.getLength(),
-        lineHeight: lineHeight,
-        width: width
-      });
-      contel.css({height: height});
-      $(textlayer.element).css({height: height});
-    }
-    
-    refreshRender();
-    
-    el.data({
-      session: session,
-      textlayer: textlayer,
-      update: function (newcontent) {
-        session.setValue(newcontent);
-        refreshRender();
-      },
-      updateMode: function (modestring) {
-        if (codeclass !== modestring) {
-          codeclass = modestring;
-        } else {
-          return;
-        }
-        if (codeclass == "javascript") {
-          var mode = new JavaScriptMode();
-        } else {
-          var mode = new TextMode();
-        }
-        session.setMode(mode);
-        refreshRender();
-      }
-    });
-    
-    el.bind("remove", function () {
-      el.unbind("remove");
-      session = null;
-      textlayer = null;
-      // Need a proper dispose here.
-    });
-  }
-  
   var pre_els = $("pre");
   
   pre_els.each(function (i, el) {
-    aceHighlight($(el));
+    new Highlight($(el));
   });
   
   var panels = {
