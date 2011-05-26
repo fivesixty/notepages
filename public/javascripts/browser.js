@@ -126,12 +126,16 @@ $(document).ready(function () {
     loaded = editing;
   
   function alignPage() {
-    var leftMargin = (($(window).width()-panels.edit) - ($("#page").width() ))/2;
-    if (leftMargin < 10)
-      leftMargin = 10;
-    page.stop()
-      .css({marginLeft: $("#page").offset().left})
-      .animate({marginLeft:leftMargin});
+    if (page.slid) {
+      var leftMargin = (($(window).width()-panels.edit) - ($("#page").width() ))/2;
+      if (leftMargin < 10)
+        leftMargin = 10;
+      page.stop()
+        .css({marginLeft: $("#page").offset().left})
+        .animate({marginLeft:leftMargin});
+    } else {
+      page.css({margin:"30px auto"});
+    }
   }
   
   function setWidths(i) {
@@ -186,6 +190,7 @@ $(document).ready(function () {
   
   page.slide = function (show) {
     if (page.slid === show) return;
+    page.slid = show;
     
     if (show) {
       alignPage();
@@ -196,7 +201,6 @@ $(document).ready(function () {
             page.css({margin:"30px auto"});
           });
     }
-    page.slid = show;
   };
   
   var suppress_redraw = false;

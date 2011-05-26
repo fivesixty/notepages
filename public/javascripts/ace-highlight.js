@@ -6,6 +6,8 @@ var TextMode = require("ace/mode/text").Mode;
 var JavaScriptMode = require("ace/mode/javascript").Mode;
 
 function Highlight(element) {
+  if (/(a)|(b)/.exec("b")[1] !== undefined) return;
+  
   this.element = $(element);
   this.session = new EditSession("");
   this.session.setUseWorker(false);

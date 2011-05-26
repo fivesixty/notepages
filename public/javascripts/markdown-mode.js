@@ -246,7 +246,7 @@ var MarkdownHighlightRules = function() {
         "listblock" : [ { // Lists only escape on completely blank lines.
             token : "empty_line",
             regex : "^$",
-            next  : "start",
+            next  : "start"
         }, {
             token : "support.function",
             regex : ".+"
@@ -255,7 +255,7 @@ var MarkdownHighlightRules = function() {
         "blockquote" : [ { // BLockquotes only escape on blank lines.
             token : "empty_line",
             regex : "^\\s*$",
-            next  : "start",
+            next  : "start"
         }, {
             token : "string",
             regex : ".+"

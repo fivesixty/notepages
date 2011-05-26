@@ -31,7 +31,7 @@ Notepages serves the MathJax, Google Font API, and jQuery through their respecti
 
 ## Browser Support
 
-Reading and editing has been tested across all major browsers (IE8/9, Safari, Chrome, Firefox). IE6 is not supported and IE7 support is marginal.
+Reading and editing has been tested across all modern browsers (IE9, Safari 5, Chrome, Firefox 3.6/4). IE6 is not supported. IE7/8 should be able to read, though will not have code highlighting, and the edit experience will be haphazard. Chrome Frame is set to be enabled for users of IE8 or lower, but does not currently prompt for install.
 
 ## Mobile support
 
