@@ -1,3 +1,17 @@
+// Add a removal event
+/*(function() {
+    var ev = new $.Event('remove'),
+        orig = $.fn.remove;
+    $.fn.remove = function() {
+        $(this).trigger(ev);
+        orig.apply(this, arguments);
+    }
+})();
+
+Somehow the above is interacting badly with jQuery UI's .show(slide).
+
+*/
+
 $(document).ready(function () {
   
   // Notification script
@@ -189,16 +203,6 @@ $(document).ready(function () {
   var EditSession = require("ace/edit_session").EditSession;
   var TextLayer = require("ace/layer/text").Text;
   var Theme = require("ace/theme/twilight");
-  
-  // Add a removal event
-  (function() {
-      var ev = new $.Event('remove'),
-          orig = $.fn.remove;
-      $.fn.remove = function() {
-          $(this).trigger(ev);
-          orig.apply(this, arguments);
-      }
-  })();
   
   function aceHighlight(el) {
     var codeclass = $("code", el).attr("class");
