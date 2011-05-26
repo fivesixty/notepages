@@ -292,6 +292,6 @@ a img {
   margin: 5px;
   border: 0;
 }
-#notify span.buttons input[type=button] {
+#notify span.buttons input[type=button], #notify span.buttons input[type=submit] {
   cursor: pointer;
 }

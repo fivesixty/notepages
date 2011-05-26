@@ -20,112 +20,14 @@ $(document).ready(function () {
   
   // Notification script
   
-  var notify = $("#notify");
-  notify.timer = undefined;
-  notify.cancel = undefined;
+  var Notify = require("notepages/notify").Notify;
+  var notify = new Notify($("#notify"));
   
-  notify.setFade = function (delay) {
-    notify.timer = setTimeout(function () {
-      notify.hide("slide", {direction:"up"});
-      notify.timer = undefined;
-    }, delay)
-  }
+  notify.onDisplay(function () {
+    $(this).css({right:$("#toolpanel").width()/2 - 200});
+  });
   
-  notify.display = function (cssclass, contents, on_display) {
-    notify.conceal().empty().removeClass()
-      .addClass(cssclass).css({right:$("#toolpanel").width()/2 - 200});
-    $.each(contents, function (i, el) {
-      notify.append(el);
-    });
-    
-    if (notify.is(":visible")) {
-      notify.stop(true, true).show();
-      if (notify.timer) {
-        clearTimeout(notify.timer);
-      }
-      if (on_display) {
-        on_display();
-      }
-    } else {
-      notify.show("slide", {direction:"up"}, function () {
-        if (on_display) {
-          on_display();
-        }
-      });
-    }
-  }
-  
-  notify.conceal = function () {
-    if (notify.cancel) {
-      notify.cancel();
-      notify.cancel = undefined;
-    }
-    return this;
-  }
-
-  notify.setMessage = function (text, icon) {
-    notify.display(icon, $("<span class=\"message\"></span>").text(text), function () {
-      notify.setFade(1500);
-    });
-  }
-  
-  notify.confirm = function (text, confirm_cb, cancel_cb) {
-    var confirm = $('<input type="submit" value="continue"></input>')
-        .click(function (e) {
-          e.preventDefault();
-          notify.hide();
-          if (confirm_cb) {
-            confirm_cb();
-          }
-        }),
-      cancel = $('<input type="button" value="cancel"></input>')
-        .click(function () {
-          notify.setFade(0);
-          if (cancel_cb) {
-            cancel_cb();
-          }
-        }),
-      form = $('<form>').append(cancel).append(confirm),
-      buttons = $('<span class="buttons"></span>').append(form),
-      content = $("<span class=\"confirm\"></span>")
-        .text(text);
-    
-    notify.display("help", [content, buttons], function () {
-      confirm.focus();
-    });
-    confirm.focus();
-    
-    notify.cancel = function () {
-      if (cancel_cb) {
-        cancel_cb();
-      }
-    }
-  }
-  
-  notify.password = function (text, password_cb) {
-    var passbox = $('<input type="password"></input>'),
-      confirm = $('<input type="submit" value="continue"></input>')
-        .click(function (e) {
-          e.preventDefault();
-          if (confirm) {
-            password_cb(passbox.val());
-            notify.setFade(0);
-          }
-        }),
-      cancel = $('<input type="button" value="cancel"></input>')
-        .click(function () {
-          notify.setFade(0);
-        }),
-      form = $('<form>').append(passbox).append(cancel).append(confirm),
-      buttons = $('<span class="buttons"></span>').append(form),
-      content = $("<span class=\"confirm\"></span>")
-        .text(text);
-    
-    notify.display("help", [content, buttons], function () {
-      passbox.focus();
-    });
-    passbox.focus();
-  }
+  // Render script
   
   var redrawNeeded = false, preproc, renderDelay = 0, timer;
   
@@ -243,7 +145,6 @@ $(document).ready(function () {
   editpanel.slide = function (show, preview) {
     if (!preview) {
       notify.conceal();
-      notify.hide();
     }
   
     if (editpanel.slid === show) return;
@@ -371,7 +272,7 @@ $(document).ready(function () {
     if (!modified) {
       doCancel()
     } else {
-      notify.confirm("Closing editor will lose unsaved changes.", doCancel);
+      notify.showConfirm("Closing editor will lose unsaved changes.", doCancel);
     }
     return false;
   });
@@ -381,13 +282,13 @@ $(document).ready(function () {
     
     if (newdocument) {
       if (!password) {
-        notify.confirm("Saving without password.", doSave);
+        notify.showConfirm("Saving without password.", doSave);
       } else {
-        notify.confirm("Saving with password.", doSave);
+        notify.showConfirm("Saving with password.", doSave);
       }
     } else {
       if (passreq && !password) {
-        notify.password("Please enter the page password.", function (newpassword) {
+        notify.showPassword("Please enter the page password.", function (newpassword) {
           if (newpassword !== "") {
             password = hex_sha256(newpassword);
           } else {
@@ -403,20 +304,20 @@ $(document).ready(function () {
     return false;
   });
     
-  notify.ajaxError(function (event, xhr, settings, thrown) {
+  notify.element.ajaxError(function (event, xhr, settings, thrown) {
     if (xhr.responseText) {
       try {
         var response = $.parseJSON(xhr.responseText);
         if (response.message) {
-          notify.setMessage(response.message, "warning");
+          notify.showMessage(response.message, "warning");
           return;
         }
       } catch (exc) {}
     }
     if (thrown) {
-      notify.setMessage(thrown, "warning");
+      notify.showMessage(thrown, "warning");
     } else {
-      notify.setMessage("Communication error.", "warning");
+      notify.showMessage("Communication error.", "warning");
     }
   });
     
@@ -433,15 +334,15 @@ $(document).ready(function () {
     $.post("/" + pagename + ".json", payload, function (ret) {
       if (ret && ret.status === "success") {
         content = cont;
-        notify.setMessage("Saved.", "success");
+        notify.showMessage("Saved.", "success");
         toolpanel.setPasswordReq(passreq);
         newdocument = false;
         refreshModified();
       } else {
         if (ret && ret.status === "failure") {
-          notify.setMessage(ret.message, "warning");
+          notify.showMessage(ret.message, "warning");
         } else {
-          notify.setMessage("Unknown response from the server.", "warning");
+          notify.showMessage("Unknown response from the server.", "warning");
         }
       }
     }, "json");
@@ -466,8 +367,8 @@ $(document).ready(function () {
   });
   
   $("#password").click(function () {
-    notify.password("Please enter a page password.", function (newpassword) {
-      if (password !== "") {
+    notify.showPassword("Please enter a page password.", function (newpassword) {
+      if (newpassword !== "") {
         password = hex_sha256(newpassword);
       } else {
         password = false;
