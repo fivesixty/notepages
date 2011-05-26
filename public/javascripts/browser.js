@@ -216,47 +216,55 @@ $(document).ready(function () {
     session.setUseWorker(false);
     session.setMode(mode);
     session.setValue(el.text());
+    session.setUseWrapMode(true);
     
     var width = el.width();
-    var lineHeight = 16;
-    var height = (session.getLength()-1) * lineHeight;
     
-    var contel = $("<div>").addClass("acecode");
+    var contel = $("<div>")
+      .addClass("acecode ace_editor " + Theme.cssClass)
+      .css({ position: "static" });
+    
     el.append(contel);
     $("code", el).hide();
+    
     var textlayer = new TextLayer(contel[0]);
     textlayer.setSession(session);
-    textlayer.update({
-      firstRow: 0,
-      lastRow: session.getLength(),
-      lineHeight: lineHeight,
+    $(textlayer.element).addClass("ace_scroller").css({
       width: width
     });
     
-    contel.addClass(Theme.cssClass).addClass("ace_editor").css({
-      position: "static",
-      height: height
-    });
+    function getDocLength() {
+      var total = 0;
+      for (var i = 0; i < session.getLength(); i++) {
+        total += session.getRowLength(i);
+      }
+      return total;
+    }
     
-    $(textlayer.element).addClass("ace_scroller").css({
-      width: width,
-      height: height
-    });
+    session.adjustWrapLimit(Math.floor(width / textlayer.getCharacterWidth()));
+    
+    function refreshRender() {
+      var lineHeight = textlayer.getLineHeight();
+      var numRows = getDocLength();
+      var height = (numRows-1) * lineHeight;
+      textlayer.update({
+        firstRow: 0,
+        lastRow: session.getLength(),
+        lineHeight: lineHeight,
+        width: width
+      });
+      contel.css({height: height});
+      $(textlayer.element).css({height: height});
+    }
+    
+    refreshRender();
     
     el.data({
       session: session,
       textlayer: textlayer,
       update: function (newcontent) {
         session.setValue(newcontent);
-        height = (session.getLength()-1) * lineHeight;
-        textlayer.update({
-          firstRow: 0,
-          lastRow: session.getLength(),
-          lineHeight: lineHeight,
-          width: width
-        });
-        contel.css({height: height});
-        $(textlayer.element).css({height: height});
+        refreshRender();
       },
       updateMode: function (modestring) {
         if (codeclass !== modestring) {
@@ -270,12 +278,7 @@ $(document).ready(function () {
           var mode = new TextMode();
         }
         session.setMode(mode);
-        textlayer.update({
-          firstRow: 0,
-          lastRow: session.getLength(),
-          lineHeight: lineHeight,
-          width: width
-        });
+        refreshRender();
       }
     });
     
