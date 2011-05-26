@@ -39,6 +39,19 @@ $.fn.quickdiff("filter", "mathSpan",
     return ("$$" + aHTML + "$$") !== bHTML;
   });
   
+$.fn.quickdiff("filter", "codePre",
+  function (node) { return node.nodeName === "PRE"; },
+  function (a, b) {
+    if ($(a).data("session")) {
+      var aValue = $.trim($(a).data("session").getValue());
+      $(a).data("updateMode")($("code", b).attr("class")); // hack
+    } else {
+      var aValue = $.trim($(a).text());
+    }
+    bValue = $.trim($(b).text());
+    return aValue !== bValue;
+  });
+  
 $.fn.quickdiff("attributes", {
   "td" : ["align"],
   "th" : ["align"],

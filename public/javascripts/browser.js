@@ -131,11 +131,30 @@ $(document).ready(function () {
 
     var startTime = (new Date()).getTime();
     preproc = $("<div></div>").html(markdown.makeHtml(editor.getSession().getValue()));
-    var patch = $("#output > div").quickdiff("patch", preproc, ["mathSpan", "mathSpanInline"]);
-
+    var patch = $("#output > div").quickdiff("diff", preproc, ["mathSpan", "mathSpanInline", "codePre"]);
+    
+    if (patch.type === "identical") {
+      setRenderDelay((new Date()).getTime() - startTime);
+      return;
+    }
+    
+    if (patch.type === "replace" && patch.source.length === 1 && patch.replace.length === 1 && $(patch.replace[0]).is("pre") && $(patch.source[0]).data("session")) {
+      $(patch.source[0]).data("update")($(patch.replace[0]).text());
+      setRenderDelay((new Date()).getTime() - startTime);
+      return;
+    }
+    
+    patch.patch();
+    
     if (patch.type !== "identical" && patch.replace.length > 0) {
       $.each(patch.replace, function (i, el) {
-        if (el.innerHTML) {
+        $("pre", el).each(function (i, el) {
+          aceHighlight($(el));
+        });
+        
+        if ($(el).is("pre")) {
+          aceHighlight($(el));
+        } else if (el.innerHTML) {
           MathJax.Hub.Typeset(el, function () {
             setRenderDelay((new Date()).getTime() - startTime);
           });
@@ -166,26 +185,109 @@ $(document).ready(function () {
   editor.setShowPrintMargin(false);
   //editor.setBehavioursEnabled(true);
   
-  window.editor2el = $("pre:first");
-  if (editor2el[0]) {
-    var codeclass = $("code", editor2el).attr("class");
-    window.editor2 = ace.edit(editor2el[0]);
-    editor2el.width(editor2el.parent().width()).height(editor2.session.getLength() * 16);
-    editor2el.after($("<div style=\"clear:both\"></div>").height(editor2.session.getLength() * 16));
-    editor2.setTheme("ace/theme/twilight");
-    editor2.getSession().setTabSize(2);
-    editor2.getSession().setUseSoftTabs(true);
+  
+  var EditSession = require("ace/edit_session").EditSession;
+  var TextLayer = require("ace/layer/text").Text;
+  var Theme = require("ace/theme/twilight");
+  
+  // Add a removal event
+  (function() {
+      var ev = new $.Event('remove'),
+          orig = $.fn.remove;
+      $.fn.remove = function() {
+          $(this).trigger(ev);
+          orig.apply(this, arguments);
+      }
+  })();
+  
+  function aceHighlight(el) {
+    var codeclass = $("code", el).attr("class");
     if (codeclass == "javascript") {
-      editor2.getSession().setMode(new JavaScriptMode());
+      var mode = new JavaScriptMode();
     } else {
-      editor2.getSession().setMode(new TextMode());
+      var mode = new TextMode();
     }
-    editor2.renderer.setShowGutter(false);
-    editor2.renderer.setHScrollBarAlwaysVisible(false);
-    editor2.getSession().setUseWrapMode(true);
-    editor2.setShowPrintMargin(false);
-    editor2.setReadOnly(true);
+    
+    var session = new EditSession("");
+    session.setUseWorker(false);
+    session.setMode(mode);
+    session.setValue(el.text());
+    
+    var width = el.width();
+    var lineHeight = 16;
+    var height = (session.getLength()-1) * lineHeight;
+    
+    var contel = $("<div>").addClass("acecode");
+    el.append(contel);
+    $("code", el).hide();
+    var textlayer = new TextLayer(contel[0]);
+    textlayer.setSession(session);
+    textlayer.update({
+      firstRow: 0,
+      lastRow: session.getLength(),
+      lineHeight: lineHeight,
+      width: width
+    });
+    
+    contel.addClass(Theme.cssClass).addClass("ace_editor").css({
+      position: "static",
+      height: height
+    });
+    
+    $(textlayer.element).addClass("ace_scroller").css({
+      width: width,
+      height: height
+    });
+    
+    el.data({
+      session: session,
+      textlayer: textlayer,
+      update: function (newcontent) {
+        session.setValue(newcontent);
+        height = (session.getLength()-1) * lineHeight;
+        textlayer.update({
+          firstRow: 0,
+          lastRow: session.getLength(),
+          lineHeight: lineHeight,
+          width: width
+        });
+        contel.css({height: height});
+        $(textlayer.element).css({height: height});
+      },
+      updateMode: function (modestring) {
+        if (codeclass !== modestring) {
+          codeclass = modestring;
+        } else {
+          return;
+        }
+        if (codeclass == "javascript") {
+          var mode = new JavaScriptMode();
+        } else {
+          var mode = new TextMode();
+        }
+        session.setMode(mode);
+        textlayer.update({
+          firstRow: 0,
+          lastRow: session.getLength(),
+          lineHeight: lineHeight,
+          width: width
+        });
+      }
+    });
+    
+    el.bind("remove", function () {
+      el.unbind("remove");
+      session = null;
+      textlayer = null;
+      // Need a proper dispose here.
+    });
   }
+  
+  var pre_els = $("pre");
+  
+  pre_els.each(function (i, el) {
+    aceHighlight($(el));
+  });
   
   var panels = {
     tool: 80,
