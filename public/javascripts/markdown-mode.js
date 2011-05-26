@@ -155,6 +155,14 @@ var JavaScriptHighlightRules = require("ace/mode/javascript_highlight_rules").Ja
 var XmlHighlightRules = require("ace/mode/xml_highlight_rules").XmlHighlightRules;
 var HtmlHighlightRules = require("ace/mode/html_highlight_rules").HtmlHighlightRules;
 
+function github_embed(tag, prefix) {
+  return { // Github style block
+    token : "invalid.illegal.deprecated", // Pick something really obvious
+    regex : "^```" + tag + "\\s*$",
+    next  : prefix + "start"
+  }
+}
+
 var MarkdownHighlightRules = function() {
 
     // regexp must not have capturing parentheses
@@ -170,19 +178,10 @@ var MarkdownHighlightRules = function() {
         }, { // code block
             token : "support.function",
             regex : "^[ ]{4}.+"
-        }, { // Github style javascript block
-            token : "invalid.illegal.deprecated", // Pick something really obvious
-            regex : "^```javascript\\s*$",
-            next  : "js-start"
-        }, { // Github style xml block
-            token : "invalid.illegal.deprecated", // Pick something really obvious
-            regex : "^```xml\\s*$",
-            next  : "xml-start"
-        }, { // Github style html block
-            token : "invalid.illegal.deprecated", // Pick something really obvious
-            regex : "^```html\\s*$",
-            next  : "html-start"
-        }, { // Github style block
+        }, github_embed("javascript", "js-"),
+           github_embed("xml", "js-"),
+           github_embed("html", "html-"),
+        { // Github style block
             token : "support.function",
             regex : "^```[a-zA-Z]+\\s*$",
             next  : "githubblock"

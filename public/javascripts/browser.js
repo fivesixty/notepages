@@ -152,6 +152,9 @@ $(document).ready(function () {
   };
   
   var MarkdownMode = require("ace/mode/markdown").Mode;
+  var TextMode = require("ace/mode/text").Mode;
+  var JavaScriptMode = require("ace/mode/javascript").Mode;
+  
   window.editor = ace.edit("ace");
   editor.setTheme("ace/theme/twilight");
   editor.getSession().setTabSize(2);
@@ -163,15 +166,32 @@ $(document).ready(function () {
   editor.setShowPrintMargin(false);
   //editor.setBehavioursEnabled(true);
   
+  window.editor2el = $("pre:first");
+  if (editor2el[0]) {
+    var codeclass = $("code", editor2el).attr("class");
+    window.editor2 = ace.edit(editor2el[0]);
+    editor2el.width(editor2el.parent().width()).height(editor2.session.getLength() * 16);
+    editor2el.after($("<div style=\"clear:both\"></div>").height(editor2.session.getLength() * 16));
+    editor2.setTheme("ace/theme/twilight");
+    editor2.getSession().setTabSize(2);
+    editor2.getSession().setUseSoftTabs(true);
+    if (codeclass == "javascript") {
+      editor2.getSession().setMode(new JavaScriptMode());
+    } else {
+      editor2.getSession().setMode(new TextMode());
+    }
+    editor2.renderer.setShowGutter(false);
+    editor2.renderer.setHScrollBarAlwaysVisible(false);
+    editor2.getSession().setUseWrapMode(true);
+    editor2.setShowPrintMargin(false);
+    editor2.setReadOnly(true);
+  }
+  
   var panels = {
     tool: 80,
     edit: 500
   };
   
-  function setWidths(i) {
-    $("#toolpanel, #editpanel").width(panels[i]);
-    editor.resize();
-  }
   var editpanel = $("#editpanel"),
     toolpanel = $("#toolpanel"),
     edittools = new MarkdownTools(editor, $("#acetools"), "/images/fugue/"),
@@ -180,6 +200,23 @@ $(document).ready(function () {
     password = false,
     newdocument = editing,
     loaded = editing;
+  
+  function alignPage() {
+    var leftMargin = (($(window).width()-panels.edit) - ($("#page").width() ))/2;
+    if (leftMargin < 10)
+      leftMargin = 10;
+    page.stop()
+      .css({marginLeft: $("#page").offset().left})
+      .animate({marginLeft:leftMargin});
+  }
+  
+  function setWidths(i) {
+    $("#toolpanel, #editpanel").width(panels[i]);
+    alignPage();
+    editor.resize();
+  }
+  
+  $(window).resize(alignPage);
   
   editpanel.slide = function (show, preview) {
     if (!preview) {
@@ -228,9 +265,7 @@ $(document).ready(function () {
     if (page.slid === show) return;
     
     if (show) {
-      page
-        .css({marginLeft: $("#page").offset().left})
-        .animate({marginLeft:30});
+      alignPage();
     } else {
       page
         .animate({marginLeft: ($(window).width()-$("#page").width())/2},
