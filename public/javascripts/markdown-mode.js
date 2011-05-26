@@ -179,7 +179,7 @@ var MarkdownHighlightRules = function() {
             token : "support.function",
             regex : "^[ ]{4}.+"
         }, github_embed("javascript", "js-"),
-           github_embed("xml", "js-"),
+           github_embed("xml", "xml-"),
            github_embed("html", "html-"),
         { // Github style block
             token : "support.function",
