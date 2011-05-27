@@ -13,10 +13,6 @@ head
   link(rel="stylesheet", href="/stylesheets/build.css")
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
-  
-  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
-  script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js")
-  script(src="/javascripts/build.js", type="text/javascript")
 
 body
   #notify.drop-shadow
@@ -24,7 +20,7 @@ body
   #page.drop-shadow
     #output
       div!= page.content
-      div(style="clear:both")
+      div.clear
     #footer Notepag.es was created by <a href="http://blog.chris-spencer.co.uk">Chris Spencer</a> and is <a href="https://github.com/fivesixty/notepages">Open Source</a>
   
   #toolpanel.readonly
@@ -47,7 +43,7 @@ body
     #dragger
     #acetools
     #ace
-    
+  
   script(type="text/x-mathjax-config")
     :protect
       MathJax.Hub.Config({
@@ -58,7 +54,12 @@ body
           scale: 100
         }
       });
-  script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js")
+  script(type="text/javascript", src="/javascripts/LAB.min.js")
+  script(type="text/javascript")
+    $LAB
+      .script("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js").wait()
+      .script("/javascripts/build.js")
+      .script("http://cdn.mathjax.org/mathjax/latest/MathJax.js");
   script(type="text/javascript)
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-13129098-3']);

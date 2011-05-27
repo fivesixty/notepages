@@ -1,4 +1,5 @@
 var copy = require('dryice').copy;
+var cleanCSS = require('clean-css');
 
 var result = copy.createDataObject();
 
@@ -6,7 +7,8 @@ var result = copy.createDataObject();
  "public/lib/ace/build/src/theme-twilight.js",
  "public/lib/ace/build/src/mode-javascript.js",
  "public/lib/ace/build/src/mode-html.js",
- "public/lib/ace/build/src/mode-xml.js"].forEach(function (file) {
+ "public/lib/ace/build/src/mode-xml.js",
+ "public/javascripts/jquery-ui-1.8.13.custom.min.js"].forEach(function (file) {
     copy({
       source: file,
       filter: [
@@ -54,5 +56,6 @@ var result_css = copy.createDataObject();
 
 copy({
   source: result_css,
+  filter: cleanCSS.process,
   dest: "public/stylesheets/build.css"
 });
