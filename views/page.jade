@@ -3,50 +3,20 @@ head
   meta(http-equiv="X-UA-Compatible", content="IE=Edge,chrome=IE8")
   meta(charset="UTF-8")
   title Notepag.es - #{page.pagename}
-  link(href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic', rel='stylesheet', type='text/css')
-  script(src="http://code.jquery.com/jquery-1.6.1.min.js")
-  script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js")
-  script(src="/lib/jquery.event.drag-2.0.js")
-  script(src="/lib/ace/build/src/ace-uncompressed.js", type="text/javascript", charset="utf-8")
-  script(src="/lib/ace/build/src/theme-twilight.js", type="text/javascript", charset="utf-8")
-  script(src="/lib/ace/build/src/mode-javascript.js", type="text/javascript", charset="utf-8")
-  script(src="/lib/ace/build/src/mode-html.js", type="text/javascript", charset="utf-8")
-  script(src="/lib/ace/build/src/mode-xml.js", type="text/javascript", charset="utf-8")
-  script(src="/javascripts/markdown-mode.js", type="text/javascript", charset="utf-8")
-  script(src="/javascripts/ace-highlight.js", type="text/javascript", charset="utf-8")
-  script(src="/javascripts/notify.js", type="text/javascript", charset="utf-8")
-
-  script(type="text/x-mathjax-config")
-    :protect
-      MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX","output/HTML-CSS"],
-        tex2jax: {inlineMath: [["%%","%%"]]},
-        "HTML-CSS": {
-          scale: 100
-        }
-      });
-  script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js")
-
+  
   script
     var editing = #{page.editing};
     var pagename = "#{page.pagename}";
     var passreq = #{page.passreq};
-
-  script(src="/lib/quickdiff/quickdiff.js")
-  script(src="/lib/sha256.js")
-
-  script(src="/lib/mdext/src/showdown.js")
-  script(src="/javascripts/universal.js")
-  script(src="/javascripts/editor-tools.js")
-  script(src="/javascripts/browser.js")
-
-  // link(rel="stylesheet", href="/stylesheets/reset.css") something going wrong here.
-  link(rel="stylesheet", href="/stylesheets/browser.css")
-  link(rel="stylesheet", href="/stylesheets/universal.css")
-  link(rel="stylesheet", href="/stylesheets/ace-twilight.css")
+  
+  link(href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic', rel='stylesheet', type='text/css')
+  link(rel="stylesheet", href="/stylesheets/build.css")
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
+  
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
+  script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js")
+  script(src="/javascripts/build.js", type="text/javascript")
 
 body
   #notify.drop-shadow
@@ -78,6 +48,17 @@ body
     #acetools
     #ace
     
+  script(type="text/x-mathjax-config")
+    :protect
+      MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX","output/HTML-CSS"],
+        tex2jax: {inlineMath: [["%%","%%"]]},
+        "HTML-CSS": {
+          scale: 100
+        }
+      });
+  script(src="http://cdn.mathjax.org/mathjax/latest/MathJax.js")
   script(type="text/javascript)
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-13129098-3']);

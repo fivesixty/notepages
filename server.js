@@ -20,7 +20,7 @@ app.configure(function(){
   app.use(express.session({ secret: 'your secret here' }));
   app.use(express.compiler({ src: __dirname + '/public', enable: ['sass'] }));
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public', { maxAge: 900000 }));
 });
 
 app.configure('development', function(){
