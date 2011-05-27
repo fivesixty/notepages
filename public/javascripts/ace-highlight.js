@@ -1,13 +1,13 @@
-define('ace/highlight', function(require, exports, module) {
+define('ace/highlight', function (require, exports, module) {
 
 // Add a removal event
-(function() {
-    var ev = new $.Event('remove'),
-        orig = $.fn.remove;
-    $.fn.remove = function() {
-        $(this).trigger(ev);
-        return orig.apply(this, arguments);
-    }
+(function () {
+  var ev = new $.Event('remove'),
+    orig = $.fn.remove;
+  $.fn.remove = function () {
+    $(this).trigger(ev);
+    return orig.apply(this, arguments);
+  };
 })();
 
 var EditSession = require("ace/edit_session").EditSession;
@@ -59,7 +59,7 @@ function Highlight(element) {
   this.twilightTheme = require("ace/theme/twilight");
   
   this.setMode = function(mode_string) {
-    if (mode_string == this.mode_string) return;
+    if (mode_string === this.mode_string) return;
     
     this.mode_string = mode_string;
     switch (mode_string) {
@@ -71,16 +71,16 @@ function Highlight(element) {
     }
     this.session.setMode(this.mode);
     this.update();
-  }
+  };
   
   this.setValue = function(newcontent) {
     this.session.setValue(newcontent);
     this.update();
-  }
+  };
   
   this.getValue = function () {
     return this.session.getValue();
-  }
+  };
   
   this.rowCount = function() {
     var total = 0;
@@ -88,7 +88,7 @@ function Highlight(element) {
       total += this.session.getRowLength(i);
     }
     return total;
-  }
+  };
   
   this.update = function() {
     var lineHeight = this.textlayer.getLineHeight();
@@ -104,7 +104,7 @@ function Highlight(element) {
     
     this.highlightDiv.css({height: height});
     $(this.textlayer.element).css({height: height});
-  }
+  };
   
 }).call(Highlight.prototype);
 
