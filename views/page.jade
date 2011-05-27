@@ -14,8 +14,8 @@ head
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
   
-  script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
-  script(src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js")
+  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
+  script(src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js")
   script(src="/javascripts/build.js", type="text/javascript")
 
 body
@@ -29,19 +29,19 @@ body
   
   #toolpanel.readonly
     a#edit.readonly(href="#edit") edit
-      img(src="/images/pencil_24.png", alt="edit", title="edit")
+      #pencil_24_png.sprites
     
     a#cancel.edit(href="#edit") close
-      img(src="/images/cancel_24.png", alt="close", title="close")
+      #cancel_24_png.sprites
           
     a#save.edit(href="#edit") save
-      img(src="/images/save_24.png", alt="save", title="save")
+      #save_24_png.sprites
               
     a#preview.edit(href="#edit") preview
-      img(src="/images/magnifier_24.png", alt="preview", title="preview")
+      #magnifier_24_png.sprites
                   
     a#password.edit(href="#edit") password
-      img(src="/images/lock_24.png", alt="password", title="password")
+      #lock_24_png.sprites
   
   #editpanel
     #dragger

@@ -148,14 +148,16 @@ a img {
   right: 10px;
   background: #666;
 }
-#acetools img {
+#acetools .button_container {
   border: 1px solid #333;
   padding: 2px;
   margin: 1px;
+  height: 16px;
   background: #888;
   cursor: pointer;
+  display: inline-block;
 }
-#acetools img:hover {
+#acetools .button_container:hover {
   background: #999;
 }
 
@@ -186,7 +188,7 @@ a img {
   padding: 5px 0;
   text-align: center;
 }
-#toolpanel a img {
+#toolpanel a div.sprites {
   vertical-align: middle;
   margin-left: 5px;
 }

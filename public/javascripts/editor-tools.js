@@ -91,7 +91,7 @@ EditorTools.prototype.callback = function (callback) {
 }
 
 EditorTools.prototype.addButton = function (path, callback, float) {
-  var element = $('<img src="' + this.docroot + path + '">').click(this.callback(callback));
+  var element = $('<div class="button_container"><div class="sprites" id="' + path + '"></div></div>').click(this.callback(callback));
   if (float) {
     element.css({float:"right"});
   }
@@ -103,7 +103,7 @@ EditorTools.prototype.addButton = function (path, callback, float) {
 function MarkdownTools (editor, panel, docroot) {
   var tools = new EditorTools(editor, panel, docroot);
   
-  tools.addButton("edit-heading.png",
+  tools.addButton("edit-heading_png",
     function (u) {
       var line = u.currentLine(),
         match = /^(#*)\s*(.*)$/.exec(line),
@@ -120,7 +120,7 @@ function MarkdownTools (editor, panel, docroot) {
       u.replaceAndSelectLine(newline);
     });
     
-  tools.addButton('edit-bold.png',
+  tools.addButton('edit-bold_png',
     function (u) {
       if (u.multiline) return;
       
@@ -139,7 +139,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-italic.png',
+  tools.addButton('edit-italic_png',
     function (u) {
       if (u.multiline) return;
 
@@ -158,7 +158,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('chain.png',
+  tools.addButton('chain_png',
     function (u) {
       if (u.multiline) return;
 
@@ -170,7 +170,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-list.png',
+  tools.addButton('edit-list_png',
     function (u) {
       u.forSelectedLines(function (row, line) {
         replaceRange = new Range(row, 0, row, line.length);
@@ -179,7 +179,7 @@ function MarkdownTools (editor, panel, docroot) {
       u.selectRange(u.selectedLineRange());
     });
   
-  tools.addButton('edit-list-order.png',
+  tools.addButton('edit-list-order_png',
     function (u) {
       marker = 1;
       u.forSelectedLines(function (row, line) {
@@ -191,17 +191,17 @@ function MarkdownTools (editor, panel, docroot) {
       u.selectRange(u.selectedLineRange());
     });
     
-  tools.addButton('edit-indent.png',
+  tools.addButton('edit-indent_png',
     function (u) {
       
     });
       
-  tools.addButton('edit-outdent.png',
+  tools.addButton('edit-outdent_png',
     function (u) {
       
     });
   
-  tools.addButton('edit-image.png',
+  tools.addButton('edit-image_png',
     function (u) {
       if (u.multiline) return;
 
@@ -212,7 +212,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-image-center.png',
+  tools.addButton('edit-image-center_png',
     function (u) {
       if (u.multiline) return;
 
@@ -223,7 +223,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-image-right.png',
+  tools.addButton('edit-image-right_png',
     function (u) {
       if (u.multiline) return;
 
@@ -234,12 +234,12 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-rule.png',
+  tools.addButton('edit-rule_png',
     function (u) {
       u.replaceAndSelect("\n---\n");
     });
     
-  tools.addButton('edit-quotation.png',
+  tools.addButton('edit-quotation_png',
     function (u) {
       if (u.multiline) return;
       
@@ -262,7 +262,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-code.png',
+  tools.addButton('edit-code_png',
     function (u) {
       var selected, match, newtext, longest, line, replaceRange;
 
@@ -320,7 +320,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-mathematics.png',
+  tools.addButton('edit-mathematics_png',
     function (u) {
       if (u.selection.start.row !== u.selection.end.row) {
         return;
@@ -353,12 +353,12 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-size-up.png',
+  tools.addButton('edit-size-up_png',
     function (u) {
       $("#ace").css("font-size", parseInt($("#ace").css("font-size"),10) + 2);
     }, true);
     
-  tools.addButton('edit-size-down.png',
+  tools.addButton('edit-size-down_png',
     function (u) {
       $("#ace").css("font-size", parseInt($("#ace").css("font-size"),10) - 2);
     }, true);

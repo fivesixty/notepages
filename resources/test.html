@@ -6,17 +6,14 @@
         console = {log:function() {}};
       }
     </script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script>
+      editing = true;
+      pagename = "TEST";
+      passreq = false;
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-    <script src="../public/lib/jquery.event.drag-2.0.js"></script>
-    <script src="../../ace/build/src/ace-uncompressed.js" type="text/javascript" charset="utf-8"></script> 
-    <script src="../public/lib/ace/build/src/theme-twilight.js" type="text/javascript" charset="utf-8"></script> 
-    <script src="../public/lib/ace/build/src/mode-javascript.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../public/lib/ace/build/src/mode-xml.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../public/lib/ace/build/src/mode-html.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../public/javascripts/markdown-mode.js"></script>
-    <script src="../public/javascripts/ace-highlight.js"></script>
-    <script src="../public/javascripts/notify.js"></script>
+    <script src="../public/javascripts/build.js"></script>
     
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -30,26 +27,10 @@
     </script>
     <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
     
-    <script>
-      editing = true;
-      pagename = "TEST";
-      passreq = false;
-    </script>
-    
-    <script src="../public/lib/quickdiff/quickdiff.js"></script>
-    <script src="../public/lib/sha256.js"></script>
-    <script src="../public/lib/mdext/src/showdown.js"></script>
-    <script src="../public/javascripts/universal.js"></script>
-    <script src="../public/javascripts/editor-tools.js"></script>
-    <script src="../public/javascripts/browser.js"></script>
-    
     <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css') />
-    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold' rel='stylesheet' type='text/css') />
     
     <!--link href="../public/stylesheets/reset.css" rel="stylesheet" /-->
-    <link href="../public/stylesheets/browser.css" rel="stylesheet" />
-    <link href="../public/stylesheets/universal.css" rel="stylesheet" />
-    <link href="../public/stylesheets/ace-twilight.css" rel="stylesheet" />
+    <link href="../public/stylesheets/build.css" rel="stylesheet" />
   </head>
   <body class="readonly">
     <div id="notify" class="drop-shadow"><span class="message"></span></div>
@@ -63,7 +44,7 @@
       </footer>
     </div>
     <div id="toolpanel" class="readonly">
-      <a class="readonly" href="#edit" id="edit">edit<img src="../public/images/pencil_24.png" alt="edit" title="edit" /></a>
+      <a class="readonly" href="#edit" id="edit">edit<div class="sprites" id="pencil_24_png"></div></a>
       <a class="edit" href="#cancel" id="cancel">close<img src="../public/images/cancel_24.png" alt="cancel" title="cancel" /></a>
       <a class="edit" href="#save" id="save">save<img src="../public/images/save_24.png" alt="save" title="save" /></a>
       <a class="edit" href="#preview" id="preview">preview<img src="../public/images/magnifier_24.png" alt="preview" title="preview" /></a>

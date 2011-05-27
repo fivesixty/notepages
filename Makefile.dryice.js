@@ -43,7 +43,8 @@ var result_css = copy.createDataObject();
 
 ["public/stylesheets/browser.css",
  "public/stylesheets/universal.css",
- "public/stylesheets/ace-twilight.css"].forEach(function (css) {
+ "public/stylesheets/ace-twilight.css",
+ "public/stylesheets/sprites.css"].forEach(function (css) {
     copy({
       source: css,
       filter: function (data) { return data + "\n"; },
