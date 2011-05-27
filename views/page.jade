@@ -9,7 +9,7 @@ head
     var pagename = "#{page.pagename}";
     var passreq = #{page.passreq};
   
-  link(href='http://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic', rel='stylesheet', type='text/css')
+  link(href='https://fonts.googleapis.com/css?family=Crimson+Text:regular,regularitalic,bold,bolditalic', rel='stylesheet', type='text/css')
   link(rel="stylesheet", href="/stylesheets/browser.css")
   link(rel="stylesheet", href="/stylesheets/print.css", media="print")
   link(rel="shortcut icon", href="/favicon.ico")
@@ -56,10 +56,11 @@ body
       });
   script(type="text/javascript", src="/javascripts/LAB.min.js")
   script(type="text/javascript")
+    var protocol = 'https:' == document.location.protocol ? 'https://' : 'http://';
     $LAB
-      .script("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js").wait()
+      .script(protocol + "ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js").wait()
       .script("/javascripts/browser.js")
-      .script("http://cdn.mathjax.org/mathjax/latest/MathJax.js");
+      .script(protocol + "d3eoax9i5htok0.cloudfront.net/mathjax/latest/MathJax.js");
   script(type="text/javascript)
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-13129098-3']);

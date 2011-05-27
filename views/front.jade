@@ -13,8 +13,9 @@ body
       
   script(type="text/javascript", src="/javascripts/LAB.min.js")
   script(type="text/javascript")
+    var protocol = 'https:' == document.location.protocol ? 'https://' : 'http://';
     $LAB
-      .script("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
+      .script(protocol + "ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
       .wait(function () {
         $("#front #page.default").live("click", function () {
           $(this).select();
