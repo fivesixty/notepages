@@ -1,9 +1,9 @@
 [submodule "public/lib/mdext"]
-	path = public/lib/mdext
+	path = support/mdext
 	url = git@github.com:fivesixty/mdext.git
 [submodule "public/lib/quickdiff"]
-	path = public/lib/quickdiff
+	path = support/quickdiff
 	url = git@github.com:fivesixty/quickdiff.git
 [submodule "public/lib/ace"]
-	path = public/lib/ace
+	path = support/ace
 	url = git://github.com/ajaxorg/ace.git

@@ -3,12 +3,12 @@ var cleanCSS = require('clean-css');
 
 var result = copy.createDataObject();
 
-["public/lib/ace/build/src/ace.js",
- "public/lib/ace/build/src/theme-twilight.js",
- "public/lib/ace/build/src/mode-javascript.js",
- "public/lib/ace/build/src/mode-html.js",
- "public/lib/ace/build/src/mode-xml.js",
- "public/javascripts/jquery-ui-1.8.13.custom.min.js"].forEach(function (file) {
+["support/ace/build/src/ace.js",
+ "support/ace/build/src/theme-twilight.js",
+ "support/ace/build/src/mode-javascript.js",
+ "support/ace/build/src/mode-html.js",
+ "support/ace/build/src/mode-xml.js",
+ "support/jquery-ui-1.8.13.custom.min.js"].forEach(function (file) {
     copy({
       source: file,
       filter: [
@@ -21,32 +21,32 @@ var result = copy.createDataObject();
 });
 
 copy({
-  source: ["public/lib/jquery.event.drag-2.0.js",
-           "public/javascripts/markdown-mode.js",
-           "public/javascripts/ace-highlight.js",
-           "public/javascripts/notify.js",
-           "public/lib/quickdiff/quickdiff.js",
-           "public/lib/sha256.js",
-
-           "public/lib/mdext/src/showdown.js",
-           "public/javascripts/universal.js",
-           "public/javascripts/editor-tools.js",
-           "public/javascripts/browser.js"],
+  source: ["support/jquery.event.drag-2.0.js",  
+           "support/quickdiff/quickdiff.js",
+           "support/sha256.js",
+           "support/mdext/src/showdown.js",
+           
+           "src/js/markdown-mode.js",
+           "src/js/ace-highlight.js",
+           "src/js/notify.js",
+           "src/js/universal.js",
+           "src/js/editor-tools.js",
+           "src/js/browser.js"],
   filter: copy.filter.uglifyjs,
   dest  : result
 });
 
 copy({
   source: result,
-  dest: "public/javascripts/build.js"
+  dest: "public/javascripts/browser.js"
 });
 
 var result_css = copy.createDataObject();
 
-["public/stylesheets/browser.css",
- "public/stylesheets/universal.css",
- "public/stylesheets/ace-twilight.css",
- "public/stylesheets/sprites.css"].forEach(function (css) {
+["src/css/browser.css",
+ "src/css/universal.css",
+ "src/css/ace-twilight.css",
+ "src/css/sprites.css"].forEach(function (css) {
     copy({
       source: css,
       filter: function (data) { return data + "\n"; },
@@ -57,5 +57,5 @@ var result_css = copy.createDataObject();
 copy({
   source: result_css,
   filter: cleanCSS.process,
-  dest: "public/stylesheets/build.css"
+  dest: "public/stylesheets/browser.css"
 });

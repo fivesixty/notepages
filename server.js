@@ -1,5 +1,5 @@
 var express = require('express')
-  , markdown = new (require('./public/lib/mdext/src/showdown').Showdown.converter)()
+  , markdown = new (require('./support/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose')
   , _ = require('underscore')
   , app = module.exports = express.createServer();

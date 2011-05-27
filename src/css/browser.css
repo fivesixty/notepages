@@ -1,0 +1,302 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #ccc;
+  font-family: 'Crimson Text', "Georgia", "Times", "Times New Roman", serif, sans-serif;
+  font-size: 1em;
+  color: #333;
+}
+
+.drop-shadow {
+    position:relative;
+    background:#fff;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+       -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.print {
+  display: none;
+}
+
+a img {
+  border: none;
+}
+
+#output {
+  padding: 40px;
+}
+#output *:first-child {
+  margin-top: 0;
+}
+#output *:last-child {
+  margin-bottom: 0;
+}
+
+#page h1, #page h2, #page h3, #page h4, #page h5, #page h6 {
+  font-weight: bold;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+#page h1 {
+  font-size: 2.5em;
+  text-align: center;
+}
+#page h2 {
+  font-size: 2.0em;
+}
+#page h3 {
+  font-size: 1.6em;
+}
+#page h4 {
+  font-size: 1.4em;
+  text-transform: uppercase;
+}
+#page h5 {
+  font-size: 1.2em;
+}
+#page h6 {
+  font-size: 1.2em;
+  font-style: italic;
+  font-weight: inherit;
+}
+#page em {
+  font-style: italic;
+}
+#page strong {
+  font-weight: bold;
+}
+#page p {
+  font-size: 1.1em;
+  line-height: 1.5em;
+  margin: 0 0 1.5em 0;
+  text-align: justify;
+}
+#page code {
+  font-family: "Courier New", "Courier", monospace, serif;
+  font-size: 0.8em;
+  background: #eee;
+  border: 1px solid #ddd;
+  padding: 2px;
+}
+#page pre code {
+  display: block;
+  line-height: 1.1em;
+  padding: 0.5em;
+  overflow: auto;
+}
+#page pre {
+  margin-bottom: 20px;
+}
+#page ol,ul {
+  padding-left: 2em;
+  margin-bottom: 1em;
+}
+#page ul {
+  list-style: disc;
+}
+#page ul ul {
+  list-style: square;
+}
+#page ul ul ul {
+  list-style: circle;
+}
+#page ol {
+  list-style: decimal;
+}
+#page ol ol {
+  list-style: lower-alpha;
+}
+#page ol ol ol {
+  list-style: lower-roman;
+}
+#page blockquote {
+	margin: 1em 3em;
+	color: #999;
+	border-left: 2px solid #999;
+	padding-left: 1em;
+}
+#page blockquote p:first-child:first-letter {
+  font-variant: small-caps;
+  font-size: 3em;
+  line-height: 0.75em;
+  margin: 7px 5px 0 0;
+  float: left;
+}
+#page hr {
+  border: 0;
+  border-top: 2px solid #aaa;
+  margin: 20px auto;
+  width: 360px;
+}
+
+#editpanel {
+  width: 500px;
+  position: fixed;
+  top: 35px;
+  bottom: 0;
+  right: 0;
+  background: #666;
+  margin: 0 -500px 0 0;
+}
+
+#acetools {
+  position: absolute;
+  top: 5px;
+  height: 24px;
+  left: 10px;
+  right: 10px;
+  background: #666;
+}
+#acetools .button_container {
+  border: 1px solid #333;
+  padding: 2px;
+  margin: 1px;
+  height: 16px;
+  background: #888;
+  cursor: pointer;
+  display: inline-block;
+}
+#acetools .button_container:hover {
+  background: #999;
+}
+
+#ace {
+  position: absolute;
+  top: 32px;
+  left: 10px;
+  bottom: 10px;
+  right: 10px;
+  resize: none;
+}
+
+#page {
+  width: 720px;
+  background: #fff;
+  margin: 30px auto;
+}
+
+#toolpanel {
+  position: fixed;
+  background: #666;
+  top: 0;
+  height: 30px;
+  margin: 0;
+  right: 20px;
+  width: 80px;
+  vertical-align: middle;
+  padding: 5px 0;
+  text-align: center;
+}
+#toolpanel a div.sprites {
+  vertical-align: middle;
+  margin-left: 5px;
+}
+#toolpanel a {
+  color: white;
+  text-decoration: none;
+  margin: 0 5px;
+  display: none;
+  padding: 3px;
+  font-family: sans-serif;
+}
+
+#toolpanel.readonly a.readonly {
+  display: inline-block;
+}
+
+#toolpanel.edit a.edit {
+  display: inline-block;
+}
+
+#toolpanel.edit a.passdisable {
+  display: none;
+}
+
+#dragger {
+  width: 10px;
+  height: 100px;
+  background: #999;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -70px;
+  cursor: move;
+}
+
+#save {
+  opacity: 0.4;
+}
+
+#footer {
+  font-family: "Helvetica", "Arial", sans-serif, serif;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8em;
+  clear: both;
+  height: 2em;
+}
+#footer, #footer a {
+  color: #333;
+}
+
+/* Notification box CSS */
+#notify {
+  position: fixed;
+  top: 40px;
+  right: 40px;
+  height: 70px;
+  width: 400px;
+  z-index: 2000;
+  background: #444 url(../images/warning1_48.png) no-repeat 11px;
+  display: none;
+  font-family: sans-serif;
+}
+#notify.warning {
+  background: #444 url(../images/warning1_48.png) no-repeat 11px;
+}
+#notify.success {
+  background: #444 url(../images/checkmark_48.png) no-repeat 11px;
+}
+#notify.help {
+  background: #444 url(../images/help_48.png) no-repeat 11px;
+}
+#notify.info {
+  background: #444 url(../images/info_48.png) no-repeat 11px;
+}
+#notify span {
+  position: absolute;
+  left: 68px;
+  width: 312px;
+  text-align: center;
+}
+#notify form {
+  margin: 0;
+  padding: 0;
+}
+#notify span.message {
+  top: 10px;
+  color: #eee;
+  line-height: 50px;
+}
+#notify span.confirm {
+  position: absolute;
+  top: 10px;
+  color: #eee;
+  line-height: 20px;
+}
+#notify span.buttons {
+  position: absolute;
+  bottom: 5px;
+}
+#notify span.buttons input {
+  padding: 5px 10px;
+  margin: 5px;
+  border: 0;
+}
+#notify span.buttons input[type=button], #notify span.buttons input[type=submit] {
+  cursor: pointer;
+}
+.clear {
+  clear: both;
+}
