@@ -1,5 +1,15 @@
 define('ace/highlight', function(require, exports, module) {
 
+// Add a removal event
+(function() {
+    var ev = new $.Event('remove'),
+        orig = $.fn.remove;
+    $.fn.remove = function() {
+        $(this).trigger(ev);
+        return orig.apply(this, arguments);
+    }
+})();
+
 var EditSession = require("ace/edit_session").EditSession;
 var TextLayer = require("ace/layer/text").Text;
 var TextMode = require("ace/mode/text").Mode;
@@ -33,6 +43,11 @@ function Highlight(element) {
   this.session.adjustWrapLimit(Math.floor(this.width / this.textlayer.getCharacterWidth()));
   
   this.update();
+  
+  var self = this;
+  this.element.bind("remove", function () {
+    self.textlayer.destroy();
+  });
   
   this.element.data("highlighter", this);
 }

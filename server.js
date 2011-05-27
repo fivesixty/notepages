@@ -101,6 +101,7 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
         post.text = req.body.text;
         post.save(function(err) {
           if (!err) res.send({status:"success",message:"Page updated."}, 200);
+          console.log("Updated " + page.iden + ".");
         });
       }
     } else {
@@ -114,6 +115,7 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
       }
       post.save(function (err) {
         if (!err) res.send({status:"success",message:"Page created."}, 200);
+        console.log("Created " + page.iden + ".");
       });
     }
   });
@@ -138,6 +140,7 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
     
     if (!err && post) {
       if (req.params.extn === "json") {
+        console.log("Returned " + page.pagename + " as json.");
         res.send({text:post.text});
         return;
       } else {
@@ -150,8 +153,10 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
     }
     
     if (req.headers["user-agent"] && isMobileBrowser(req.headers["user-agent"])) {
+      console.log("Rendered " + page.pagename + " for mobile. (new: " + page.editing + ")");
       res.render('mobile', { page: page });
     } else {
+      console.log("Rendered " + page.pagename + " for browser. (new: " + page.editing + ")");
       res.render('page', { page: page });
     }
   });
