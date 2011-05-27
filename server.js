@@ -101,7 +101,7 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
         post.text = req.body.text;
         post.save(function(err) {
           if (!err) res.send({status:"success",message:"Page updated."}, 200);
-          console.log("Updated " + page.iden + ".");
+          console.log("Updated " + post.iden + ".");
         });
       }
     } else {
@@ -115,7 +115,7 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
       }
       post.save(function (err) {
         if (!err) res.send({status:"success",message:"Page created."}, 200);
-        console.log("Created " + page.iden + ".");
+        console.log("Created " + post.iden + ".");
       });
     }
   });
