@@ -152,7 +152,7 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
       page.content = "";
     }
     
-    if (req.headers["user-agent"] && isMobileBrowser(req.headers["user-agent"])) {
+    if (false && req.headers["user-agent"] && isMobileBrowser(req.headers["user-agent"])) {
       console.log("Rendered " + page.pagename + " for mobile. (new: " + page.editing + ")");
       res.render('mobile', { page: page });
     } else {

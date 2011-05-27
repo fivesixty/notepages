@@ -37,6 +37,8 @@ Reading and editing has been tested across all modern browsers (IE9, Safari 5, C
 
 A mobile version is served to detected browsers, using jQuery Mobile Alpha 3. It has been tested on iPad/iPhone browsers. Reading experience is good on the iPad, somewhat constrained on the iPhone due to width. Editing is buggy due to alpha status of jQuery mobile., but functional.
 
+#### Mobile support is currently not supported in development, and will be moving to a read-only state pending finding suitable input arrangements.
+
 ## Printing
 
 A print stylesheet is served which formats the document in a print friendly manner. Exporting of pages is not self-supported, but Print-to-PDF functionality of most browsers works as expected.
