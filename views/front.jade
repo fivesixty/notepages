@@ -2,18 +2,6 @@ head
   meta(http-equiv="Content-type", content="text/html;charset=UTF-8")
   meta(http-equiv="X-UA-Compatible", content="IE=Edge,chrome=IE8")
   title Notepag.es
-  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js")
-  script
-    $(document).ready(function () {
-      $("#front #page.default").live("click", function () {
-        $(this).select();
-        $(this).removeClass("default");
-      });
-      $("form").submit(function () {
-        window.location = "/" + $("#page").val();
-        return false;
-      });
-    });
   link(rel="stylesheet", href="/stylesheets/front.css")
   link(rel="shortcut icon", href="/favicon.ico")
 body
@@ -21,3 +9,29 @@ body
     form
       input#page.default(type="text", value=randid)
       input#write(type="submit", value="write!")
+  
+      
+  script(type="text/javascript", src="/javascripts/LAB.min.js")
+  script(type="text/javascript")
+    $LAB
+      .script("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js")
+      .wait(function () {
+        $("#front #page.default").live("click", function () {
+          $(this).select();
+          $(this).removeClass("default");
+        });
+        $("form").submit(function () {
+          window.location = "/" + $("#page").val();
+          return false;
+        });
+      });
+      
+  script(type="text/javascript)
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13129098-3']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
