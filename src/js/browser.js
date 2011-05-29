@@ -243,6 +243,7 @@ $(document).ready(function () {
   $("#edit").click(toggleEditOn);
   
   if (editing) {
+    toolpanel.show();
     toggleEditOn();
   }
   

@@ -54,6 +54,13 @@ body
           scale: 100
         }
       });
+      if (!editing) {
+        MathJax.Hub.Register.StartupHook("End Typeset",
+          function (message) {
+            $("#toolpanel").show("slide", {direction: "up"});
+          }
+        );
+      }
   script(type="text/javascript", src="/javascripts/LAB.min.js")
   script(type="text/javascript")
     var protocol = 'https:' == document.location.protocol ? 'https://' : 'http://';

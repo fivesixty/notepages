@@ -187,6 +187,7 @@ a img {
   vertical-align: middle;
   padding: 5px 0;
   text-align: center;
+  display: none;
 }
 #toolpanel a div.sprites {
   vertical-align: middle;
