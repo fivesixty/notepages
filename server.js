@@ -2,7 +2,9 @@ var express = require('express')
   , markdown = new (require('./support/mdext/src/showdown').Showdown.converter)()
   , mongoose = require('mongoose')
   , _ = require('underscore')
-  , app = module.exports = express.createServer();
+  , app = module.exports = express.createServer()
+  , redis = require("redis")
+  , redis_client = redis.createClient();
 
 // By default Jade will kill itself inside a MathJax configuration script
 // So we need this filter
@@ -21,6 +23,7 @@ app.configure(function(){
   //app.use(express.compiler({ src: __dirname + '/public', enable: ['sass'] }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public', { maxAge: 7*24*60*60*1000 })); // 1 week cache
+  app.enable('view cache');
 });
 
 app.configure('development', function(){
@@ -101,7 +104,7 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
         post.text = req.body.text;
         post.save(function(err) {
           if (!err) res.send({status:"success",message:"Page updated."}, 200);
-          console.log("Updated " + post.iden + ".");
+          redis_client.del("page_" + post.iden);
         });
       }
     } else {
@@ -115,13 +118,29 @@ app.post(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, express.bodyParser(), fun
       }
       post.save(function (err) {
         if (!err) res.send({status:"success",message:"Page created."}, 200);
-        console.log("Created " + post.iden + ".");
       });
     }
   });
 });
 
-app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
+function redisCache(req, res, next) {
+  if (req.params.extn != "html") {
+    next();
+    return;
+  }
+  
+  redis_client.exists("page_" + req.params.id, function (err, reply) {
+    if (reply) {
+      redis_client.hgetall("page_" + req.params.id, function (err, page) {
+        res.render('page', { page: page });
+      });
+    } else {
+      next();
+    }
+  });
+}
+
+app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, [prePage, redisCache], function(req, res, next) {
   var page = {
     pagename: req.params.id
   }
@@ -140,12 +159,12 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
     
     if (!err && post) {
       if (req.params.extn === "json") {
-        console.log("Returned " + page.pagename + " as json.");
         res.send({text:post.text});
         return;
       } else {
         page.editing = "false";
         page.content = markdown.makeHtml(post.text);
+        redis_client.hmset("page_" + page.pagename, page);
       }
     } else {
       page.editing = "true";
@@ -153,10 +172,8 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
     }
     
     if (false && req.headers["user-agent"] && isMobileBrowser(req.headers["user-agent"])) {
-      console.log("Rendered " + page.pagename + " for mobile. (new: " + page.editing + ")");
       res.render('mobile', { page: page });
     } else {
-      console.log("Rendered " + page.pagename + " for browser. (new: " + page.editing + ")");
       res.render('page', { page: page });
     }
   });
@@ -167,4 +184,6 @@ app.get(/^\/([a-zA-Z0-9_-]{2,})\.?(json)?$/, prePage, function(req, res, next) {
 if (!module.parent) {
   app.listen(8888);
   console.log("Express server listening on port %d", app.address().port);
+} else {
+  module.exports = app;
 }
