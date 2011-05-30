@@ -99,6 +99,14 @@ $(document).ready(function () {
     editor.getSession().setTabSize(parseInt($(this).val(), 10));
   });
   
+  $("#wrapselect").change(function () {
+    if ($(this).val() == "soft") {
+      editor.getSession().setUseWrapMode(true);
+    } else {
+      editor.getSession().setUseWrapMode(false);
+    }
+  });
+  
   var pre_els = $("pre");
   
   pre_els.each(function (i, el) {

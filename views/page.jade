@@ -70,6 +70,11 @@ body
         optgroup(label="Tab Size") 
           option(value="2", selected) Soft: 2
           option(value="4") Soft: 4
+          
+      select#wrapselect
+        optgroup(label="Wrapping Mode")
+          option(value="soft", selected) Soft Wrap
+          option(value="none") No Wrap
   
   script(type="text/x-mathjax-config")
     :protect
