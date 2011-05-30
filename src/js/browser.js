@@ -91,6 +91,14 @@ $(document).ready(function () {
   editor.setShowPrintMargin(false);
   //editor.setBehavioursEnabled(true);
   
+  $("#themeselect").change(function () {
+    editor.setTheme($(this).val());
+  });
+  
+  $("#tabselect").change(function () {
+    editor.getSession().setTabSize(parseInt($(this).val(), 10));
+  });
+  
   var pre_els = $("pre");
   
   pre_els.each(function (i, el) {

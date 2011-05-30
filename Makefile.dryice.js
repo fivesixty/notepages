@@ -4,7 +4,7 @@ var cleanCSS = require('clean-css');
 var result = copy.createDataObject();
 
 ["support/ace/build/src/ace.js",
- "support/ace/build/src/theme-twilight.js",
+ "support/ace/build/src/theme-all.js",
  "support/ace/build/src/mode-javascript.js",
  "support/ace/build/src/mode-html.js",
  "support/ace/build/src/mode-xml.js",

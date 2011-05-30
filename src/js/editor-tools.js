@@ -32,7 +32,9 @@ EditorTools.prototype.utils = {
     return this.session.getLine(this.selection.start.row);
   },
   offsetCursor: function (offset) {
-    this.editor.moveCursorTo(this.selection.start.row, this.selection.start.column+offset);
+    this.editor.selection.setSelectionRange(
+      new Range(this.selection.start.row, this.selection.start.column+offset,
+                this.selection.start.row, this.selection.start.column+offset));
   },
   joinReplaceAndSelect: function (arr, selectedIndex) {
     var sum_length = 0, joined = "", to_select;
@@ -190,7 +192,7 @@ function MarkdownTools (editor, panel, docroot) {
       });
       u.selectRange(u.selectedLineRange());
     });
-    
+    /*
   tools.addButton('edit-indent_png',
     function (u) {
       
@@ -200,7 +202,7 @@ function MarkdownTools (editor, panel, docroot) {
     function (u) {
       
     });
-  
+    */
   tools.addButton('edit-image_png',
     function (u) {
       if (u.multiline) return;
@@ -223,7 +225,7 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-image-right_png',
+  tools.addButton('edit-indent_png',
     function (u) {
       if (u.multiline) return;
 
@@ -335,6 +337,7 @@ function MarkdownTools (editor, panel, docroot) {
           newline = "$$" + u.selected + "$$";
         }
         u.replaceAndSelectLine(newline);
+        u.offsetCursor(2);
       } else if (/^\s*$/.test(line)) {
         newline = "$$$$\n"
         u.session.replace(u.selectedLineRange(), newline);
@@ -353,12 +356,12 @@ function MarkdownTools (editor, panel, docroot) {
       }
     });
     
-  tools.addButton('edit-size-up_png',
+  tools.addButton('edit-signiture_png',
     function (u) {
       $("#ace").css("font-size", parseInt($("#ace").css("font-size"),10) + 2);
     }, true);
     
-  tools.addButton('edit-size-down_png',
+  tools.addButton('edit-size-up_png',
     function (u) {
       $("#ace").css("font-size", parseInt($("#ace").css("font-size"),10) - 2);
     }, true);

@@ -13,7 +13,24 @@
     </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-    <script src="../public/javascripts/build.js"></script>
+    <script src="../support/ace/build/src/ace.js"></script>
+    <script src="../../ace/build/src/theme-all.js"></script>
+    <script src="../../ace/build/src/mode-all.js"></script>
+    <script src="../support/ace/build/src/mode-html.js"></script>
+    <script src="../support/ace/build/src/mode-xml.js"></script>
+    <script src="../support/jquery-ui-1.8.13.custom.min.js"></script>
+    
+    <script src="../support/jquery.event.drag-2.0.js"></script>
+    <script src="../support/quickdiff/quickdiff.js"></script>
+    <script src="../support/sha256.js"></script>
+    <script src="../support/mdext/src/showdown.js"></script>
+
+    <script src="../src/js/markdown-mode.js"></script>
+    <script src="../src/js/ace-highlight.js"></script>
+    <script src="../src/js/notify.js"></script>
+    <script src="../src/js/universal.js"></script>
+    <script src="../src/js/editor-tools.js"></script>
+    <script src="../src/js/browser.js"></script>
     
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -30,7 +47,10 @@
     <link href='http://fonts.googleapis.com/css?family=OFL+Sorts+Mill+Goudy+TT:regular,italic' rel='stylesheet' type='text/css') />
     
     <!--link href="../public/stylesheets/reset.css" rel="stylesheet" /-->
-    <link href="../public/stylesheets/build.css" rel="stylesheet" />
+    <link href="../src/css/browser.css" rel="stylesheet" />
+    <link href="../src/css/universal.css" rel="stylesheet" />
+    <link href="../src/css/ace-twilight.css" rel="stylesheet" />
+    <link href="../src/css/sprites.css" rel="stylesheet" />
   </head>
   <body class="readonly">
     <div id="notify" class="drop-shadow"><span class="message"></span></div>
@@ -54,6 +74,41 @@
       <div id="dragger"></div>
       <div id="acetools"></div>
       <div id="ace"></div>
+      <div id="settings">
+        <select>
+          <optgroup label="Editor Mode">
+            <option>Markdown</option>
+          </optgroup>
+        </select>
+        
+        <select id="themeselect">
+          <optgroup label="Editor Themes">
+            <option value="ace/theme/clouds">Clouds</option>
+            <option value="ace/theme/dawn">Dawn</option>
+            <option value="ace/theme/eclipse">Eclipse</option>
+          </optgroup>
+          <optgroup label="Dark">
+            <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
+            <option value="ace/theme/cobalt">Cobalt</option>
+            <option value="ace/theme/idle_fingers">idleFingers</option>
+            <option value="ace/theme/kr_theme">krTheme</option>
+            <option value="ace/theme/mono_industrial">Mono Industrial</option>
+            <option value="ace/theme/monokai">Monokai</option>
+            <option value="ace/theme/merbivore">Merbivore</option>
+            <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
+            <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
+            <option value="ace/theme/twilight" selected>Twilight</option>
+            <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
+          </optgroup>
+        </select>
+        
+        <select id="tabselect">
+          <optgroup label="Tab Size">
+            <option value="2" selected>Soft: 2</option>
+            <option value="4">Soft: 4</option>
+          </optgroup>
+        </select>
+      </div>
     </div>
   </body>
 </html>
