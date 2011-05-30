@@ -50,6 +50,12 @@ $(document).ready(function () {
       return;
     }
     
+    if (patch.type === "replace" && patch.source.length === 1 && patch.replace.length === 1 && $(patch.replace[0]).is("img") && $(patch.source[0]).is("img") && $(patch.replace[0]).attr("src") === $(patch.source[0]).attr("src")) {
+      $(patch.source[0]).attr("title", $(patch.replace[0]).attr("title"));
+      $(patch.source[0]).attr("alt", $(patch.replace[0]).attr("alt"));
+      return;
+    }
+    
     patch.patch();
     
     if (patch.type !== "identical" && patch.replace.length > 0) {
