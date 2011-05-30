@@ -154,6 +154,7 @@ var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightR
 var JavaScriptHighlightRules = require("ace/mode/javascript_highlight_rules").JavaScriptHighlightRules;
 var XmlHighlightRules = require("ace/mode/xml_highlight_rules").XmlHighlightRules;
 var HtmlHighlightRules = require("ace/mode/html_highlight_rules").HtmlHighlightRules;
+var TexHighlightRules = require("ace/mode/tex_highlight_rules").TexHighlightRules;
 
 function github_embed(tag, prefix) {
   return { // Github style block
@@ -220,11 +221,13 @@ var MarkdownHighlightRules = function() {
             regex : "^(?:[*+-]\\s.+)",
             next  : "listblock"
         }, { // math span
-            token : "keyword",
-            regex : "%%.+?%%"
+            token : "constant",
+            regex : "%%(?=.+?%%)",
+            next  : "texi-start"
         }, { // math div
-            token : "keyword",
-            regex : "[$]{2}.+?[$]{2}"
+            token : "constant",
+            regex : "[$]{2}(?=.+?[$]{2})",
+            next  : "tex-start"
         }, { // strong ** __
             token : "string",
             regex : "([*]{2}|[_]{2}(?=\\S))([^\\r]*?\\S[*_]*)(\\1)"
@@ -288,8 +291,52 @@ var MarkdownHighlightRules = function() {
        regex : "^```",
        next  : "start"
     }]);
+    
+    this.embedRules(TexHighlightRules, "tex-", [{
+        token : "constant",
+        regex : "\\$\\$",
+        next  : "start"
+    }]);
+    
+    this.embedRules(TexHighlightRules, "texi-", [{
+        token : "constant",
+        regex : "%%",
+        next  : "start"
+    }]);
 };
 oop.inherits(MarkdownHighlightRules, TextHighlightRules);
 
 exports.MarkdownHighlightRules = MarkdownHighlightRules;
+});
+
+define("ace/mode/tex_highlight_rules", function (require, exports, module) {
+
+var oop = require("pilot/oop");
+var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
+
+var commands = "above|abovewithdelims|acute|aleph|alpha|amalg|And|angle|approx|approxeq|arccos|arcsin|arctan|arg|array|Arrowvert|arrowvert|ast|asymp|atop|atopwithdelims|backepsilon|backprime|backsim|backsimeq|backslash|backslash|bar|barwedge|Bbb|Bbbk|because|begin|beta|beth|between|bf|Big|big|bigcap|bigcirc|bigcup|Bigg|bigg|Biggl|biggl|Biggm|biggm|Biggr|biggr|Bigl|bigl|Bigm|bigm|bigodot|bigoplus|bigotimes|Bigr|bigr|bigsqcup|bigstar|bigtriangledown|bigtriangleup|biguplus|bigvee|bigwedge|binom|blacklozenge|blacksquare|blacktriangle|blacktriangledown|blacktriangleleft|blacktriangleright|bmod|boldsymbol|bot|bowtie|Box|boxdot|boxed|boxminus|boxplus|boxtimes|brace|bracevert|brack|breve|buildrel|bullet|Bumpeq|bumpeq|cal|cap|Cap|cases|cdot|cdotp|cdots|centerdot|cfrac|check|checkmark|chi|choose|circ|circeq|circlearrowleft|circlearrowright|circledast|circledcirc|circleddash|circledR|circledS|class|clubsuit|colon|color|complement|cong|coprod|cos|cosh|cot|coth|cr|csc|cssId|cup|Cup|curlyeqprec|curlyeqsucc|curlyvee|curlywedge|curvearrowleft|curvearrowright|dagger|daleth|dashleftarrow|dashrightarrow|dashv|dbinom|ddagger|ddddot|dddot|ddot|ddots|DeclareMathOperator|def|deg|Delta|delta|det|dfrac|diagdown|diagup|diamond|Diamond|diamondsuit|digamma|dim|displaylines|displaystyle|div|divideontimes|dot|doteq|Doteq|doteqdot|dotplus|dots|dotsb|dotsc|dotsi|dotsm|dotso|doublebarwedge|doublecap|doublecup|Downarrow|downarrow|downdownarrows|downharpoonleft|downharpoonright|ell|emptyset|end|enspace|epsilon|eqalign|eqalignno|eqcirc|eqsim|eqslantgtr|eqslantless|equiv|eta|eth|exists|exp|fallingdotseq|fbox|Finv|flat|forall|frac|frac|frak|frown|Game|Gamma|gamma|gcd|ge|genfrac|geq|geqq|geqslant|gets|gg|ggg|gggtr|gimel|gnapprox|gneq|gneqq|gnsim|grave|gt|gt|gtrapprox|gtrdot|gtreqless|gtreqqless|gtrless|gtrsim|gvertneqq|hat|hbar|hbox|hdashline|heartsuit|hline|hom|hookleftarrow|hookrightarrow|hphantom|href|hskip|hslash|hspace|Huge|huge|idotsint|iff|iiiint|iiint|iint|Im|imath|impliedby|implies|in|inf|infty|injlim|int|intercal|intop|iota|it|jmath|Join|kappa|ker|kern|Lambda|lambda|land|langle|LARGE|Large|large|LaTeX|lbrace|lbrack|lceil|ldotp|ldots|le|leadsto|left|Leftarrow|leftarrow|leftarrowtail|leftharpoondown|leftharpoonup|leftleftarrows|Leftrightarrow|leftrightarrow|leftrightarrows|leftrightharpoons|leftrightsquigarrow|leftroot|leftthreetimes|leq|leqalignno|leqq|leqslant|lessapprox|lessdot|lesseqgtr|lesseqqgtr|lessgtr|lesssim|lfloor|lg|lgroup|lhd|lim|liminf|limits|limsup|ll|llap|llcorner|Lleftarrow|lll|llless|lmoustache|ln|lnapprox|lneq|lneqq|lnot|lnsim|log|Longleftarrow|longleftarrow|Longleftrightarrow|longleftrightarrow|longmapsto|Longrightarrow|longrightarrow|looparrowleft|looparrowright|lor|lower|lozenge|lrcorner|Lsh|lt|lt|ltimes|lVert|lvert|lvertneqq|maltese|mapsto|mathbb|mathbf|mathbin|mathcal|mathchoice|mathclose|mathfrak|mathinner|mathit|mathop|mathopen|mathord|mathpunct|mathrel|mathring|mathrm|mathscr|mathsf|mathstrut|mathtt|matrix|max|mbox|measuredangle|mho|mid|min|mit|mkern|mod|models|moveleft|moveright|mp|mskip|mspace|mu|multimap|nabla|natural|ncong|ne|nearrow|neg|negmedspace|negthickspace|negthinspace|neq|newcommand|newenvironment|newline|nexists|ngeq|ngeqq|ngeqslant|ngtr|ni|nLeftarrow|nleftarrow|nLeftrightarrow|nleftrightarrow|nleq|nleqq|nleqslant|nless|nmid|nobreakspace|nolimits|normalsize|not|notag|notin|nparallel|nprec|npreceq|nRightarrow|nrightarrow|nshortmid|nshortparallel|nsim|nsubseteq|nsubseteqq|nsucc|nsucceq|nsupseteq|nsupseteqq|ntriangleleft|ntrianglelefteq|ntriangleright|ntrianglerighteq|nu|nVDash|nVdash|nvDash|nvdash|nwarrow|odot|oint|oldstyle|Omega|omega|omicron|ominus|operatorname|oplus|oslash|otimes|over|overbrace|overleftarrow|overleftrightarrow|overline|overrightarrow|overset|overwithdelims|owns|parallel|partial|perp|phantom|Phi|phi|Pi|pi|pitchfork|pm|pmatrix|pmb|pmod|pod|Pr|prec|precapprox|preccurlyeq|preceq|precnapprox|precneqq|precnsim|precsim|prime|prod|projlim|propto|Psi|psi|qquad|quad|raise|rangle|rbrace|rbrack|rceil|Re|renewcommand|require|restriction|rfloor|rgroup|rhd|rho|right|Rightarrow|rightarrow|rightarrowtail|rightharpoondown|rightharpoonup|rightleftarrows|rightleftharpoons|rightleftharpoons|rightrightarrows|rightsquigarrow|rightthreetimes|risingdotseq|rlap|rm|rmoustache|root|Rrightarrow|Rsh|rtimes|Rule|rVert|rvert|S|scr|scriptscriptstyle|scriptsize|scriptstyle|searrow|sec|setminus|sf|sharp|shortmid|shortparallel|shoveleft|shoveright|sideset|Sigma|sigma|sim|simeq|sin|sinh|skew|small|smallfrown|smallint|smallsetminus|smallsmile|smash|smile|Space|space|spadesuit|sphericalangle|sqcap|sqcup|sqrt|sqsubset|sqsubseteq|sqsupset|sqsupseteq|square|stackrel|star|strut|style|subset|Subset|subseteq|subseteqq|subsetneq|subsetneqq|substack|succ|succapprox|succcurlyeq|succeq|succnapprox|succneqq|succnsim|succsim|sum|sup|supset|Supset|supseteq|supseteqq|supsetneq|supsetneqq|surd|swarrow|tag|tan|tanh|tau|tbinom|TeX|text|textbf|textit|textrm|textstyle|tfrac|therefore|Theta|theta|thickapprox|thicksim|thinspace|tilde|times|tiny|Tiny|to|top|triangle|triangledown|triangleleft|trianglelefteq|triangleq|triangleright|trianglerighteq|tt|twoheadleftarrow|twoheadrightarrow|ulcorner|underbrace|underleftarrow|underleftrightarrow|underline|underrightarrow|underset|unicode|unlhd|unrhd|Uparrow|uparrow|Updownarrow|updownarrow|upharpoonleft|upharpoonright|uplus|uproot|Upsilon|upsilon|upuparrows|urcorner|varDelta|varepsilon|varGamma|varinjlim|varkappa|varLambda|varliminf|varlimsup|varnothing|varOmega|varphi|varPhi|varpi|varPi|varprojlim|varpropto|varPsi|varrho|varsigma|varSigma|varsubsetneq|varsubsetneqq|varsupsetneq|varsupsetneqq|vartheta|varTheta|vartriangle|vartriangleleft|vartriangleright|varUpsilon|varXi|vcenter|vdash|Vdash|vDash|vdots|vec|vee|veebar|verb|Vert|vert|vphantom|Vvdash|wedge|widehat|widetilde|wp|wr|Xi|xi|xleftarrow|xrightarrow|yen|zeta";
+
+function TexHighlightRules () {
+    this.$rules = {
+        start: [ {
+            token : "keyword",
+            regex : "\\\\(?:" + commands + ")(?![a-zA-Z])"
+        }, {
+            token : "text",
+            regex : "[#%&^_{}~]"
+        }, {
+            token : "variable",
+            regex : "\\s*[a-zA-Z](?![a-zA-Z])"
+        }, {
+            token : "constant",
+            regex : "[0-9\\.]+"
+        }, {
+            token : "text",
+            regex : "[^#%&$^_{}~\\\\()=\\\\,+-]+"
+        } ]
+    }
+}
+oop.inherits(TexHighlightRules, TextHighlightRules);
+
+exports.TexHighlightRules = TexHighlightRules;
 });
