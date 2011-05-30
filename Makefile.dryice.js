@@ -120,6 +120,8 @@ copy({
            "support/quickdiff/quickdiff.js",
            "support/sha256.js",
            "support/mdext/src/showdown.js",
+           "support/store/json.js",
+           "support/store/store.js",
            
            "src/js/markdown-mode.js",
            "src/js/ace-highlight.js",

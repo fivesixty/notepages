@@ -81,8 +81,6 @@ $(document).ready(function () {
   var JavaScriptMode = require("ace/mode/javascript").Mode;
   
   window.editor = ace.edit("ace");
-  editor.setTheme("ace/theme/twilight");
-  editor.getSession().setTabSize(2);
   editor.getSession().setUseSoftTabs(true);
   editor.getSession().setMode(new MarkdownMode());
   editor.renderer.setShowGutter(false);
@@ -91,20 +89,32 @@ $(document).ready(function () {
   editor.setShowPrintMargin(false);
   editor.setBehavioursEnabled(true);
   
+  var userTheme = store.get('userTheme');
+  if (userTheme) {
+    editor.setTheme(userTheme);
+    $("#themeselect").val(userTheme);
+  } else {
+    editor.setTheme("ace/theme/twilight");
+  }
   $("#themeselect").change(function () {
     editor.setTheme($(this).val());
+    store.set("userTheme", $(this).val());
   });
   
+  var userTab = store.get('userTab');
+  if (userTab) {
+    editor.getSession().setTabSize(parseInt(userTab, 10));
+    $("#tabselect").val(userTab);
+  } else {
+    editor.getSession().setTabSize(4);
+  }
   $("#tabselect").change(function () {
     editor.getSession().setTabSize(parseInt($(this).val(), 10));
+    store.set("userTab", $(this).val());
   });
   
   $("#wrapselect").change(function () {
-    if ($(this).val() == "soft") {
-      editor.getSession().setUseWrapMode(true);
-    } else {
-      editor.getSession().setUseWrapMode(false);
-    }
+    editor.getSession().setUseWrapMode($(this).val() == "soft");
   });
   
   var pre_els = $("pre");

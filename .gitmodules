@@ -7,3 +7,6 @@
 [submodule "public/lib/ace"]
 	path = support/ace
 	url = git://github.com/ajaxorg/ace.git
+[submodule "support/store"]
+	path = support/store
+	url = git://github.com/marcuswestin/store.js.git
