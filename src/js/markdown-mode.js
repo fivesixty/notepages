@@ -218,7 +218,7 @@ var MarkdownHighlightRules = function() {
             regex : "^[ ]{0,2}(?:[ ]?\\_[ ]?){3,}[ \\t]*$"
         }, { // list
             token : "support.function",
-            regex : "^(?:[*+-]\\s.+)",
+            regex : "^(?:[*+-]\\s.+|\\d+\\..+)",
             next  : "listblock"
         }, { // math span
             token : "constant",
@@ -321,6 +321,9 @@ function TexHighlightRules () {
         start: [ {
             token : "keyword",
             regex : "\\\\(?:" + commands + ")(?![a-zA-Z])"
+        }, {
+            token : "invalid.illegal",
+            regex : "\\\\[a-zA-Z]+"
         }, {
             token : "text",
             regex : "[#%&^_{}~]"
