@@ -89,7 +89,7 @@ $(document).ready(function () {
   editor.renderer.setHScrollBarAlwaysVisible(false);
   editor.getSession().setUseWrapMode(true);
   editor.setShowPrintMargin(false);
-  //editor.setBehavioursEnabled(true);
+  editor.setBehavioursEnabled(true);
   
   $("#themeselect").change(function () {
     editor.setTheme($(this).val());
