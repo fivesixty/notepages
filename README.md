@@ -11,10 +11,14 @@ This repository contains the development version, which is available at [dev.not
 
 The Notepages server is built upon [Node.js][1]/[MongoDB][2], and uses the [Express][3] and [Mongoose][4] libraries. Both libraries are available through `npm`. Bundled libraries are [quickdiff][5] (created for notepages), and [mdext][7] (a showdown fork).
 
-    npm install express mongoose jade sass underscore
+    npm install express mongoose jade sass underscore redis
     
 The client editor uses the [Ace][8] editor by Mozilla/Ajax.org with a custom MarkdownMode. Some icons used are from the [Retina Display Icon Set](http://blog.twg.ca/2010/11/retina-display-icon-set/). Editor icons are from the Fugue set, Copyright © [Yusuke Kamiyamane](http://p.yusukekamiyamane.com/).
 
+To clone the repo and all its submodules:
+
+    git clone --recursive https://github.com/fivesixty/notepages.git
+    
 The database configuration is trivial and at the top of the `server.js` file. Running `node server.js` will start the server listening on port 8080 or 8888 depending on what I pushed last.
 
   [1]: http://nodejs.org
